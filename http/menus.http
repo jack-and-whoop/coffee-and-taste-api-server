@@ -1,0 +1,12 @@
+###
+POST {{host}}/api/menus
+Content-Type: application/json
+
+{
+  "name": "아이스 카푸치노",
+  "price": 5000,
+  "onSale": true
+}
+
+###
+GET {{host}}/api/menus
