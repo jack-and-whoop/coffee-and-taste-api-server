@@ -1,0 +1,10 @@
+###
+POST {{host}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "음료"
+}
+
+###
+GET {{host}}/api/categories
