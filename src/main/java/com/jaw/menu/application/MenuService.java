@@ -23,6 +23,7 @@ public class MenuService {
         return createResponseFromEntity(menu);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponseDTO> findAll() {
         List<Menu> menus = menuRepository.findAll();
         return menus.stream()
