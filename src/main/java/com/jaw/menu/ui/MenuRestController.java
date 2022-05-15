@@ -24,7 +24,6 @@ public class MenuRestController {
 
     @GetMapping
     public ResponseEntity<List<MenuResponseDTO>> findAll() {
-        return ResponseEntity.ok()
-            .body(menuService.findAll());
+        return ResponseEntity.ok(menuService.findAll());
     }
 }
