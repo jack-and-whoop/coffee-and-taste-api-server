@@ -1,0 +1,10 @@
+###
+POST {{host}}/api/menu-groups
+Content-Type: application/json
+
+{
+  "name": "블렌드"
+}
+
+###
+GET {{host}}/api/menu-groups
