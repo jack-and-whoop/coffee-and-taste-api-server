@@ -27,6 +27,10 @@ public class Menu {
 
     private boolean onSale;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
     public Menu(String name, BigDecimal price, boolean onSale) {
         this.name = name;
         this.price = price;
