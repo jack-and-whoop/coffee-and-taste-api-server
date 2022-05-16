@@ -1,5 +1,6 @@
 package com.jaw.menu.domain;
 
+import com.jaw.category.domain.Category;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,10 @@ public class MenuGroup {
 
     @Column(nullable = false)
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public MenuGroup(String name) {
         this.name = name;
