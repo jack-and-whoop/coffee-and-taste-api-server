@@ -11,9 +11,11 @@ import com.jaw.member.domain.MemberRepository;
 public class InMemoryMemberRepository implements MemberRepository {
 
 	private final Map<Long, Member> members = new HashMap<>();
+	private static long sequence = 0L;
 
 	@Override
 	public Member save(Member member) {
+		member.setId(++sequence);
 		members.put(member.getId(), member);
 		return member;
 	}

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.jaw.member.domain.Member;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,15 @@ public class MemberRequestDTO {
 	private LocalDate birthDate;
 	private String email;
 	private String phoneNumber;
+
+	@Builder
+	public MemberRequestDTO(String name, String nickname, LocalDate birthDate, String email, String phoneNumber) {
+		this.name = name;
+		this.nickname = nickname;
+		this.birthDate = birthDate;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+	}
 
 	public Member toEntity() {
 		return Member.builder()

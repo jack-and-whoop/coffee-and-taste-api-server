@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
+import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
 
 class MemberServiceTest {
@@ -26,22 +27,21 @@ class MemberServiceTest {
 	@DisplayName("회원을 등록한다.")
 	@Test
 	void create() {
-		Member member = memberRepository.save(member(1L, "memberA"));
+		MemberResponseDTO member = memberService.create(member( "memberA"));
 		assertThat(member.getId()).isEqualTo(1L);
 	}
 
 	@DisplayName("회원 목록을 조회한다.")
 	@Test
 	void findAll() {
-		memberRepository.save(member(1L, "memberA"));
-		memberRepository.save(member(2L, "memberB"));
+		memberRepository.save(member("memberA").toEntity());
+		memberRepository.save(member("memberB").toEntity());
 		List<MemberResponseDTO> members = memberService.findAll();
 		assertThat(members).hasSize(2);
 	}
 
-	private Member member(Long id, String name) {
-		return Member.builder()
-			.id(id)
+	private MemberRequestDTO member(String name) {
+		return MemberRequestDTO.builder()
 			.name(name)
 			.build();
 	}
