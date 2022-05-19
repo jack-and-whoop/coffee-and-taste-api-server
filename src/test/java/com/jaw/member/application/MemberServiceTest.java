@@ -1,0 +1,48 @@
+package com.jaw.member.application;
+
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import com.jaw.member.domain.Member;
+import com.jaw.member.domain.MemberRepository;
+import com.jaw.member.ui.MemberResponseDTO;
+
+class MemberServiceTest {
+
+	private MemberRepository memberRepository;
+	private MemberService memberService;
+
+	@BeforeEach
+	void setup() {
+		memberRepository = new InMemoryMemberRepository();
+		memberService = new MemberService(memberRepository);
+	}
+
+	@DisplayName("회원을 등록한다.")
+	@Test
+	void create() {
+		Member member = memberRepository.save(member(1L, "memberA"));
+		assertThat(member.getId()).isEqualTo(1L);
+	}
+
+	@DisplayName("회원 목록을 조회한다.")
+	@Test
+	void findAll() {
+		memberRepository.save(member(1L, "memberA"));
+		memberRepository.save(member(2L, "memberB"));
+		List<MemberResponseDTO> members = memberService.findAll();
+		assertThat(members).hasSize(2);
+	}
+
+	private Member member(Long id, String name) {
+		return Member.builder()
+			.id(id)
+			.name(name)
+			.build();
+	}
+}
