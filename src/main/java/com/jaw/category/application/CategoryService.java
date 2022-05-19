@@ -1,14 +1,17 @@
 package com.jaw.category.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jaw.category.domain.Category;
 import com.jaw.category.domain.CategoryRepository;
 import com.jaw.category.ui.CategoryRequestDTO;
 import com.jaw.category.ui.CategoryResponseDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
@@ -23,7 +26,10 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<CategoryResponseDTO> findAll() {
+        return categoryRepository.findAll()
+            .stream()
+            .map(category -> new CategoryResponseDTO(category.getId(), category.getName()))
+            .collect(Collectors.toList());
     }
 }

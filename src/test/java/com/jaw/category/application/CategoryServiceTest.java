@@ -1,16 +1,17 @@
 package com.jaw.category.application;
 
-import com.jaw.category.domain.Category;
-import com.jaw.category.domain.CategoryRepository;
-import com.jaw.category.ui.CategoryRequestDTO;
-import com.jaw.category.ui.CategoryResponseDTO;
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.jaw.category.domain.Category;
+import com.jaw.category.domain.CategoryRepository;
+import com.jaw.category.ui.CategoryRequestDTO;
+import com.jaw.category.ui.CategoryResponseDTO;
 
 class CategoryServiceTest {
 
@@ -36,7 +37,7 @@ class CategoryServiceTest {
     void findAll() {
         categoryRepository.save(new Category("음료"));
         categoryRepository.save(new Category("푸드"));
-        List<Category> categories = categoryService.findAll();
+        List<CategoryResponseDTO> categories = categoryService.findAll();
         assertThat(categories).hasSize(2);
     }
 }
