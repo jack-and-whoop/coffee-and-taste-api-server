@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
@@ -23,5 +24,10 @@ public class InMemoryMemberRepository implements MemberRepository {
 	@Override
 	public List<Member> findAll() {
 		return new ArrayList<>(members.values());
+	}
+
+	@Override
+	public Optional<Member> findById(Long id) {
+		return Optional.ofNullable(members.get(id));
 	}
 }
