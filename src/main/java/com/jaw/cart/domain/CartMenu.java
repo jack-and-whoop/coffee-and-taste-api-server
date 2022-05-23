@@ -5,9 +5,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
-import com.jaw.member.domain.Member;
+import com.jaw.menu.domain.Menu;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,17 +17,24 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Cart {
+public class CartMenu {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Setter
 	private Long id;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	private Member member;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Cart cart;
 
-	public Cart(Member member) {
-		this.member = member;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Menu menu;
+
+	private long count;
+
+	public CartMenu(Cart cart, Menu menu, long count) {
+		this.cart = cart;
+		this.menu = menu;
+		this.count = count;
 	}
 }
