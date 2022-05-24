@@ -18,10 +18,10 @@ public class CartRestController {
 
 	private final CartService cartService;
 
-	@PostMapping("/member/{memberId}/cart")
+	@PostMapping("/members/{memberId}/cart")
 	public ResponseEntity<Cart> create(@PathVariable Long memberId) {
 		Cart cart = cartService.create(memberId);
-		return ResponseEntity.created(URI.create("/member/{memberId}/cart"))
+		return ResponseEntity.created(URI.create(String.format("/member/%d/cart", memberId)))
 			.body(cart);
 	}
 }
