@@ -15,7 +15,7 @@ import com.jaw.member.application.MemberService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/api/members")
 @RestController
 public class MemberRestController {
 
@@ -24,7 +24,7 @@ public class MemberRestController {
 	@PostMapping
 	public ResponseEntity<MemberResponseDTO> create(@RequestBody MemberRequestDTO request) {
 		MemberResponseDTO response = memberService.create(request);
-		return ResponseEntity.created(URI.create("/members/" + response.getId()))
+		return ResponseEntity.created(URI.create("/api/members/" + response.getId()))
 			.body(response);
 	}
 
