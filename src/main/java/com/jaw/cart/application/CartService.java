@@ -29,11 +29,8 @@ public class CartService {
 	}
 
 	public CartMenu addMenu(Long memberId, Menu menu, long count) {
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(IllegalArgumentException::new);
-
 		Cart cart = cartRepository.findByMemberId(memberId)
-			.orElse(cartRepository.save(new Cart(member)));
+			.orElse(create(memberId));
 
 		CartMenu cartMenu = new CartMenu(cart, menu, count);
 		return cartMenuRepository.save(cartMenu);
