@@ -7,4 +7,6 @@ public interface CartMenuRepository {
 	CartMenu save(CartMenu cartMenu);
 
 	List<CartMenu> findAll();
+
+	List<CartMenu> findAllByCart(Cart cart);
 }

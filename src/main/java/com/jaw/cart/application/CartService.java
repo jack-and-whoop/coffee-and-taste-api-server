@@ -1,5 +1,7 @@
 package com.jaw.cart.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,5 +36,12 @@ public class CartService {
 
 		CartMenu cartMenu = new CartMenu(cart, menu, count);
 		return cartMenuRepository.save(cartMenu);
+	}
+
+	@Transactional(readOnly = true)
+	public List<CartMenu> findAll(Long memberId) {
+		Cart cart = cartRepository.findByMemberId(memberId)
+			.orElse(create(memberId));
+		return cartMenuRepository.findAllByCart(cart);
 	}
 }
