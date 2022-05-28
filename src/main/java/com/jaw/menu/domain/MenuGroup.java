@@ -22,6 +22,8 @@ public class MenuGroup {
     @Column(nullable = false)
     private String name;
 
+    private String englishName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
