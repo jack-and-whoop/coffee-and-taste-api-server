@@ -26,6 +26,7 @@ public class InMemoryCategoryRepository implements CategoryRepository {
     }
 
     public void clear() {
+        sequence = 0;
         categories.clear();
     }
 }

@@ -26,6 +26,7 @@ public class InMemoryMenuRepository implements MenuRepository {
     }
 
     public void clear() {
+        sequence = 0;
         menus.clear();
     }
 }

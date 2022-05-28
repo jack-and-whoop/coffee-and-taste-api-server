@@ -29,6 +29,7 @@ public class InMemoryCartMenuRepository implements CartMenuRepository {
 	}
 
 	public void clear() {
+		sequence = 0;
 		cartMenus.clear();
 	}
 }

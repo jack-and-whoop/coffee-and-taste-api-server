@@ -26,6 +26,7 @@ public class InMemoryMenuGroupRepository implements MenuGroupRepository {
     }
 
     public void clear() {
+        sequence = 0;
         menuGroups.clear();
     }
 }

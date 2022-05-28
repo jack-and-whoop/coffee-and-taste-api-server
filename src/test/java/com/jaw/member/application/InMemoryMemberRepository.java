@@ -32,6 +32,7 @@ public class InMemoryMemberRepository implements MemberRepository {
 	}
 
 	public void clear() {
+		sequence = 0;
 		members.clear();
 	}
 }

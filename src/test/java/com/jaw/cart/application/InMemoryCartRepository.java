@@ -27,6 +27,7 @@ public class InMemoryCartRepository implements CartRepository {
 	}
 
 	public void clear() {
+		sequence = 0;
 		carts.clear();
 	}
 }
