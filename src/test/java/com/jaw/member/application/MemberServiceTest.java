@@ -4,18 +4,17 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.jaw.member.domain.Member;
-import com.jaw.member.domain.MemberRepository;
 import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
 
 class MemberServiceTest {
 
-	private MemberRepository memberRepository;
+	private InMemoryMemberRepository memberRepository;
 	private MemberService memberService;
 
 	@BeforeEach
@@ -24,11 +23,16 @@ class MemberServiceTest {
 		memberService = new MemberService(memberRepository);
 	}
 
+	@AfterEach
+	void teardown() {
+		memberRepository.clear();
+	}
+
 	@DisplayName("회원을 등록한다.")
 	@Test
 	void create() {
 		MemberResponseDTO member = memberService.create(member( "memberA"));
-		assertThat(member.getName()).isEqualTo("memberA");
+		assertThat(member.getId()).isEqualTo(1L);
 	}
 
 	@DisplayName("회원 목록을 조회한다.")

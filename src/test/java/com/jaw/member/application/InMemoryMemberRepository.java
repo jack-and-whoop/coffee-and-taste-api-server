@@ -30,4 +30,8 @@ public class InMemoryMemberRepository implements MemberRepository {
 	public Optional<Member> findById(Long id) {
 		return Optional.ofNullable(members.get(id));
 	}
+
+	public void clear() {
+		members.clear();
+	}
 }
