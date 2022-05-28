@@ -1,10 +1,11 @@
 package com.jaw.cart.application;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
 import com.jaw.cart.domain.CartMenuRepository;
 
@@ -21,7 +22,9 @@ public class InMemoryCartMenuRepository implements CartMenuRepository {
 	}
 
 	@Override
-	public List<CartMenu> findAll() {
-		return new ArrayList<>(cartMenus.values());
+	public List<CartMenu> findAllByCart(Cart cart) {
+		return cartMenus.values().stream()
+			.filter(cartMenu -> cartMenu.getCart().equals(cart))
+			.collect(Collectors.toList());
 	}
 }

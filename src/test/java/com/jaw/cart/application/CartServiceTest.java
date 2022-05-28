@@ -36,7 +36,7 @@ class CartServiceTest {
 	@DisplayName("회원의 장바구니를 생성한다.")
 	@Test
 	void create() {
-		Member member = memberRepository.save(member(1L, "홍길동"));
+		Member member = memberRepository.save(member( "홍길동"));
 		Cart cart = cartService.create(member.getId());
 		assertThat(cart.getMember()).isEqualTo(member);
 	}
@@ -44,16 +44,16 @@ class CartServiceTest {
 	@DisplayName("장바구니에 메뉴를 추가한다.")
 	@Test
 	void add() {
-		Member member = memberRepository.save(member(2L, "고길동"));
+		Member member = memberRepository.save(member("고길동"));
+		Cart cart = cartService.create(member.getId());
 		cartService.addMenu(member.getId(), menu("바닐라 플랫 화이트", 5_900), 1);
 		cartService.addMenu(member.getId(), menu("아이스 카페 모카", 5_500), 1);
-		List<CartMenu> cartMenus = cartMenuRepository.findAll();
+		List<CartMenu> cartMenus = cartMenuRepository.findAllByCart(cart);
 		assertThat(cartMenus).hasSize(2);
 	}
 
-	private Member member(Long id, String name) {
+	private Member member(String name) {
 		return Member.builder()
-			.id(id)
 			.name(name)
 			.build();
 	}
