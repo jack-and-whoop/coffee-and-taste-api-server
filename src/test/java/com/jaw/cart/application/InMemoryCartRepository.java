@@ -21,6 +21,8 @@ public class InMemoryCartRepository implements CartRepository {
 
 	@Override
 	public Optional<Cart> findByMemberId(Long memberId) {
-		return Optional.ofNullable(carts.get(memberId));
+		return carts.values().stream()
+			.filter(cart -> cart.getMember().getId().equals(memberId))
+			.findFirst();
 	}
 }
