@@ -1,12 +1,12 @@
 package com.jaw.menu.application;
 
-import com.jaw.menu.domain.MenuGroup;
-import com.jaw.menu.domain.MenuGroupRepository;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.jaw.menu.domain.MenuGroup;
+import com.jaw.menu.domain.MenuGroupRepository;
 
 public class InMemoryMenuGroupRepository implements MenuGroupRepository {
 
@@ -23,5 +23,9 @@ public class InMemoryMenuGroupRepository implements MenuGroupRepository {
         menuGroup.setId(++sequence);
         menuGroups.put(menuGroup.getId(), menuGroup);
         return menuGroup;
+    }
+
+    public void clear() {
+        menuGroups.clear();
     }
 }

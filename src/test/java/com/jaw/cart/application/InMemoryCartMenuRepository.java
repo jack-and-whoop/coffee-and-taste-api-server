@@ -27,4 +27,8 @@ public class InMemoryCartMenuRepository implements CartMenuRepository {
 			.filter(cartMenu -> cartMenu.getCart().equals(cart))
 			.collect(Collectors.toList());
 	}
+
+	public void clear() {
+		cartMenus.clear();
+	}
 }

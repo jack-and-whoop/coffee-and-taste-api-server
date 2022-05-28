@@ -1,28 +1,34 @@
 package com.jaw.menu.application;
 
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.domain.MenuRepository;
-import com.jaw.menu.ui.MenuRequestDTO;
-import com.jaw.menu.ui.MenuResponseDTO;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.ui.MenuRequestDTO;
+import com.jaw.menu.ui.MenuResponseDTO;
 
 class MenuServiceTest {
 
-    private MenuRepository menuRepository;
+    private InMemoryMenuRepository menuRepository;
     private MenuService menuService;
 
     @BeforeEach
     void setup() {
         menuRepository = new InMemoryMenuRepository();
         menuService = new MenuService(menuRepository);
+    }
+
+    @AfterEach
+    void teardown() {
+        menuRepository.clear();
     }
 
     @DisplayName("새로운 메뉴를 등록한다.")

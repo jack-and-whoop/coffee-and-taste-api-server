@@ -1,12 +1,12 @@
 package com.jaw.menu.application;
 
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.domain.MenuRepository;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.domain.MenuRepository;
 
 public class InMemoryMenuRepository implements MenuRepository {
 
@@ -23,5 +23,9 @@ public class InMemoryMenuRepository implements MenuRepository {
         menu.setId(++sequence);
         menus.put(menu.getId(), menu);
         return menu;
+    }
+
+    public void clear() {
+        menus.clear();
     }
 }

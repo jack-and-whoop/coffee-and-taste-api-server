@@ -25,4 +25,8 @@ public class InMemoryCartRepository implements CartRepository {
 			.filter(cart -> cart.getMember().getId().equals(memberId))
 			.findFirst();
 	}
+
+	public void clear() {
+		carts.clear();
+	}
 }

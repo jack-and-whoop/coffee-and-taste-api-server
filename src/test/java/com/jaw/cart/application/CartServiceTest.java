@@ -5,24 +5,22 @@ import static org.assertj.core.api.Assertions.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
-import com.jaw.cart.domain.CartMenuRepository;
-import com.jaw.cart.domain.CartRepository;
 import com.jaw.member.application.InMemoryMemberRepository;
 import com.jaw.member.domain.Member;
-import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
 
 class CartServiceTest {
 
-	private CartRepository cartRepository;
-	private CartMenuRepository cartMenuRepository;
-	private MemberRepository memberRepository;
+	private InMemoryCartRepository cartRepository;
+	private InMemoryCartMenuRepository cartMenuRepository;
+	private InMemoryMemberRepository memberRepository;
 	private CartService cartService;
 
 	@BeforeEach
@@ -31,6 +29,13 @@ class CartServiceTest {
 		cartMenuRepository = new InMemoryCartMenuRepository();
 		memberRepository = new InMemoryMemberRepository();
 		cartService = new CartService(cartRepository, cartMenuRepository, memberRepository);
+	}
+
+	@AfterEach
+	void teardown() {
+		cartRepository.clear();
+		cartMenuRepository.clear();
+		memberRepository.clear();
 	}
 
 	@DisplayName("회원의 장바구니를 생성한다.")

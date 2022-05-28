@@ -1,12 +1,12 @@
 package com.jaw.category.application;
 
-import com.jaw.category.domain.Category;
-import com.jaw.category.domain.CategoryRepository;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.jaw.category.domain.Category;
+import com.jaw.category.domain.CategoryRepository;
 
 public class InMemoryCategoryRepository implements CategoryRepository {
 
@@ -23,5 +23,9 @@ public class InMemoryCategoryRepository implements CategoryRepository {
         category.setId(++sequence);
         categories.put(category.getId(), category);
         return category;
+    }
+
+    public void clear() {
+        categories.clear();
     }
 }

@@ -1,27 +1,33 @@
 package com.jaw.menu.application;
 
-import com.jaw.menu.domain.MenuGroup;
-import com.jaw.menu.domain.MenuGroupRepository;
-import com.jaw.menu.ui.MenuGroupRequestDTO;
-import com.jaw.menu.ui.MenuGroupResponseDTO;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import com.jaw.menu.domain.MenuGroup;
+import com.jaw.menu.ui.MenuGroupRequestDTO;
+import com.jaw.menu.ui.MenuGroupResponseDTO;
 
 class MenuGroupServiceTest {
 
-    private MenuGroupRepository menuGroupRepository;
+    private InMemoryMenuGroupRepository menuGroupRepository;
     private MenuGroupService menuGroupService;
 
     @BeforeEach
     void setup() {
         menuGroupRepository = new InMemoryMenuGroupRepository();
         menuGroupService = new MenuGroupService(menuGroupRepository);
+    }
+
+    @AfterEach
+    void teardown() {
+        menuGroupRepository.clear();
     }
 
     @DisplayName("새로운 메뉴 그룹을 등록한다.")

@@ -4,24 +4,29 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.jaw.category.domain.Category;
-import com.jaw.category.domain.CategoryRepository;
 import com.jaw.category.ui.CategoryRequestDTO;
 import com.jaw.category.ui.CategoryResponseDTO;
 
 class CategoryServiceTest {
 
-    private CategoryRepository categoryRepository;
+    private InMemoryCategoryRepository categoryRepository;
     private CategoryService categoryService;
 
     @BeforeEach
     void setup() {
         categoryRepository = new InMemoryCategoryRepository();
         categoryService = new CategoryService(categoryRepository);
+    }
+
+    @AfterEach
+    void teardown() {
+        categoryRepository.clear();
     }
 
     @DisplayName("새로운 카테고리를 등록한다.")
