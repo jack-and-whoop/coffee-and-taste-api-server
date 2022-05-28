@@ -28,7 +28,7 @@ class MemberServiceTest {
 	@Test
 	void create() {
 		MemberResponseDTO member = memberService.create(member( "memberA"));
-		assertThat(member.getId()).isEqualTo(1L);
+		assertThat(member.getName()).isEqualTo("memberA");
 	}
 
 	@DisplayName("회원 목록을 조회한다.")
