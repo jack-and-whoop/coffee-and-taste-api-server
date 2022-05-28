@@ -4,7 +4,7 @@ VALUES
 (2, '푸드'),
 (3, '상품');
 
-INSERT INTO MEGU_GROUP(MENU_GROUP_ID, CATEGORY_ID, NAME, ENGLISH_NAME)
+INSERT INTO MENU_GROUP(MENU_GROUP_ID, CATEGORY_ID, NAME, ENGLISH_NAME)
 VALUES
 (1, 1, '리저브 에스프레소', 'Reserve Espresso'),
 (2, 1, '리저브 드립', 'Reserve Drip'),
@@ -41,35 +41,35 @@ VALUES
 (31, 3, '패키지 티', 'Packaged Tea'),
 (32, 3, '리저브 원두', 'Reserve Whole bean');
 
-INSERT INTO MENU(MENU_ID, MENU_GROUP_ID, NAME, ENGLISH_NAME, PRICE, ON_SALE)
+INSERT INTO MENU(MENU_GROUP_ID, NAME, ENGLISH_NAME, PRICE, ON_SALE)
 VALUES
 (1, '인도네시아 WJ 사케라또 아포가토', 'Indonesia WJ Shakerato Affogato', 9500, TRUE),
 (1, '브라질 FC 사케라또 아포가토', 'Brazil FC Shakerato Affogato', 8500, TRUE),
-(1, '사케라또 아포가토', 7500, 'Shakerato Affogato', TRUE),
+(1, '사케라또 아포가토', 'Shakerato Affogato', 7500, TRUE),
 (1, '인도네시아 WJ 스파클링 시트러스 에스프레소', 'Indonesia WJ Sparkling Citrus Espresso', 9500, TRUE),
 (1, '브라질 FC 스파클링 시트러스 에스프레소', 'Brazil FC Sparkling Citrus Espresso', 8500, TRUE),
 (1, '스파클링 시트러스 에스프레소', 'Sparkling Citrus Espresso', 7500, TRUE),
 (1, '인도네시아 WJ 클래식 아포가토', 'Indonesia WJ Classic Affogato', 9000, TRUE),
-(1, '브라질 FC 클래식 아포가토', 8000, 'Brazil FC Classic Affogato', TRUE),
-(1, '클래식 아포가토', 7000, 'Classic Affogato', TRUE),
+(1, '브라질 FC 클래식 아포가토', 'Brazil FC Classic Affogato', 8000, TRUE),
+(1, '클래식 아포가토', 'Classic Affogato', 7000, TRUE),
 (1, '인도네시아 WJ 사케라또 비안코 오버 아이스', 'Indonesia WJ Shakerato Bianco Over Ice', 9500, TRUE),
 (1, '브라질 FC 사케라또 비안코 오버 아이스', 'Brazil FC Shakerato Bianco Over Ice', 8500, TRUE),
-(1, '사케라또 비안코 오버 아이스', 7500, 'Shakerato Bianco Over Ice', TRUE),
+(1, '사케라또 비안코 오버 아이스', 'Shakerato Bianco Over Ice', 7500, TRUE),
 (1, '인도네시아 WJ 아이스 다크 초콜릿 모카', 'Indonesia WJ Iced Dark Chocolate Mocha', 9000, TRUE),
 (1, '브라질 FC 아이스 다크 초콜릿 모카', 'Brazil FC Iced Dark Chocolate Mocha', 8000, TRUE),
-(1, '아이스 다크 초콜릿 모카', 7000, 'Iced Dark Chocolate Mocha', TRUE),
+(1, '아이스 다크 초콜릿 모카', 'Iced Dark Chocolate Mocha', 7000, TRUE),
 (1, '인도네시아 WJ 아이스 바닐라 빈 라떼', 'Indonesia WJ Iced Vanilla Bean Latte', 9000, TRUE),
 (1, '브라질 FC 아이스 바닐라 빈 라떼', 'Brazil FC Iced Vanilla Bean Latte', 8000, TRUE),
-(1, '아이스 바닐라 빈 라떼', 7000, 'Iced Vanilla Bean Latte', TRUE),
+(1, '아이스 바닐라 빈 라떼', 'Iced Vanilla Bean Latte', 7000, TRUE),
 (1, '인도네시아 WJ 아이스 카페 라떼', 'Indonesia WJ Iced Caffe Latte', 8500, TRUE),
 (1, '브라질 FC 아이스 카페 라뗴', 'Brazil FC Iced Caffe Latte', 7500, TRUE),
 (1, '아이스 카페 라떼', 'Iced Caffe Latte', 6500, TRUE),
 (1, '인도네시아 WJ 아이스 카푸치노', 'Indonesia WJ Iced Cappucinno', 8500, TRUE),
-(1, '브라질 FC 아이스 카푸치노', 7500, 'Brazil FC Iced Cappucinno', TRUE),
-(1, '아이스 카푸치노', 6500, 'Iced Cappucinno', TRUE),
+(1, '브라질 FC 아이스 카푸치노', 'Brazil FC Iced Cappucinno', 7500, TRUE),
+(1, '아이스 카푸치노', 'Iced Cappucinno', 6500, TRUE),
 (1, '인도네시아 WJ 아이스 카페 아메리카노', 'Indonesia WJ Iced Caffe Americano', 8000, TRUE),
 (1, '브라질 FC 아이스 카페 아메리카노', 'Brazil FC Iced Caffe Americano', 7000, TRUE),
-(1, '아이스 카페 아메리카노', 6000, 'Iced Caffe Americano', TRUE),
+(1, '아이스 카페 아메리카노', 'Iced Caffe Americano', 6000, TRUE),
 (1, '인도네시아 WJ 코르타도', 'Indonesia WJ Cortado', 8500, TRUE),
 (1, '브라질 FC 코르타도', 'Brazil FC Cortado', 7500, TRUE),
 (1, '코르타도', 'Cortado', 6500, TRUE),
@@ -226,5 +226,5 @@ VALUES
 (13, '페리에 라임 330ML', 'Perrier Lime 330ML', 3300, TRUE),
 (13, '유기농 스파클링 애플 주스 296ML', 'Organic Sparkling Apple Juice 296ML', 4800, TRUE),
 (13, '삼다수 500ML', 'Samdasoo water 500ML', 950, TRUE),
-(13, '뉴욕셀처(레몬&라임)296ML', 'NewYork Seltzer(Lemon&Lime)296ML', 4000, TRUE),
+(13, '뉴욕셀처(레몬&라임)296ML', 'NewYork Seltzer(Lemon&Lime)296ML', 4000, TRUE)
 ;
