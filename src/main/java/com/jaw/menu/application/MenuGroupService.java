@@ -32,6 +32,6 @@ public class MenuGroupService {
     }
 
     private MenuGroupResponseDTO createResponseFromEntity(MenuGroup menuGroup) {
-        return new MenuGroupResponseDTO(menuGroup.getId(), menuGroup.getName());
+        return new MenuGroupResponseDTO(menuGroup.getId(), menuGroup.getName(), menuGroup.getEnglishName());
     }
 }

@@ -31,4 +31,9 @@ public class MenuGroup {
     public MenuGroup(String name) {
         this.name = name;
     }
+
+    public MenuGroup(String name, String englishName) {
+        this.name = name;
+        this.englishName = englishName;
+    }
 }

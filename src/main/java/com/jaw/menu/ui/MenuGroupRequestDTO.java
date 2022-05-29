@@ -11,12 +11,13 @@ import lombok.Setter;
 public class MenuGroupRequestDTO {
 
     private String name;
+    private String englishName;
 
     public MenuGroupRequestDTO(String name) {
         this.name = name;
     }
 
     public MenuGroup toEntity() {
-        return new MenuGroup(name);
+        return new MenuGroup(name, englishName);
     }
 }
