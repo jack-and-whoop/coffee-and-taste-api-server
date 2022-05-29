@@ -1,20 +1,19 @@
 package com.jaw.cart.application;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
 import com.jaw.member.application.InMemoryMemberRepository;
 import com.jaw.member.domain.Member;
 import com.jaw.menu.domain.Menu;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CartServiceTest {
 
@@ -64,7 +63,11 @@ class CartServiceTest {
 	}
 
 	private Menu menu(String name, long price) {
-		return new Menu(name, BigDecimal.valueOf(price), true);
+		return Menu.builder()
+			.name(name)
+			.price(BigDecimal.valueOf(price))
+			.onSale(true)
+			.build();
 	}
 
 }

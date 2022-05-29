@@ -1,6 +1,7 @@
 package com.jaw.menu.ui;
 
 import com.jaw.menu.domain.Menu;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,16 +14,24 @@ import java.math.BigDecimal;
 public class MenuRequestDTO {
 
     private String name;
+    private String englishName;
     private BigDecimal price;
     private boolean onSale;
 
-    public MenuRequestDTO(String name, BigDecimal price, boolean onSale) {
+    @Builder
+    public MenuRequestDTO(String name, String englishName, BigDecimal price, boolean onSale) {
         this.name = name;
+        this.englishName = englishName;
         this.price = price;
         this.onSale = onSale;
     }
 
     public Menu toEntity() {
-        return new Menu(name, price, onSale);
+        return Menu.builder()
+            .name(name)
+            .englishName(englishName)
+            .price(price)
+            .onSale(onSale)
+            .build();
     }
 }

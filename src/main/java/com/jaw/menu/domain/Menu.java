@@ -11,10 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,8 +38,10 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    public Menu(String name, BigDecimal price, boolean onSale) {
+    @Builder
+    public Menu(String name, String englishName, BigDecimal price, boolean onSale) {
         this.name = name;
+        this.englishName = englishName;
         this.price = price;
         this.onSale = onSale;
     }

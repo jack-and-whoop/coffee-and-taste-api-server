@@ -1,19 +1,18 @@
 package com.jaw.menu.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.math.BigDecimal;
-import java.util.List;
-
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.ui.MenuRequestDTO;
+import com.jaw.menu.ui.MenuResponseDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.ui.MenuRequestDTO;
-import com.jaw.menu.ui.MenuResponseDTO;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MenuServiceTest {
 
@@ -36,7 +35,11 @@ class MenuServiceTest {
     void create() {
         String name = "아이스 카페 아메리카노";
         BigDecimal price = BigDecimal.valueOf(4_500);
-        MenuRequestDTO request = new MenuRequestDTO(name, price, true);
+        MenuRequestDTO request = MenuRequestDTO.builder()
+            .name(name)
+            .price(price)
+            .onSale(true)
+            .build();
         MenuResponseDTO response = menuService.create(request);
         assertAll(
             () -> assertThat(response.getId()).isEqualTo(1L),
@@ -58,6 +61,10 @@ class MenuServiceTest {
     }
 
     private Menu menu(String name, long price, boolean onSale) {
-        return new Menu(name, BigDecimal.valueOf(price), onSale);
+        return Menu.builder()
+            .name(name)
+            .price(BigDecimal.valueOf(price))
+            .onSale(onSale)
+            .build();
     }
 }
