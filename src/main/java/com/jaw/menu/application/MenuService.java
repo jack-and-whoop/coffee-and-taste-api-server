@@ -35,6 +35,7 @@ public class MenuService {
         return MenuResponseDTO.builder()
             .id(menu.getId())
             .name(menu.getName())
+            .englishName(menu.getEnglishName())
             .price(menu.getPrice())
             .onSale(menu.isOnSale())
             .build();
