@@ -1,9 +1,6 @@
 package com.jaw.category.application;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.jaw.category.domain.Category;
 import com.jaw.category.domain.CategoryRepository;
@@ -23,6 +20,11 @@ public class InMemoryCategoryRepository implements CategoryRepository {
         category.setId(++sequence);
         categories.put(category.getId(), category);
         return category;
+    }
+
+    @Override
+    public Optional<Category> findById(Long id) {
+        return Optional.ofNullable(categories.get(id));
     }
 
     public void clear() {

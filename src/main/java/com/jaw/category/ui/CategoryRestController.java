@@ -27,4 +27,9 @@ public class CategoryRestController {
     public ResponseEntity<List<CategoryResponseDTO>> findAll() {
         return ResponseEntity.ok(categoryService.findAll());
     }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponseDTO> findById(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(categoryService.findById(categoryId));
+    }
 }

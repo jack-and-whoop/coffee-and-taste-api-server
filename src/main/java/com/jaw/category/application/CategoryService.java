@@ -3,6 +3,7 @@ package com.jaw.category.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.jaw.menu.ui.MenuGroupResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,5 +32,16 @@ public class CategoryService {
             .stream()
             .map(category -> new CategoryResponseDTO(category.getId(), category.getName()))
             .collect(Collectors.toList());
+    }
+
+    public CategoryResponseDTO findById(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(IllegalArgumentException::new);
+
+        List<MenuGroupResponseDTO> menuGroups = category.getMenuGroups().stream()
+            .map(menuGroup -> new MenuGroupResponseDTO(menuGroup.getId(), menuGroup.getName(), menuGroup.getEnglishName()))
+            .collect(Collectors.toList());
+
+        return new CategoryResponseDTO(category.getId(), category.getName(), menuGroups);
     }
 }
