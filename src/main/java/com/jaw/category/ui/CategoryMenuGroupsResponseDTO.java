@@ -15,7 +15,6 @@ public class CategoryMenuGroupsResponseDTO extends CategoryResponseDTO {
 
 	private List<MenuGroupResponseDTO> menuGroups;
 
-	@Builder
 	public CategoryMenuGroupsResponseDTO(Category category, List<MenuGroup> menuGroups) {
 		super(category);
 		this.menuGroups = menuGroups.stream()

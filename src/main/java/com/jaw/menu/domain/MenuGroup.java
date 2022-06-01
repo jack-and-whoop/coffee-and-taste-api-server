@@ -4,8 +4,6 @@ import com.jaw.category.domain.Category;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,9 +24,6 @@ public class MenuGroup {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-
-    @OneToMany(mappedBy = "menuGroup")
-    private List<Menu> menus = new ArrayList<>();
 
     @Builder
     public MenuGroup(String name, String englishName, Category category) {
