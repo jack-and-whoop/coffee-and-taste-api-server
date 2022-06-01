@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jaw.menu.domain.Menu;
 import com.jaw.menu.domain.MenuGroup;
 import com.jaw.menu.domain.MenuGroupRepository;
+import com.jaw.menu.domain.MenuRepository;
+import com.jaw.menu.ui.MenuGroupMenusResponseDTO;
 import com.jaw.menu.ui.MenuGroupRequestDTO;
 import com.jaw.menu.ui.MenuGroupResponseDTO;
 
@@ -19,17 +22,18 @@ import lombok.RequiredArgsConstructor;
 public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
+    private final MenuRepository menuRepository;
 
     public MenuGroupResponseDTO create(MenuGroupRequestDTO request) {
         MenuGroup menuGroup = menuGroupRepository.save(request.toEntity());
-        return createResponseFromEntity(menuGroup);
+        return new MenuGroupResponseDTO(menuGroup);
     }
 
     @Transactional(readOnly = true)
     public List<MenuGroupResponseDTO> findAll() {
         return menuGroupRepository.findAll()
             .stream()
-            .map(this::createResponseFromEntity)
+            .map(MenuGroupResponseDTO::new)
             .collect(Collectors.toList());
     }
 
@@ -37,14 +41,14 @@ public class MenuGroupService {
     public MenuGroupResponseDTO findById(Long menuGroupId) {
         MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
             .orElseThrow(IllegalArgumentException::new);
-        return createResponseFromEntity(menuGroup);
+        return new MenuGroupResponseDTO(menuGroup);
     }
 
-    private MenuGroupResponseDTO createResponseFromEntity(MenuGroup menuGroup) {
-        return MenuGroupResponseDTO.builder()
-            .id(menuGroup.getId())
-            .name(menuGroup.getName())
-            .englishName(menuGroup.getEnglishName())
-            .build();
+    @Transactional(readOnly = true)
+    public MenuGroupMenusResponseDTO findWithMenusById(Long menuGroupId) {
+        MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
+            .orElseThrow(IllegalArgumentException::new);
+        List<Menu> menus = menuRepository.findAllByMenuGroupId(menuGroupId);
+        return new MenuGroupMenusResponseDTO(menuGroup, menus);
     }
 }

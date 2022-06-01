@@ -1,15 +1,17 @@
 package com.jaw.menu.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jaw.menu.domain.Menu;
 import com.jaw.menu.domain.MenuRepository;
 import com.jaw.menu.ui.MenuRequestDTO;
 import com.jaw.menu.ui.MenuResponseDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
@@ -20,24 +22,14 @@ public class MenuService {
 
     public MenuResponseDTO create(MenuRequestDTO request) {
         Menu menu = menuRepository.save(request.toEntity());
-        return createResponseFromEntity(menu);
+        return new MenuResponseDTO(menu);
     }
 
     @Transactional(readOnly = true)
     public List<MenuResponseDTO> findAll() {
         List<Menu> menus = menuRepository.findAll();
         return menus.stream()
-            .map(this::createResponseFromEntity)
+            .map(MenuResponseDTO::new)
             .collect(Collectors.toList());
-    }
-
-    private MenuResponseDTO createResponseFromEntity(Menu menu) {
-        return MenuResponseDTO.builder()
-            .id(menu.getId())
-            .name(menu.getName())
-            .englishName(menu.getEnglishName())
-            .price(menu.getPrice())
-            .onSale(menu.isOnSale())
-            .build();
     }
 }

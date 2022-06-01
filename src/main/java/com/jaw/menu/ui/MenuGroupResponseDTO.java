@@ -1,6 +1,7 @@
 package com.jaw.menu.ui;
 
-import lombok.Builder;
+import com.jaw.menu.domain.MenuGroup;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,10 +13,9 @@ public class MenuGroupResponseDTO {
     private String name;
     private String englishName;
 
-    @Builder
-    public MenuGroupResponseDTO(Long id, String name, String englishName) {
-        this.id = id;
-        this.name = name;
-        this.englishName = englishName;
+    public MenuGroupResponseDTO(MenuGroup menuGroup) {
+        this.id = menuGroup.getId();
+        this.name = menuGroup.getName();
+        this.englishName = menuGroup.getEnglishName();
     }
 }

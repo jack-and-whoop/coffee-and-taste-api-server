@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.jaw.menu.domain.Menu;
 import com.jaw.menu.domain.MenuRepository;
@@ -23,6 +24,13 @@ public class InMemoryMenuRepository implements MenuRepository {
         menu.setId(++sequence);
         menus.put(menu.getId(), menu);
         return menu;
+    }
+
+    @Override
+    public List<Menu> findAllByMenuGroupId(Long menuGroupId) {
+        return menus.values().stream()
+            .filter(menu -> menu.getMenuGroup().getId().equals(menuGroupId))
+            .collect(Collectors.toList());
     }
 
     public void clear() {

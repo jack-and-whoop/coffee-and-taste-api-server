@@ -51,7 +51,7 @@ public class CategoryService {
 
         List<MenuGroupResponseDTO> menuGroups = menuGroupRepository.findAllByCategoryId(categoryId)
             .stream()
-            .map(menuGroup -> new MenuGroupResponseDTO(menuGroup.getId(), menuGroup.getName(), menuGroup.getEnglishName()))
+            .map(MenuGroupResponseDTO::new)
             .collect(Collectors.toList());
 
         return new CategoryMenuGroupsResponseDTO(category.getId(), category.getName(), menuGroups);

@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+import com.jaw.menu.domain.Menu;
+
 @Getter
 @Setter
 public class MenuResponseDTO {
@@ -16,12 +18,11 @@ public class MenuResponseDTO {
     private BigDecimal price;
     private boolean onSale;
 
-    @Builder
-    public MenuResponseDTO(Long id, String name, String englishName, BigDecimal price, boolean onSale) {
-        this.id = id;
-        this.name = name;
-        this.englishName = englishName;
-        this.price = price;
-        this.onSale = onSale;
+    public MenuResponseDTO(Menu menu) {
+        this.id = menu.getId();
+        this.name = menu.getName();
+        this.englishName = menu.getEnglishName();
+        this.price = menu.getPrice();
+        this.onSale = menu.isOnSale();
     }
 }

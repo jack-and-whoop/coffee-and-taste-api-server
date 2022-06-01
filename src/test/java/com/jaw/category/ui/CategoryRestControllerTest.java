@@ -106,9 +106,7 @@ class CategoryRestControllerTest {
 		CategoryMenuGroupsResponseDTO response = CategoryMenuGroupsResponseDTO.builder()
 			.id(category.getId())
 			.name(category.getName())
-			.menuGroups(List.of(
-				new MenuGroupResponseDTO(coke.getId(), "콜라", "Coke"),
-				new MenuGroupResponseDTO(cider.getId(), "사이다", "Cider")))
+			.menuGroups(List.of(new MenuGroupResponseDTO(coke), new MenuGroupResponseDTO(cider)))
 			.build();
 
 		mvc.perform(get("/api/categories/{categoryId}/menu-groups", category.getId()))
