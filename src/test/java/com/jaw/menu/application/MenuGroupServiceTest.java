@@ -1,18 +1,20 @@
 package com.jaw.menu.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.domain.MenuGroup;
+import com.jaw.menu.ui.MenuGroupMenusResponseDTO;
+import com.jaw.menu.ui.MenuGroupRequestDTO;
+import com.jaw.menu.ui.MenuGroupResponseDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.jaw.menu.domain.MenuGroup;
-import com.jaw.menu.ui.MenuGroupRequestDTO;
-import com.jaw.menu.ui.MenuGroupResponseDTO;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MenuGroupServiceTest {
 
@@ -29,6 +31,7 @@ class MenuGroupServiceTest {
 
     @AfterEach
     void teardown() {
+        menuRepository.clear();
         menuGroupRepository.clear();
     }
 
@@ -63,10 +66,32 @@ class MenuGroupServiceTest {
         assertThat(menuGroup.getName()).isEqualTo(created.getName());
     }
 
+    @DisplayName("특정 메뉴 그룹 조회 시, 하위의 메뉴 목록을 함께 조회한다.")
+    @Test
+    void findWithMenusById() {
+        MenuGroup blended = menuGroupRepository.save(menuGroup("블렌디드", "Blended"));
+        menuRepository.save(menu("망고 바나나", "Mango Banana", 6100, blended));
+        menuRepository.save(menu("피치 & 레몬", "Peach & Lemon", 6200, blended));
+
+        MenuGroupMenusResponseDTO menuGroup = menuGroupService.findWithMenusById(blended.getId());
+        assertThat(menuGroup.getName()).isEqualTo(blended.getName());
+        assertThat(menuGroup.getEnglishName()).isEqualTo(blended.getEnglishName());
+        assertThat(menuGroup.getMenus()).hasSize(2);
+    }
+
     private MenuGroup menuGroup(String name, String englishName) {
         return MenuGroup.builder()
             .name(name)
             .englishName(englishName)
+            .build();
+    }
+
+    private Menu menu(String name, String englishName, long price, MenuGroup menuGroup) {
+        return Menu.builder()
+            .name(name)
+            .englishName(englishName)
+            .price(BigDecimal.valueOf(price))
+            .menuGroup(menuGroup)
             .build();
     }
 }
