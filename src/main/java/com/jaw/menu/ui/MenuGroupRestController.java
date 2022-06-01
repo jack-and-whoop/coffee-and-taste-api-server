@@ -26,4 +26,9 @@ public class MenuGroupRestController {
     public ResponseEntity<List<MenuGroupResponseDTO>> findAll() {
         return ResponseEntity.ok(menuGroupService.findAll());
     }
+
+    @GetMapping("/{menuGroupId}")
+    public ResponseEntity<MenuGroupResponseDTO> findById(@PathVariable Long menuGroupId) {
+        return ResponseEntity.ok(menuGroupService.findById(menuGroupId));
+    }
 }

@@ -4,6 +4,7 @@ import com.jaw.menu.domain.MenuGroup;
 import com.jaw.menu.domain.MenuGroupRepository;
 import com.jaw.menu.ui.MenuGroupRequestDTO;
 import com.jaw.menu.ui.MenuGroupResponseDTO;
+import com.jaw.menu.ui.MenuResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,30 @@ public class MenuGroupService {
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public MenuGroupResponseDTO findById(Long menuGroupId) {
+        MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
+            .orElseThrow(IllegalArgumentException::new);
+        return createResponseFromEntity(menuGroup);
+    }
+
     private MenuGroupResponseDTO createResponseFromEntity(MenuGroup menuGroup) {
-        return new MenuGroupResponseDTO(menuGroup.getId(), menuGroup.getName(), menuGroup.getEnglishName());
+        List<MenuResponseDTO> menus = menuGroup.getMenus()
+            .stream()
+            .map(menu -> MenuResponseDTO.builder()
+                .id(menu.getId())
+                .name(menu.getName())
+                .englishName(menu.getEnglishName())
+                .price(menu.getPrice())
+                .onSale(menu.isOnSale())
+                .build())
+            .collect(Collectors.toList());
+
+        return MenuGroupResponseDTO.builder()
+            .id(menuGroup.getId())
+            .name(menuGroup.getName())
+            .englishName(menuGroup.getEnglishName())
+            .menus(menus)
+            .build();
     }
 }

@@ -34,12 +34,17 @@ public class CategoryService {
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public CategoryResponseDTO findById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
             .orElseThrow(IllegalArgumentException::new);
 
         List<MenuGroupResponseDTO> menuGroups = category.getMenuGroups().stream()
-            .map(menuGroup -> new MenuGroupResponseDTO(menuGroup.getId(), menuGroup.getName(), menuGroup.getEnglishName()))
+            .map(menuGroup -> MenuGroupResponseDTO.builder()
+                .id(menuGroup.getId())
+                .name(menuGroup.getName())
+                .englishName(menuGroup.getEnglishName())
+                .build())
             .collect(Collectors.toList());
 
         return new CategoryResponseDTO(category.getId(), category.getName(), menuGroups);
