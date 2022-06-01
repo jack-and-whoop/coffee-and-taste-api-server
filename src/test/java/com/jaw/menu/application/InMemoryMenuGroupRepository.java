@@ -1,6 +1,7 @@
 package com.jaw.menu.application;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.jaw.menu.domain.MenuGroup;
 import com.jaw.menu.domain.MenuGroupRepository;
@@ -25,6 +26,14 @@ public class InMemoryMenuGroupRepository implements MenuGroupRepository {
     @Override
     public Optional<MenuGroup> findById(Long id) {
         return Optional.ofNullable(menuGroups.get(id));
+    }
+
+    @Override
+    public List<MenuGroup> findAllByCategoryId(Long categoryId) {
+        return menuGroups.values()
+            .stream()
+            .filter(menuGroup -> menuGroup.getCategory().getId().equals(categoryId))
+            .collect(Collectors.toList());
     }
 
     public void clear() {

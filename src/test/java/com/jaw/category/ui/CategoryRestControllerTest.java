@@ -1,11 +1,11 @@
 package com.jaw.category.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jaw.category.application.CategoryService;
-import com.jaw.category.domain.Category;
-import com.jaw.category.domain.CategoryRepository;
-import com.jaw.menu.domain.MenuGroup;
-import com.jaw.menu.domain.MenuGroupRepository;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,14 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jaw.category.application.CategoryService;
+import com.jaw.category.domain.Category;
+import com.jaw.category.domain.CategoryRepository;
+import com.jaw.menu.domain.MenuGroup;
+import com.jaw.menu.domain.MenuGroupRepository;
+import com.jaw.menu.ui.MenuGroupResponseDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -96,6 +95,26 @@ class CategoryRestControllerTest {
 
         mvc.perform(get("/api/categories/" + category.getId())
                 .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(objectMapper.writeValueAsString(response)));
+    }
+
+    @DisplayName("특정 카테고리 조회 시, 하위의 메뉴 그룹 목록을 함께 조회한다.")
+    @Test
+    void findWithMenuGroupsById() throws Exception {
+        Category category = categoryRepository.save(new Category("탄산음료"));
+		MenuGroup coke = menuGroupRepository.save(menuGroup("콜라", "Coke", category));
+		MenuGroup cider = menuGroupRepository.save(menuGroup("사이다", "Cider", category));
+
+		CategoryMenuGroupsResponseDTO response = CategoryMenuGroupsResponseDTO.builder()
+			.id(category.getId())
+			.name(category.getName())
+			.menuGroups(List.of(
+				new MenuGroupResponseDTO(coke.getId(), "콜라", "Coke"),
+				new MenuGroupResponseDTO(cider.getId(), "사이다", "Cider")))
+			.build();
+
+		mvc.perform(get("/api/categories/{categoryId}/menu-groups", category.getId()))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(response)));
     }

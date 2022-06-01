@@ -1,16 +1,17 @@
 package com.jaw.menu.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jaw.menu.domain.MenuGroup;
 import com.jaw.menu.domain.MenuGroupRepository;
 import com.jaw.menu.ui.MenuGroupRequestDTO;
 import com.jaw.menu.ui.MenuGroupResponseDTO;
-import com.jaw.menu.ui.MenuResponseDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
@@ -40,22 +41,10 @@ public class MenuGroupService {
     }
 
     private MenuGroupResponseDTO createResponseFromEntity(MenuGroup menuGroup) {
-        List<MenuResponseDTO> menus = menuGroup.getMenus()
-            .stream()
-            .map(menu -> MenuResponseDTO.builder()
-                .id(menu.getId())
-                .name(menu.getName())
-                .englishName(menu.getEnglishName())
-                .price(menu.getPrice())
-                .onSale(menu.isOnSale())
-                .build())
-            .collect(Collectors.toList());
-
         return MenuGroupResponseDTO.builder()
             .id(menuGroup.getId())
             .name(menuGroup.getName())
             .englishName(menuGroup.getEnglishName())
-            .menus(menus)
             .build();
     }
 }

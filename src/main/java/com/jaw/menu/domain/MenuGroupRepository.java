@@ -10,4 +10,6 @@ public interface MenuGroupRepository {
     MenuGroup save(MenuGroup menuGroup);
 
     Optional<MenuGroup> findById(Long id);
+
+    List<MenuGroup> findAllByCategoryId(Long categoryId);
 }

@@ -1,7 +1,7 @@
 package com.jaw.category.ui;
 
 import com.jaw.category.application.CategoryService;
-import com.jaw.category.domain.Category;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,4 +32,10 @@ public class CategoryRestController {
     public ResponseEntity<CategoryResponseDTO> findById(@PathVariable Long categoryId) {
         return ResponseEntity.ok(categoryService.findById(categoryId));
     }
+
+    @GetMapping("/{categoryId}/menu-groups")
+    public ResponseEntity<CategoryMenuGroupsResponseDTO> findWithMenuGroupsById(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(categoryService.findWithMenuGroupsById(categoryId));
+    }
+
 }
