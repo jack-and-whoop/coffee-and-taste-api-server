@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jaw.category.application.CategoryService;
 import com.jaw.category.domain.Category;
 import com.jaw.category.domain.CategoryRepository;
 import com.jaw.menu.domain.MenuGroup;
@@ -41,9 +41,6 @@ class CategoryRestControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
     private CategoryRepository categoryRepository;
 
     @Autowired
@@ -55,7 +52,7 @@ class CategoryRestControllerTest {
     @BeforeEach
     void setup() {
         mvc = MockMvcBuilders.webAppContextSetup(wac)
-            .addFilters(new CharacterEncodingFilter("UTF-8", true))
+            .addFilters(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
             .alwaysDo(print())
             .build();
     }
@@ -63,37 +60,37 @@ class CategoryRestControllerTest {
     @DisplayName("새로운 카테고리를 등록한다.")
     @Test
     void create() throws Exception {
-        CategoryRequestDTO request = new CategoryRequestDTO("coffee");
-        CategoryResponseDTO response = new CategoryResponseDTO(1L, "coffee");
+        CategoryRequestDTO request = new CategoryRequestDTO("음료");
 
         mvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
-            .andExpect(content().string(objectMapper.writeValueAsString(response)));
+            .andExpect(jsonPath("$.name").value("음료"));
     }
 
     @DisplayName("카테고리 목록을 조회한다.")
     @Test
     void findAll() throws Exception {
-        CategoryResponseDTO coffee = categoryService.create(new CategoryRequestDTO("coffee"));
-        CategoryResponseDTO bread = categoryService.create(new CategoryRequestDTO("bread"));
+		Category beverage = categoryRepository.save(new Category("음료"));
+		Category food = categoryRepository.save(new Category("푸드"));
 
-        mvc.perform(get("/api/categories"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(objectMapper.writeValueAsString(List.of(coffee, bread))));
-    }
+		CategoryResponseDTO beverageResponse = new CategoryResponseDTO(beverage.getId(), beverage.getName());
+		CategoryResponseDTO foodResponse = new CategoryResponseDTO(food.getId(), food.getName());
+
+		mvc.perform(get("/api/categories"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(objectMapper.writeValueAsString(List.of(beverageResponse, foodResponse))));
+	}
 
     @DisplayName("특정 카테고리를 조회한다.")
     @Test
     void findById() throws Exception {
         Category category = categoryRepository.save(new Category("음료"));
-        menuGroupRepository.save(menuGroup("리저브 에스프레소", "Reserve Espresso", category));
-        menuGroupRepository.save(menuGroup("리저브 드립", "Reserve Drip", category));
 
-        CategoryResponseDTO response = categoryService.findById(category.getId());
+		CategoryResponseDTO response = new CategoryResponseDTO(category.getId(), category.getName());
 
-        mvc.perform(get("/api/categories/" + category.getId())
+		mvc.perform(get("/api/categories/{categoryId}", category.getId())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(response)));
