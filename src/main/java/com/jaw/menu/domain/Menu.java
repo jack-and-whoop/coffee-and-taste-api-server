@@ -39,10 +39,10 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @Builder
-    public Menu(String name, String englishName, BigDecimal price, boolean onSale, MenuGroup menuGroup) {
+    public Menu(String name, String englishName, long price, boolean onSale, MenuGroup menuGroup) {
         this.name = name;
         this.englishName = englishName;
-        this.price = price;
+        this.price = BigDecimal.valueOf(price);
         this.onSale = onSale;
         this.menuGroup = menuGroup;
     }

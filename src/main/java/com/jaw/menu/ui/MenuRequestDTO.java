@@ -4,21 +4,19 @@ import com.jaw.menu.domain.Menu;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Getter
 @NoArgsConstructor
 public class MenuRequestDTO {
 
     private String name;
     private String englishName;
-    private BigDecimal price;
+    private Long price;
     private boolean onSale;
 
-    public MenuRequestDTO(String name, String englishName, long price, boolean onSale) {
+    public MenuRequestDTO(String name, String englishName, Long price, boolean onSale) {
         this.name = name;
         this.englishName = englishName;
-        this.price = BigDecimal.valueOf(price);
+        this.price = price;
         this.onSale = onSale;
     }
 

@@ -1,12 +1,9 @@
 package com.jaw.menu.ui;
 
 import com.jaw.menu.domain.MenuGroup;
-
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class MenuGroupResponseDTO {
 
     private Long id;

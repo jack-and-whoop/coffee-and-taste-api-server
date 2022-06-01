@@ -90,7 +90,7 @@ class MenuGroupServiceTest {
         return Menu.builder()
             .name(name)
             .englishName(englishName)
-            .price(BigDecimal.valueOf(price))
+            .price(price)
             .menuGroup(menuGroup)
             .build();
     }

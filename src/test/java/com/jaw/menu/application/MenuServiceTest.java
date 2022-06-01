@@ -80,7 +80,7 @@ class MenuServiceTest {
         return Menu.builder()
             .name(name)
             .englishName(englishName)
-            .price(BigDecimal.valueOf(price))
+            .price(price)
             .onSale(onSale)
             .build();
     }

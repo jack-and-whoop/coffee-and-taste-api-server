@@ -65,7 +65,7 @@ class CartServiceTest {
 	private Menu menu(String name, long price) {
 		return Menu.builder()
 			.name(name)
-			.price(BigDecimal.valueOf(price))
+			.price(price)
 			.onSale(true)
 			.build();
 	}
