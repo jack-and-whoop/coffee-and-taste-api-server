@@ -44,9 +44,15 @@ class MenuGroupServiceTest {
     @DisplayName("전체 메뉴 그룹 목록을 조회한다.")
     @Test
     void findAll() {
-        menuGroupRepository.save(new MenuGroup("블렌드"));
-        menuGroupRepository.save(new MenuGroup("디카페인 커피"));
+        menuGroupRepository.save(menuGroup("블렌디드"));
+        menuGroupRepository.save(menuGroup("프라푸치노"));
         List<MenuGroupResponseDTO> menuGroups = menuGroupService.findAll();
         assertThat(menuGroups).hasSize(2);
+    }
+    
+    private MenuGroup menuGroup(String name) {
+        return MenuGroup.builder()
+            .name(name)
+            .build();
     }
 }

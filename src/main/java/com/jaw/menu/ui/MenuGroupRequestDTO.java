@@ -18,6 +18,9 @@ public class MenuGroupRequestDTO {
     }
 
     public MenuGroup toEntity() {
-        return new MenuGroup(name, englishName);
+        return MenuGroup.builder()
+            .name(name)
+            .englishName(englishName)
+            .build();
     }
 }

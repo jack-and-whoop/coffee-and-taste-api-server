@@ -1,10 +1,7 @@
 package com.jaw.menu.domain;
 
 import com.jaw.category.domain.Category;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -28,12 +25,10 @@ public class MenuGroup {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public MenuGroup(String name) {
-        this.name = name;
-    }
-
-    public MenuGroup(String name, String englishName) {
+    @Builder
+    public MenuGroup(String name, String englishName, Category category) {
         this.name = name;
         this.englishName = englishName;
+        this.category = category;
     }
 }
