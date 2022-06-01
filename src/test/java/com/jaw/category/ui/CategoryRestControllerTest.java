@@ -26,7 +26,6 @@ import com.jaw.category.domain.Category;
 import com.jaw.category.domain.CategoryRepository;
 import com.jaw.menu.domain.MenuGroup;
 import com.jaw.menu.domain.MenuGroupRepository;
-import com.jaw.menu.ui.MenuGroupResponseDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -75,8 +74,8 @@ class CategoryRestControllerTest {
 		Category beverage = categoryRepository.save(new Category("음료"));
 		Category food = categoryRepository.save(new Category("푸드"));
 
-		CategoryResponseDTO beverageResponse = new CategoryResponseDTO(beverage.getId(), beverage.getName());
-		CategoryResponseDTO foodResponse = new CategoryResponseDTO(food.getId(), food.getName());
+		CategoryResponseDTO beverageResponse = new CategoryResponseDTO(beverage);
+		CategoryResponseDTO foodResponse = new CategoryResponseDTO(food);
 
 		mvc.perform(get("/api/categories"))
 			.andExpect(status().isOk())
@@ -88,7 +87,7 @@ class CategoryRestControllerTest {
     void findById() throws Exception {
         Category category = categoryRepository.save(new Category("음료"));
 
-		CategoryResponseDTO response = new CategoryResponseDTO(category.getId(), category.getName());
+		CategoryResponseDTO response = new CategoryResponseDTO(category);
 
 		mvc.perform(get("/api/categories/{categoryId}", category.getId())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -103,11 +102,7 @@ class CategoryRestControllerTest {
 		MenuGroup coke = menuGroupRepository.save(menuGroup("콜라", "Coke", category));
 		MenuGroup cider = menuGroupRepository.save(menuGroup("사이다", "Cider", category));
 
-		CategoryMenuGroupsResponseDTO response = CategoryMenuGroupsResponseDTO.builder()
-			.id(category.getId())
-			.name(category.getName())
-			.menuGroups(List.of(new MenuGroupResponseDTO(coke), new MenuGroupResponseDTO(cider)))
-			.build();
+		CategoryMenuGroupsResponseDTO response = new CategoryMenuGroupsResponseDTO(category, List.of(coke, cider));
 
 		mvc.perform(get("/api/categories/{categoryId}/menu-groups", category.getId()))
             .andExpect(status().isOk())

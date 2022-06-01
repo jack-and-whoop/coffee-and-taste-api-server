@@ -2,7 +2,8 @@ package com.jaw.member.ui;
 
 import java.time.LocalDate;
 
-import lombok.Builder;
+import com.jaw.member.domain.Member;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,13 +18,12 @@ public class MemberResponseDTO {
 	private String email;
 	private String phoneNumber;
 
-	@Builder
-	public MemberResponseDTO(Long id, String name, String nickname, LocalDate birthDate, String email, String phoneNumber) {
-		this.id = id;
-		this.name = name;
-		this.nickname = nickname;
-		this.birthDate = birthDate;
-		this.email = email;
-		this.phoneNumber = phoneNumber;
+	public MemberResponseDTO(Member member) {
+		this.id = member.getId();
+		this.name = member.getName();
+		this.nickname = member.getNickname();
+		this.birthDate = member.getBirthDate();
+		this.email = member.getEmail();
+		this.phoneNumber = member.getPhoneNumber();
 	}
 }

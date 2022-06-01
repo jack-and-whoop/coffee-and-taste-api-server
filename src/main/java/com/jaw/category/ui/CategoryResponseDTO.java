@@ -1,15 +1,17 @@
 package com.jaw.category.ui;
 
+import com.jaw.category.domain.Category;
+
 import lombok.Getter;
 
 @Getter
 public class CategoryResponseDTO {
 
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
-    public CategoryResponseDTO(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public CategoryResponseDTO(Category category) {
+        this.id = category.getId();
+        this.name = category.getName();
     }
 }

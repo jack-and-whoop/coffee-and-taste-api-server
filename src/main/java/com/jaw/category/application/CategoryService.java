@@ -11,8 +11,8 @@ import com.jaw.category.domain.CategoryRepository;
 import com.jaw.category.ui.CategoryMenuGroupsResponseDTO;
 import com.jaw.category.ui.CategoryRequestDTO;
 import com.jaw.category.ui.CategoryResponseDTO;
+import com.jaw.menu.domain.MenuGroup;
 import com.jaw.menu.domain.MenuGroupRepository;
-import com.jaw.menu.ui.MenuGroupResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,14 +26,14 @@ public class CategoryService {
 
     public CategoryResponseDTO create(CategoryRequestDTO request) {
         Category category = categoryRepository.save(request.toEntity());
-        return new CategoryResponseDTO(category.getId(), category.getName());
+        return new CategoryResponseDTO(category);
     }
 
     @Transactional(readOnly = true)
     public List<CategoryResponseDTO> findAll() {
         return categoryRepository.findAll()
             .stream()
-            .map(category -> new CategoryResponseDTO(category.getId(), category.getName()))
+            .map(CategoryResponseDTO::new)
             .collect(Collectors.toList());
     }
 
@@ -41,19 +41,14 @@ public class CategoryService {
     public CategoryResponseDTO findById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
             .orElseThrow(IllegalArgumentException::new);
-        return new CategoryResponseDTO(category.getId(), category.getName());
+        return new CategoryResponseDTO(category);
     }
 
     @Transactional(readOnly = true)
     public CategoryMenuGroupsResponseDTO findWithMenuGroupsById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
             .orElseThrow(IllegalArgumentException::new);
-
-        List<MenuGroupResponseDTO> menuGroups = menuGroupRepository.findAllByCategoryId(categoryId)
-            .stream()
-            .map(MenuGroupResponseDTO::new)
-            .collect(Collectors.toList());
-
-        return new CategoryMenuGroupsResponseDTO(category.getId(), category.getName(), menuGroups);
+        List<MenuGroup> menuGroups = menuGroupRepository.findAllByCategoryId(categoryId);
+        return new CategoryMenuGroupsResponseDTO(category, menuGroups);
     }
 }

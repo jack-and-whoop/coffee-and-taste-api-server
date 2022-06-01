@@ -22,24 +22,13 @@ public class MemberService {
 
 	public MemberResponseDTO create(MemberRequestDTO request) {
 		Member member = memberRepository.save(request.toEntity());
-		return createResponseFromEntity(member);
+		return new MemberResponseDTO(member);
 	}
 
 	public List<MemberResponseDTO> findAll() {
 		return memberRepository.findAll()
 			.stream()
-			.map(this::createResponseFromEntity)
+			.map(MemberResponseDTO::new)
 			.collect(Collectors.toList());
-	}
-
-	private MemberResponseDTO createResponseFromEntity(Member member) {
-		return MemberResponseDTO.builder()
-			.id(member.getId())
-			.name(member.getName())
-			.nickname(member.getNickname())
-			.birthDate(member.getBirthDate())
-			.email(member.getEmail())
-			.phoneNumber(member.getPhoneNumber())
-			.build();
 	}
 }
