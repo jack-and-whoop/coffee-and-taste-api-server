@@ -1,22 +1,18 @@
 package com.jaw.menu.ui;
 
-import lombok.Builder;
+import com.jaw.menu.domain.Menu;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 
-import com.jaw.menu.domain.Menu;
-
 @Getter
-@Setter
 public class MenuResponseDTO {
 
-    private Long id;
-    private String name;
-    private String englishName;
-    private BigDecimal price;
-    private boolean onSale;
+    private final Long id;
+    private final String name;
+    private final String englishName;
+    private final BigDecimal price;
+    private final boolean onSale;
 
     public MenuResponseDTO(Menu menu) {
         this.id = menu.getId();

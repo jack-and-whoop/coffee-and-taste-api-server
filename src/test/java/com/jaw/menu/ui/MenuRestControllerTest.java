@@ -12,7 +12,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -73,11 +72,6 @@ class MenuRestControllerTest {
     }
 
     private MenuRequestDTO menu(String name, String englishName, long price) {
-        return MenuRequestDTO.builder()
-            .name(name)
-            .englishName(englishName)
-            .price(BigDecimal.valueOf(price))
-            .onSale(true)
-            .build();
+        return new MenuRequestDTO(name, englishName, price, true);
     }
 }

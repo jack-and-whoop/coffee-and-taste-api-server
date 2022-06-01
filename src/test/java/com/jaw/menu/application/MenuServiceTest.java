@@ -34,17 +34,16 @@ class MenuServiceTest {
     @Test
     void create() {
         String name = "아이스 카페 아메리카노";
-        BigDecimal price = BigDecimal.valueOf(4_500);
-        MenuRequestDTO request = MenuRequestDTO.builder()
-            .name(name)
-            .price(price)
-            .onSale(true)
-            .build();
+        String englishName = "Iced Caffe Americano";
+        long price = 4_500;
+        MenuRequestDTO request = new MenuRequestDTO(name, englishName, price, true);
+
         MenuResponseDTO response = menuService.create(request);
+
         assertAll(
             () -> assertThat(response.getId()).isEqualTo(1L),
             () -> assertThat(response.getName()).isEqualTo(name),
-            () -> assertThat(response.getPrice()).isEqualTo(price),
+            () -> assertThat(response.getPrice()).isEqualTo(BigDecimal.valueOf(price)),
             () -> assertThat(response.isOnSale()).isTrue()
         );
     }
@@ -56,7 +55,9 @@ class MenuServiceTest {
         Menu menu2 = menu("아이스 카페 모카", "Iced Caffe Mocha", 5_500, false);
         menuRepository.save(menu1);
         menuRepository.save(menu2);
+
         List<MenuResponseDTO> menus = menuService.findAll();
+
         assertThat(menus).hasSize(2);
     }
 
@@ -64,7 +65,9 @@ class MenuServiceTest {
     @Test
     void findById() {
         Menu menu = menuRepository.save(menu("바닐라 플랫 화이트", "Vanilla Flat White", 5_900, true));
+
         MenuResponseDTO foundMenu = menuService.findById(menu.getId());
+
         assertAll(
             () -> assertThat(foundMenu.getId()).isEqualTo(menu.getId()),
             () -> assertThat(foundMenu.getName()).isEqualTo(menu.getName()),
