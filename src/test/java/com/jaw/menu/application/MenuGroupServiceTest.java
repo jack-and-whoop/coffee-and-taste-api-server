@@ -49,7 +49,16 @@ class MenuGroupServiceTest {
         List<MenuGroupResponseDTO> menuGroups = menuGroupService.findAll();
         assertThat(menuGroups).hasSize(2);
     }
-    
+
+    @DisplayName("특정 메뉴 그룹을 조회한다.")
+    @Test
+    void findById() {
+        MenuGroup created = menuGroupRepository.save(menuGroup("티바나"));
+        MenuGroupResponseDTO menuGroup = menuGroupService.findById(created.getId());
+        assertThat(menuGroup.getId()).isEqualTo(created.getId());
+        assertThat(menuGroup.getName()).isEqualTo(created.getName());
+    }
+
     private MenuGroup menuGroup(String name) {
         return MenuGroup.builder()
             .name(name)
