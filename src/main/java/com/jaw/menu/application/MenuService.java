@@ -32,4 +32,10 @@ public class MenuService {
             .map(MenuResponseDTO::new)
             .collect(Collectors.toList());
     }
+
+    public MenuResponseDTO findById(Long menuId) {
+        Menu menu = menuRepository.findById(menuId)
+            .orElseThrow(IllegalArgumentException::new);
+        return new MenuResponseDTO(menu);
+    }
 }

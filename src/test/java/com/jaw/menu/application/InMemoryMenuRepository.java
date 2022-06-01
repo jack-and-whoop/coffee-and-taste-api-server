@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.jaw.menu.domain.Menu;
@@ -31,6 +32,11 @@ public class InMemoryMenuRepository implements MenuRepository {
         return menus.values().stream()
             .filter(menu -> menu.getMenuGroup().getId().equals(menuGroupId))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Menu> findById(Long id) {
+        return Optional.ofNullable(menus.get(id));
     }
 
     public void clear() {

@@ -52,17 +52,31 @@ class MenuServiceTest {
     @DisplayName("전체 메뉴 목록을 조회한다.")
     @Test
     void findAll() {
-        Menu menu1 = menu("바닐라 플랫 화이트", 5_900, true);
-        Menu menu2 = menu("아이스 카페 모카", 5_500, false);
+        Menu menu1 = menu("바닐라 플랫 화이트", "Vanilla Flat White", 5_900, true);
+        Menu menu2 = menu("아이스 카페 모카", "Iced Caffe Mocha", 5_500, false);
         menuRepository.save(menu1);
         menuRepository.save(menu2);
         List<MenuResponseDTO> menus = menuService.findAll();
         assertThat(menus).hasSize(2);
     }
 
-    private Menu menu(String name, long price, boolean onSale) {
+    @DisplayName("특정 메뉴를 조회한다.")
+    @Test
+    void findById() {
+        Menu menu = menuRepository.save(menu("바닐라 플랫 화이트", "Vanilla Flat White", 5_900, true));
+        MenuResponseDTO foundMenu = menuService.findById(menu.getId());
+        assertAll(
+            () -> assertThat(foundMenu.getId()).isEqualTo(menu.getId()),
+            () -> assertThat(foundMenu.getName()).isEqualTo(menu.getName()),
+            () -> assertThat(foundMenu.getPrice()).isEqualTo(menu.getPrice()),
+            () -> assertThat(foundMenu.isOnSale()).isEqualTo(menu.isOnSale())
+        );
+    }
+
+    private Menu menu(String name, String englishName, long price, boolean onSale) {
         return Menu.builder()
             .name(name)
+            .englishName(englishName)
             .price(BigDecimal.valueOf(price))
             .onSale(onSale)
             .build();
