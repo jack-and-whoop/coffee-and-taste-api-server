@@ -1,10 +1,10 @@
-INSERT INTO CATEGORY(CATEGORY_ID, NAME)
+INSERT INTO category(CATEGORY_ID, NAME)
 VALUES
 (1, '음료'),
 (2, '푸드'),
 (3, '상품');
 
-INSERT INTO MENU_GROUP(MENU_GROUP_ID, CATEGORY_ID, NAME, ENGLISH_NAME)
+INSERT INTO menu_group(MENU_GROUP_ID, CATEGORY_ID, NAME, ENGLISH_NAME)
 VALUES
 (1, 1, '리저브 에스프레소', 'Reserve Espresso'),
 (2, 1, '리저브 드립', 'Reserve Drip'),
@@ -41,7 +41,7 @@ VALUES
 (31, 3, '패키지 티', 'Packaged Tea'),
 (32, 3, '리저브 원두', 'Reserve Whole bean');
 
-INSERT INTO MENU(MENU_GROUP_ID, NAME, ENGLISH_NAME, PRICE, ON_SALE)
+INSERT INTO menu(MENU_GROUP_ID, NAME, ENGLISH_NAME, PRICE, ON_SALE)
 VALUES
 (1, '인도네시아 WJ 사케라또 아포가토', 'Indonesia WJ Shakerato Affogato', 9500, TRUE),
 (1, '브라질 FC 사케라또 아포가토', 'Brazil FC Shakerato Affogato', 8500, TRUE),
