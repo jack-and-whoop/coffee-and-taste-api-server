@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jaw.cart.application.CartService;
-import com.jaw.cart.domain.CartMenu;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +18,7 @@ public class CartRestController {
 	private final CartService cartService;
 
 	@GetMapping("/members/{memberId}/cart")
-	public ResponseEntity<List<CartMenu>> findAll(@PathVariable Long memberId) {
+	public ResponseEntity<List<CartMenuResponseDTO>> findAll(@PathVariable Long memberId) {
 		return ResponseEntity.ok(cartService.findAll(memberId));
 	}
 }

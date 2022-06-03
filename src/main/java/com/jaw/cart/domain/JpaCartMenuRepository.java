@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface JpaCartMenuRepository extends CartMenuRepository, JpaRepository<CartMenu, Long> {
 
-	@Query("select cm from CartMenu cm where cm.cart = :cart")
+	@Query("select cm from CartMenu cm join fetch cm.menu where cm.cart = :cart")
 	List<CartMenu> findAllByCart(@Param("cart") Cart cart);
 }

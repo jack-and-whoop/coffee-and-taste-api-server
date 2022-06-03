@@ -1,6 +1,7 @@
 package com.jaw.cart.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
 import com.jaw.cart.domain.CartMenuRepository;
 import com.jaw.cart.domain.CartRepository;
+import com.jaw.cart.ui.CartMenuResponseDTO;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
@@ -24,12 +26,6 @@ public class CartService {
 	private final CartMenuRepository cartMenuRepository;
 	private final MemberRepository memberRepository;
 
-	public Cart create(Long memberId) {
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(IllegalArgumentException::new);
-		return cartRepository.save(new Cart(member));
-	}
-
 	public CartMenu addMenu(Long memberId, Menu menu, long count) {
 		Cart cart = cartRepository.findByMemberId(memberId)
 			.orElse(create(memberId));
@@ -39,9 +35,19 @@ public class CartService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<CartMenu> findAll(Long memberId) {
+	public List<CartMenuResponseDTO> findAll(Long memberId) {
 		Cart cart = cartRepository.findByMemberId(memberId)
 			.orElse(create(memberId));
-		return cartMenuRepository.findAllByCart(cart);
+
+		return cartMenuRepository.findAllByCart(cart)
+			.stream()
+			.map(CartMenuResponseDTO::new)
+			.collect(Collectors.toList());
+	}
+
+	private Cart create(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(IllegalArgumentException::new);
+		return cartRepository.save(new Cart(member));
 	}
 }
