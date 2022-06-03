@@ -9,9 +9,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,6 +37,11 @@ public class Menu {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Lob
+    private String description;
+
+    private String imagePath;
+
     private boolean onSale;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,10 +49,12 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @Builder
-    public Menu(String name, String englishName, long price, boolean onSale, MenuGroup menuGroup) {
+    public Menu(String name, String englishName, long price, String description, String imagePath, boolean onSale, MenuGroup menuGroup) {
         this.name = name;
         this.englishName = englishName;
         this.price = BigDecimal.valueOf(price);
+        this.description = description;
+        this.imagePath = imagePath;
         this.onSale = onSale;
         this.menuGroup = menuGroup;
     }
