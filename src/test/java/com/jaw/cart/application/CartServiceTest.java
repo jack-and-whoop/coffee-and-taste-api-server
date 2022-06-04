@@ -12,12 +12,14 @@ import org.junit.jupiter.api.Test;
 import com.jaw.cart.ui.CartMenuResponseDTO;
 import com.jaw.member.application.InMemoryMemberRepository;
 import com.jaw.member.domain.Member;
+import com.jaw.menu.application.InMemoryMenuRepository;
 import com.jaw.menu.domain.Menu;
 
 class CartServiceTest {
 
 	private InMemoryCartRepository cartRepository;
 	private InMemoryCartMenuRepository cartMenuRepository;
+	private InMemoryMenuRepository menuRepository;
 	private InMemoryMemberRepository memberRepository;
 	private CartService cartService;
 
@@ -25,8 +27,9 @@ class CartServiceTest {
 	void setup() {
 		cartRepository = new InMemoryCartRepository();
 		cartMenuRepository = new InMemoryCartMenuRepository();
+		menuRepository = new InMemoryMenuRepository();
 		memberRepository = new InMemoryMemberRepository();
-		cartService = new CartService(cartRepository, cartMenuRepository, memberRepository);
+		cartService = new CartService(cartRepository, cartMenuRepository, menuRepository, memberRepository);
 	}
 
 	@AfterEach
@@ -40,9 +43,11 @@ class CartServiceTest {
 	@Test
 	void addMenu() {
 		Member member = memberRepository.save(member("고길동"));
+		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900));
+		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500));
 
-		cartService.addMenu(member.getId(), menu("바닐라 플랫 화이트", 5_900), 1);
-		cartService.addMenu(member.getId(), menu("아이스 카페 모카", 5_500), 1);
+		cartService.addMenu(member.getId(), vanillaFlatWhite.getId(), 1);
+		cartService.addMenu(member.getId(), icedCaffeMocha.getId(), 1);
 
 		List<CartMenuResponseDTO> cartMenus = cartService.findAll(member.getId());
 

@@ -14,6 +14,7 @@ import com.jaw.cart.ui.CartMenuResponseDTO;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
+import com.jaw.menu.domain.MenuRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,12 +25,15 @@ public class CartService {
 
 	private final CartRepository cartRepository;
 	private final CartMenuRepository cartMenuRepository;
+	private final MenuRepository menuRepository;
 	private final MemberRepository memberRepository;
 
-	public CartMenu addMenu(Long memberId, Menu menu, long count) {
+	public CartMenuResponseDTO addMenu(Long memberId, Long menuId, long count) {
 		Cart cart = findCartByMemberId(memberId);
-		CartMenu cartMenu = new CartMenu(cart, menu, count);
-		return cartMenuRepository.save(cartMenu);
+		Menu menu = menuRepository.findById(menuId)
+			.orElseThrow(IllegalArgumentException::new);
+		CartMenu cartMenu = cartMenuRepository.save(new CartMenu(cart, menu, count));
+		return new CartMenuResponseDTO(cartMenu);
 	}
 
 	@Transactional(readOnly = true)
