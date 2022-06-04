@@ -27,25 +27,26 @@ public class CartService {
 	private final MemberRepository memberRepository;
 
 	public CartMenu addMenu(Long memberId, Menu menu, long count) {
-		Cart cart = cartRepository.findByMemberId(memberId)
-			.orElse(create(memberId));
-
+		Cart cart = findCartByMemberId(memberId);
 		CartMenu cartMenu = new CartMenu(cart, menu, count);
 		return cartMenuRepository.save(cartMenu);
 	}
 
 	@Transactional(readOnly = true)
 	public List<CartMenuResponseDTO> findAll(Long memberId) {
-		Cart cart = cartRepository.findByMemberId(memberId)
-			.orElse(create(memberId));
-
+		Cart cart = findCartByMemberId(memberId);
 		return cartMenuRepository.findAllByCart(cart)
 			.stream()
 			.map(CartMenuResponseDTO::new)
 			.collect(Collectors.toList());
 	}
 
-	private Cart create(Long memberId) {
+	private Cart findCartByMemberId(Long memberId) {
+		return cartRepository.findByMemberId(memberId)
+			.orElseGet(() -> createNewCart(memberId));
+	}
+
+	private Cart createNewCart(Long memberId) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(IllegalArgumentException::new);
 		return cartRepository.save(new Cart(member));
