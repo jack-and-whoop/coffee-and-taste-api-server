@@ -18,6 +18,8 @@ import com.jaw.member.application.MemberService;
 
 class MemberRestControllerTest extends AbstractControllerTest {
 
+	private static final String BASE_URI = "/api/members";
+
 	@Autowired
 	private MemberService memberService;
 
@@ -26,7 +28,7 @@ class MemberRestControllerTest extends AbstractControllerTest {
 	void create() throws Exception {
 		MemberRequestDTO request = member("홍길동", "hong", "hong@gmail.com", "010-1234-5678");
 
-		mvc.perform(post("/api/members")
+		mvc.perform(post(BASE_URI)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
@@ -43,7 +45,7 @@ class MemberRestControllerTest extends AbstractControllerTest {
 		MemberResponseDTO kim = memberService.create(member("김철수", "kim", "kim@gmail.com", "010-1234-5678"));
 		MemberResponseDTO park = memberService.create(member("박영희", "park", "park@gmail.com", "010-9012-3456"));
 
-		mvc.perform(get("/api/members"))
+		mvc.perform(get(BASE_URI))
 			.andExpect(status().isOk())
 			.andExpect(content().string(objectMapper.writeValueAsString(List.of(kim, park))));
 	}

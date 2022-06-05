@@ -1,11 +1,10 @@
 package com.jaw.menu.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.domain.MenuGroup;
-import com.jaw.menu.domain.MenuGroupRepository;
-import com.jaw.menu.domain.MenuRepository;
-import org.junit.jupiter.api.BeforeEach;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,31 +12,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.jaw.AbstractControllerTest;
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.domain.MenuGroup;
+import com.jaw.menu.domain.MenuGroupRepository;
+import com.jaw.menu.domain.MenuRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 @TestPropertySource("/application-dev.properties")
-class MenuGroupRestControllerTest {
+class MenuGroupRestControllerTest extends AbstractControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private static final String BASE_URI = "/api/menu-groups";
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -45,23 +34,12 @@ class MenuGroupRestControllerTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    @Autowired
-    private WebApplicationContext wac;
-
-    @BeforeEach
-    void setup() {
-        mvc = MockMvcBuilders.webAppContextSetup(wac)
-            .addFilters(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
-            .alwaysDo(print())
-            .build();
-    }
-
     @DisplayName("새로운 메뉴 그룹을 등록한다.")
     @Test
     void create() throws Exception {
         MenuGroupRequestDTO request = new MenuGroupRequestDTO("블렌디드", "Blended");
 
-        mvc.perform(post("/api/menu-groups")
+        mvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -80,7 +58,7 @@ class MenuGroupRestControllerTest {
             new MenuGroupResponseDTO(blonde)
         );
 
-        mvc.perform(get("/api/menu-groups"))
+        mvc.perform(get(BASE_URI))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(menuGroups)));
     }
@@ -92,7 +70,7 @@ class MenuGroupRestControllerTest {
 
         MenuGroupResponseDTO menuGroup = new MenuGroupResponseDTO(frappuccino);
 
-        mvc.perform(get("/api/menu-groups/{menuGroupId}", frappuccino.getId()))
+        mvc.perform(get(BASE_URI + "/{menuGroupId}", frappuccino.getId()))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
     }
@@ -106,7 +84,7 @@ class MenuGroupRestControllerTest {
 
         MenuGroupMenusResponseDTO menuGroup = new MenuGroupMenusResponseDTO(espresso, List.of(macchiato, conPanna));
 
-        mvc.perform(get("/api/menu-groups/{menuGroupId}/menus", espresso.getId()))
+        mvc.perform(get(BASE_URI + "/{menuGroupId}/menus", espresso.getId()))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
     }

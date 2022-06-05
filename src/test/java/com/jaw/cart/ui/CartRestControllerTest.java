@@ -21,6 +21,8 @@ import com.jaw.menu.domain.MenuRepository;
 
 class CartRestControllerTest extends AbstractControllerTest {
 
+	private static final String BASE_URI = "/members/{memberId}/cart";
+
 	@Autowired
 	private MemberRepository memberRepository;
 
@@ -51,7 +53,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 
 		CartMenuRequestDTO request = new CartMenuRequestDTO(americano.getId(), 1);
 
-		mvc.perform(post("/members/{memberId}/cart", member.getId())
+		mvc.perform(post(BASE_URI, member.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
@@ -71,7 +73,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 		CartMenuResponseDTO mangoBananaInCart = cartService.addMenu(member.getId(), mangoBanana.getId(), 1);
 		List<CartMenuResponseDTO> responses = List.of(icedAmericanoInCart, mangoBananaInCart);
 
-		mvc.perform(get("/members/{memberId}/cart", member.getId()))
+		mvc.perform(get(BASE_URI, member.getId()))
 			.andExpect(status().isOk())
 			.andExpect(content().json(objectMapper.writeValueAsString(responses)));
 	}

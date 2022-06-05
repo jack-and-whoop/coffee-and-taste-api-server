@@ -18,6 +18,8 @@ import com.jaw.menu.domain.MenuGroupRepository;
 
 class CategoryRestControllerTest extends AbstractControllerTest {
 
+	private static final String BASE_URI = "/api/categories";
+
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -29,7 +31,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
     void create() throws Exception {
         CategoryRequestDTO request = new CategoryRequestDTO("음료");
 
-        mvc.perform(post("/api/categories")
+        mvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -45,7 +47,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
 		CategoryResponseDTO beverageResponse = new CategoryResponseDTO(beverage);
 		CategoryResponseDTO foodResponse = new CategoryResponseDTO(food);
 
-		mvc.perform(get("/api/categories"))
+		mvc.perform(get(BASE_URI))
 			.andExpect(status().isOk())
 			.andExpect(content().string(objectMapper.writeValueAsString(List.of(beverageResponse, foodResponse))));
 	}
@@ -57,7 +59,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
 
 		CategoryResponseDTO response = new CategoryResponseDTO(category);
 
-		mvc.perform(get("/api/categories/{categoryId}", category.getId())
+		mvc.perform(get(BASE_URI + "/{categoryId}", category.getId())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(response)));
@@ -72,7 +74,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
 
 		CategoryMenuGroupsResponseDTO response = new CategoryMenuGroupsResponseDTO(category, List.of(coke, cider));
 
-		mvc.perform(get("/api/categories/{categoryId}/menu-groups", category.getId()))
+		mvc.perform(get(BASE_URI+ "/{categoryId}/menu-groups", category.getId()))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(response)));
     }
