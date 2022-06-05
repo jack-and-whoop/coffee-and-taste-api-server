@@ -7,11 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jaw.cart.application.CartService;
-import com.jaw.cart.domain.Cart;
-import com.jaw.cart.domain.CartMenu;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,15 +20,17 @@ public class CartRestController {
 
 	private final CartService cartService;
 
-	@PostMapping("/members/{memberId}/cart")
-	public ResponseEntity<Cart> create(@PathVariable Long memberId) {
-		Cart cart = cartService.create(memberId);
-		return ResponseEntity.created(URI.create(String.format("/members/%d/cart", memberId)))
-			.body(cart);
+	@GetMapping("/members/{memberId}/cart")
+	public ResponseEntity<List<CartMenuResponseDTO>> findAll(@PathVariable Long memberId) {
+		return ResponseEntity.ok(cartService.findAll(memberId));
 	}
 
-	@GetMapping("/members/{memberId}/cart")
-	public ResponseEntity<List<CartMenu>> findAll(@PathVariable Long memberId) {
-		return ResponseEntity.ok(cartService.findAll(memberId));
+	@PostMapping("/members/{memberId}/cart")
+	public ResponseEntity<CartMenuResponseDTO> addMenu(@PathVariable Long memberId,
+													   @RequestBody CartMenuRequestDTO request) {
+
+		CartMenuResponseDTO cartMenu = cartService.addMenu(memberId, request.getMenuId(), request.getCount());
+		return ResponseEntity.created(URI.create(String.format("/members/%d/cart", memberId)))
+			.body(cartMenu);
 	}
 }

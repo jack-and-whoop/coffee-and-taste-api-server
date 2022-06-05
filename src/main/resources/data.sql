@@ -1,10 +1,10 @@
-INSERT INTO CATEGORY(CATEGORY_ID, NAME)
+INSERT INTO category(CATEGORY_ID, NAME)
 VALUES
 (1, '음료'),
 (2, '푸드'),
 (3, '상품');
 
-INSERT INTO MENU_GROUP(MENU_GROUP_ID, CATEGORY_ID, NAME, ENGLISH_NAME)
+INSERT INTO menu_group(MENU_GROUP_ID, CATEGORY_ID, NAME, ENGLISH_NAME)
 VALUES
 (1, 1, '콜드 브루', 'Cold Brew'),
 (2, 1, '에스프레소', 'Espresso'),
@@ -37,7 +37,7 @@ VALUES
 (27, 3, '패키지 티', 'Packaged Tea'),
 (28, 3, '리저브 원두', 'Reserve Whole bean');
 
-INSERT INTO MENU(MENU_GROUP_ID, NAME, ENGLISH_NAME, PRICE, ON_SALE, DESCRIPTION, IMAGE_PATH)
+INSERT INTO menu(MENU_GROUP_ID, NAME, ENGLISH_NAME, PRICE, ON_SALE, DESCRIPTION, IMAGE_PATH)
 VALUES
 (1, '롤린 민트 초코 콜드 브루', 'Rollin Mint Choco Cold Brew', 6100, TRUE, '스타벅스의 콜드 브루와 은은한 민트 초코 베이스로\n누구나 즐길 수 있는 여름 음료.\n손목의 스냅을 춤을 추듯 가볍게 돌려 음료를 섞어서\n빨대 없이 즐겨 보세요.', '/images/rollin_mint_choco_cold_brew.jpg'),
 (1, '콜드 브루 오트 라떼', 'Cold Brew With Oat Milk', 5800, TRUE, '콜드 브루의 풍미와 깔끔한 오트 밀크가 어우러진 달콤 고소한 라떼.\n식물성 밀크를 사용해 모든 고객이 부담없이 즐길 수 있는 콜드 브루 음료', '/images/cold_brew_with_oat_milk.jpg'),
