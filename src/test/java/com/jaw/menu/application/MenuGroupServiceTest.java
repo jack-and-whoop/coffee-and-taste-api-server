@@ -70,8 +70,8 @@ class MenuGroupServiceTest {
     @Test
     void findWithMenusById() {
         MenuGroup blended = menuGroupRepository.save(menuGroup("블렌디드", "Blended"));
-        menuRepository.save(menu("망고 바나나", "Mango Banana", 6100, blended));
-        menuRepository.save(menu("피치 & 레몬", "Peach & Lemon", 6200, blended));
+        menuRepository.save(menu("망고 바나나", "Mango Banana", 6_100, blended));
+        menuRepository.save(menu("피치 & 레몬", "Peach & Lemon", 6_200, blended));
 
         MenuGroupMenusResponseDTO menuGroup = menuGroupService.findWithMenusById(blended.getId());
         assertThat(menuGroup.getName()).isEqualTo(blended.getName());

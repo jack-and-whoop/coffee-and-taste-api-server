@@ -1,10 +1,8 @@
 package com.jaw.cart.ui;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,37 +10,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jaw.AbstractControllerTest;
 import com.jaw.cart.application.CartService;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
 import com.jaw.menu.domain.MenuRepository;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
-@TestPropertySource("/application-dev.properties")
-class CartRestControllerTest {
+class CartRestControllerTest extends AbstractControllerTest {
 
-	@Autowired
-	private MockMvc mvc;
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Autowired
-	private WebApplicationContext wac;
+	private static final String BASE_URI = "/members/{memberId}/cart";
 
 	@Autowired
 	private MemberRepository memberRepository;
@@ -56,12 +35,8 @@ class CartRestControllerTest {
 	private Member member;
 
 	@BeforeEach
-	void setup() {
-		mvc = MockMvcBuilders.webAppContextSetup(wac)
-			.addFilters(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
-			.alwaysDo(print())
-			.build();
-
+	protected void setup() {
+		super.setup();
 		member = memberRepository.save(Member.builder()
 			.name("홍길동")
 			.nickname("hong")
@@ -78,7 +53,7 @@ class CartRestControllerTest {
 
 		CartMenuRequestDTO request = new CartMenuRequestDTO(americano.getId(), 1);
 
-		mvc.perform(post("/members/{memberId}/cart", member.getId())
+		mvc.perform(post(BASE_URI, member.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
@@ -98,7 +73,7 @@ class CartRestControllerTest {
 		CartMenuResponseDTO mangoBananaInCart = cartService.addMenu(member.getId(), mangoBanana.getId(), 1);
 		List<CartMenuResponseDTO> responses = List.of(icedAmericanoInCart, mangoBananaInCart);
 
-		mvc.perform(get("/members/{memberId}/cart", member.getId()))
+		mvc.perform(get(BASE_URI, member.getId()))
 			.andExpect(status().isOk())
 			.andExpect(content().json(objectMapper.writeValueAsString(responses)));
 	}
