@@ -2,6 +2,7 @@ package com.jaw.member.application;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -47,6 +48,7 @@ class MemberServiceTest {
 	private MemberRequestDTO member(String name) {
 		return MemberRequestDTO.builder()
 			.name(name)
+			.birthDate(LocalDate.now())
 			.build();
 	}
 }

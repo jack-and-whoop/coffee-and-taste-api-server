@@ -10,27 +10,13 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jaw.AbstractControllerTest;
 import com.jaw.member.application.MemberService;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
-@ActiveProfiles("dev")
-class MemberRestControllerTest {
-
-	@Autowired
-	private MockMvc mvc;
-
-	@Autowired
-	private ObjectMapper objectMapper;
+class MemberRestControllerTest extends AbstractControllerTest {
 
 	@Autowired
 	private MemberService memberService;
@@ -46,7 +32,7 @@ class MemberRestControllerTest {
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.name").value("홍길동"))
 			.andExpect(jsonPath("$.nickname").value("hong"))
-			.andExpect(jsonPath("$.birthDate").value(LocalDate.now().format(DateTimeFormatter.ISO_DATE)))
+			.andExpect(jsonPath("$.birthDate").value(LocalDate.of(2000, 1, 1).format(DateTimeFormatter.ISO_DATE)))
 			.andExpect(jsonPath("$.email").value("hong@gmail.com"))
 			.andExpect(jsonPath("$.phoneNumber").value("010-1234-5678"));
 	}
@@ -59,14 +45,14 @@ class MemberRestControllerTest {
 
 		mvc.perform(get("/api/members"))
 			.andExpect(status().isOk())
-			.andExpect(content().json(objectMapper.writeValueAsString(List.of(kim, park))));
+			.andExpect(content().string(objectMapper.writeValueAsString(List.of(kim, park))));
 	}
 
 	private MemberRequestDTO member(String name, String nickname, String email, String phoneNumber) {
 		return MemberRequestDTO.builder()
 			.name(name)
 			.nickname(nickname)
-			.birthDate(LocalDate.now())
+			.birthDate(LocalDate.of(2000, 1, 1))
 			.email(email)
 			.phoneNumber(phoneNumber)
 			.build();
