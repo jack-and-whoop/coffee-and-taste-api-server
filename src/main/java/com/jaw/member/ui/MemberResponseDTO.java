@@ -5,18 +5,16 @@ import java.time.LocalDate;
 import com.jaw.member.domain.Member;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class MemberResponseDTO {
 
-	private Long id;
-	private String name;
-	private String nickname;
-	private LocalDate birthDate;
-	private String email;
-	private String phoneNumber;
+	private final Long id;
+	private final String name;
+	private final String nickname;
+	private final LocalDate birthDate;
+	private final String email;
+	private final String phoneNumber;
 
 	public MemberResponseDTO(Member member) {
 		this.id = member.getId();
