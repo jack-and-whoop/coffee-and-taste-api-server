@@ -1,4 +1,9 @@
 spring:
+  profiles:
+    active: dev
+
+---
+spring:
   config:
     activate:
       on-profile: prod
@@ -36,6 +41,10 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+  sql:
+    init:
+      data-locations: classpath*:data.sql
 
   h2:
     console:

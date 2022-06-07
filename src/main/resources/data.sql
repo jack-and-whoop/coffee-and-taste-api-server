@@ -4,38 +4,38 @@ VALUES
 (2, '푸드'),
 (3, '상품');
 
-INSERT INTO menu_group(MENU_GROUP_ID, CATEGORY_ID, NAME, ENGLISH_NAME)
+INSERT INTO menu_group(MENU_GROUP_ID, CATEGORY_ID, NAME, ENGLISH_NAME, REPRESENTATIVE_IMAGE_PATH)
 VALUES
-(1, 1, '콜드 브루', 'Cold Brew'),
-(2, 1, '에스프레소', 'Espresso'),
-(3, 1, '프라푸치노', 'Frappuccino'),
-(4, 1, '블렌디드', 'Blended'),
-(5, 1, '피지오', 'Starbucks Fizzio'),
-(6, 1, '티바나', 'Teavana'),
-(7, 1, '브루드 커피', 'Brewed Coffee'),
-(8, 1, '기타', 'Others'),
-(9, 1, '병음료', 'RTD'),
+(1, 1, '콜드 브루', 'Cold Brew', '/images/cold_brew.jpg'),
+(2, 1, '에스프레소', 'Espresso', '/images/iced_caffe_americano.jpg'),
+(3, 1, '프라푸치노', 'Frappuccino', '/images/mocha_frappuccino.jpg'),
+(4, 1, '블렌디드', 'Blended', '/images/mango_banana_blended.jpg'),
+(5, 1, '피지오', 'Starbucks Fizzio', '/images/cool_lime_starbucks_fizzio.jpg'),
+(6, 1, '티바나', 'Teavana', '/images/pomelo_flow_green_tea.jpg'),
+(7, 1, '브루드 커피', 'Brewed Coffee', '/images/brewed_coffee.jpg'),
+(8, 1, '기타', 'Others', '/images/iced_signature_chocolate.jpg'),
+(9, 1, '병음료', 'RTD', '/images/organic_orange_100_juice_190ml.jpg'),
 
-(10, 2, '브레드', 'Bread'),
-(11, 2, '케이크&미니디저트', 'Cake&Mini Dessert'),
-(12, 2, '샌드위치&샐러드', 'Sandwich&Salad'),
-(13, 2, '따뜻한 푸드', 'Hot Food'),
-(14, 2, '과일&요거트', 'Fruit&Yogurt'),
-(15, 2, '스낵', 'Snack'),
-(16, 2, '아이스크림', 'Ice Cream'),
-(17, 2, '스타디움 세트', 'Stadium Set'),
+(10, 2, '브레드', 'Bread', null),
+(11, 2, '케이크&미니디저트', 'Cake&Mini Dessert', null),
+(12, 2, '샌드위치&샐러드', 'Sandwich&Salad', null),
+(13, 2, '따뜻한 푸드', 'Hot Food', null),
+(14, 2, '과일&요거트', 'Fruit&Yogurt', null),
+(15, 2, '스낵', 'Snack', null),
+(16, 2, '아이스크림', 'Ice Cream', null),
+(17, 2, '스타디움 세트', 'Stadium Set', null),
 
-(18, 3, '머그/글라스', 'Mug/Glass'),
-(19, 3, '스테인리스텀블러', 'Stainless steel Tumbler'),
-(20, 3, '플라스틱텀블러', 'Plastic Tumbler'),
-(21, 3, '보온병', 'Vaccum flask'),
-(22, 3, '엑세서리', 'ACC'),
-(23, 3, '커피용품', 'Brewing Item'),
-(24, 3, '원두','Whole bean'),
-(25, 3, '비아', 'VIA'),
-(26, 3, '스타벅스앳홈 by 캡슐', 'Starbucks at Home by capsule'),
-(27, 3, '패키지 티', 'Packaged Tea'),
-(28, 3, '리저브 원두', 'Reserve Whole bean');
+(18, 3, '머그/글라스', 'Mug/Glass', null),
+(19, 3, '스테인리스텀블러', 'Stainless steel Tumbler', null),
+(20, 3, '플라스틱텀블러', 'Plastic Tumbler', null),
+(21, 3, '보온병', 'Vaccum flask', null),
+(22, 3, '엑세서리', 'ACC', null),
+(23, 3, '커피용품', 'Brewing Item', null),
+(24, 3, '원두','Whole bean', null),
+(25, 3, '비아', 'VIA', null),
+(26, 3, '스타벅스앳홈 by 캡슐', 'Starbucks at Home by capsule', null),
+(27, 3, '패키지 티', 'Packaged Tea', null),
+(28, 3, '리저브 원두', 'Reserve Whole bean', null);
 
 INSERT INTO menu(MENU_GROUP_ID, NAME, ENGLISH_NAME, PRICE, ON_SALE, DESCRIPTION, IMAGE_PATH)
 VALUES
