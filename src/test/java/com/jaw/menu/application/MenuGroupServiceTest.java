@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,11 +39,13 @@ class MenuGroupServiceTest {
     void create() {
         String name = "에스프레소";
         String englishName = "Espresso";
-        MenuGroupResponseDTO response = menuGroupService.create(new MenuGroupRequestDTO(name, englishName));
+        String imagePath = "/images/espresso.jpg";
+        MenuGroupResponseDTO response = menuGroupService.create(new MenuGroupRequestDTO(name, englishName, imagePath));
         assertAll(
             () -> assertThat(response.getId()).isEqualTo(1L),
             () -> assertThat(response.getName()).isEqualTo(name),
-            () -> assertThat(response.getEnglishName()).isEqualTo(englishName)
+            () -> assertThat(response.getEnglishName()).isEqualTo(englishName),
+            () -> assertThat(response.getRepresentativeImagePath()).isEqualTo(imagePath)
         );
     }
 
