@@ -11,9 +11,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
+import com.jaw.auth.AuthenticationErrorFilter;
+import com.jaw.auth.JwtAuthenticationFilter;
+import com.jaw.member.application.AuthenticationService;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	private final AuthenticationService authenticationService;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -29,6 +38,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		http.exceptionHandling()
 			.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+
+		http.addFilter(new JwtAuthenticationFilter(authenticationManager(), authenticationService))
+			.addFilterBefore(new AuthenticationErrorFilter(), JwtAuthenticationFilter.class);
 	}
 
 	@Bean
