@@ -36,15 +36,19 @@ public class Member {
 	private String email;
 
 	@Column(nullable = false)
+	private String password;
+
+	@Column(nullable = false)
 	private String phoneNumber;
 
 	@Builder
-	public Member(Long id, String name, String nickname, LocalDate birthDate, String email, String phoneNumber) {
+	public Member(Long id, String name, String nickname, LocalDate birthDate, String email, String password, String phoneNumber) {
 		this.id = id;
 		this.name = name;
 		this.nickname = nickname;
 		this.birthDate = birthDate;
 		this.email = email;
+		this.password = password;
 		this.phoneNumber = phoneNumber;
 	}
 }

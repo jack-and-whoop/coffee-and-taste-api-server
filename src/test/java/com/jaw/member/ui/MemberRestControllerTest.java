@@ -26,7 +26,7 @@ class MemberRestControllerTest extends AbstractControllerTest {
 	@DisplayName("새로운 회원을 등록한다.")
 	@Test
 	void create() throws Exception {
-		MemberRequestDTO request = member("홍길동", "hong", "hong@gmail.com", "010-1234-5678");
+		MemberRequestDTO request = member("홍길동", "hong", "hong@gmail.com", "1234", "010-1234-5678");
 
 		mvc.perform(post(BASE_URI)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -42,20 +42,21 @@ class MemberRestControllerTest extends AbstractControllerTest {
 	@DisplayName("회원 목록을 조회한다.")
 	@Test
 	void findAll() throws Exception {
-		MemberResponseDTO kim = memberService.create(member("김철수", "kim", "kim@gmail.com", "010-1234-5678"));
-		MemberResponseDTO park = memberService.create(member("박영희", "park", "park@gmail.com", "010-9012-3456"));
+		MemberResponseDTO kim = memberService.create(member("김철수", "kim", "kim@gmail.com", "1234", "010-1234-5678"));
+		MemberResponseDTO park = memberService.create(member("박영희", "park", "park@gmail.com", "1234", "010-9012-3456"));
 
 		mvc.perform(get(BASE_URI))
 			.andExpect(status().isOk())
 			.andExpect(content().string(objectMapper.writeValueAsString(List.of(kim, park))));
 	}
 
-	private MemberRequestDTO member(String name, String nickname, String email, String phoneNumber) {
+	private MemberRequestDTO member(String name, String nickname, String email, String password, String phoneNumber) {
 		return MemberRequestDTO.builder()
 			.name(name)
 			.nickname(nickname)
 			.birthDate(LocalDate.of(2000, 1, 1))
 			.email(email)
+			.password(password)
 			.phoneNumber(phoneNumber)
 			.build();
 	}
