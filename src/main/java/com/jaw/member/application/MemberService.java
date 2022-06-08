@@ -31,4 +31,10 @@ public class MemberService {
 			.map(MemberResponseDTO::new)
 			.collect(Collectors.toList());
 	}
+
+	public MemberResponseDTO findByEmail(String email) {
+		return memberRepository.findByEmail(email)
+			.map(MemberResponseDTO::new)
+			.orElseThrow(IllegalArgumentException::new);
+	}
 }
