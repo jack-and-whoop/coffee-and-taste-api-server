@@ -37,14 +37,15 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
     @DisplayName("새로운 메뉴 그룹을 등록한다.")
     @Test
     void create() throws Exception {
-        MenuGroupRequestDTO request = new MenuGroupRequestDTO("블렌디드", "Blended");
+        MenuGroupRequestDTO request = new MenuGroupRequestDTO("블렌디드", "Blended", "blended.jpg");
 
         mvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.name").value("블렌디드"))
-            .andExpect(jsonPath("$.englishName").value("Blended"));
+            .andExpect(jsonPath("$.englishName").value("Blended"))
+            .andExpect(jsonPath("$.representativeImagePath").value("blended.jpg"));
     }
 
     @DisplayName("메뉴 그룹 목록을 조회한다.")
