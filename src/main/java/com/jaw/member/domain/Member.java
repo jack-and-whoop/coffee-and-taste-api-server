@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,5 +52,9 @@ public class Member {
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
+	}
+
+	public boolean authenticate(String password, PasswordEncoder passwordEncoder) {
+		return passwordEncoder.matches(password, this.password);
 	}
 }
