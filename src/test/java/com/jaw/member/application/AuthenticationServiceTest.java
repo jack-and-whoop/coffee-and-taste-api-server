@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.jaw.auth.JwtUtil;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
+import com.jaw.member.domain.RoleRepository;
 
 class AuthenticationServiceTest {
 
@@ -26,13 +27,14 @@ class AuthenticationServiceTest {
 	private static final String INVALID_PASSWORD = "1111";
 
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
+	private final RoleRepository roleRepository = mock(RoleRepository.class);
 	private AuthenticationService authenticationService;
 
 	@BeforeEach
 	void setup() {
 		JwtUtil jwtUtil = new JwtUtil(SECRET_KEY);
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		authenticationService = new AuthenticationService(memberRepository, jwtUtil, passwordEncoder);
+		authenticationService = new AuthenticationService(memberRepository, roleRepository, jwtUtil, passwordEncoder);
 
 		Member member = Member.builder()
 			.id(1L)
