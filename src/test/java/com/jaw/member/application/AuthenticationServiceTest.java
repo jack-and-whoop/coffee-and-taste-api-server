@@ -19,6 +19,7 @@ class AuthenticationServiceTest {
 
 	private static final String SECRET_KEY = "this-is-coffee-and-taste-api-server";
 	private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbfw";
+	private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbf0";
 	private static final String VALID_EMAIL = "aaa@gmail.com";
 	private static final String VALID_PASSWORD = "1234";
 	private static final String INVALID_EMAIL = "bbb@gmail.com";
@@ -63,5 +64,19 @@ class AuthenticationServiceTest {
 		assertThatThrownBy(() -> authenticationService.login(VALID_EMAIL, INVALID_PASSWORD))
 			.isInstanceOf(IllegalArgumentException.class);
 		verify(memberRepository).findByEmail(VALID_EMAIL);
+	}
+
+	@DisplayName("유효한 토큰을 파싱하여 사용자 아이디를 얻는다.")
+	@Test
+	void parseValidToken() {
+		Long userId = authenticationService.parseToken(VALID_TOKEN);
+		assertThat(userId).isEqualTo(1L);
+	}
+
+	@DisplayName("유효하지 않은 토큰을 파싱하면 예외가 발생한다.")
+	@Test
+	void parseInvalidToken() {
+		assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 }
