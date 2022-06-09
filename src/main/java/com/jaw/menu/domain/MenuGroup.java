@@ -21,14 +21,17 @@ public class MenuGroup {
 
     private String englishName;
 
+    private String representativeImagePath;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
     @Builder
-    public MenuGroup(String name, String englishName, Category category) {
+    public MenuGroup(String name, String englishName, String representativeImagePath, Category category) {
         this.name = name;
         this.englishName = englishName;
+        this.representativeImagePath = representativeImagePath;
         this.category = category;
     }
 }

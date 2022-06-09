@@ -6,24 +6,26 @@ import com.jaw.member.domain.Member;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@NoArgsConstructor
 public class MemberRequestDTO {
 
 	private String name;
 	private String nickname;
 	private LocalDate birthDate;
 	private String email;
+	private String password;
 	private String phoneNumber;
 
 	@Builder
-	public MemberRequestDTO(String name, String nickname, LocalDate birthDate, String email, String phoneNumber) {
+	public MemberRequestDTO(String name, String nickname, LocalDate birthDate, String email, String password, String phoneNumber) {
 		this.name = name;
 		this.nickname = nickname;
 		this.birthDate = birthDate;
 		this.email = email;
+		this.password = password;
 		this.phoneNumber = phoneNumber;
 	}
 
@@ -33,6 +35,7 @@ public class MemberRequestDTO {
 			.nickname(nickname)
 			.birthDate(birthDate)
 			.email(email)
+			.password(password)
 			.phoneNumber(phoneNumber)
 			.build();
 	}

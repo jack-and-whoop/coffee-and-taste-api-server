@@ -1,11 +1,10 @@
 package com.jaw.menu.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jaw.AbstractControllerTest;
 import com.jaw.menu.domain.Menu;
 import com.jaw.menu.domain.MenuGroup;
 import com.jaw.menu.domain.MenuGroupRepository;
 import com.jaw.menu.domain.MenuRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,31 +12,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 @TestPropertySource("/application-dev.properties")
-class MenuGroupRestControllerTest {
+class MenuGroupRestControllerTest extends AbstractControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private static final String BASE_URI = "/api/menu-groups";
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -45,42 +34,32 @@ class MenuGroupRestControllerTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    @Autowired
-    private WebApplicationContext wac;
-
-    @BeforeEach
-    void setup() {
-        mvc = MockMvcBuilders.webAppContextSetup(wac)
-            .addFilters(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
-            .alwaysDo(print())
-            .build();
-    }
-
     @DisplayName("새로운 메뉴 그룹을 등록한다.")
     @Test
     void create() throws Exception {
-        MenuGroupRequestDTO request = new MenuGroupRequestDTO("블렌디드", "Blended");
+        MenuGroupRequestDTO request = new MenuGroupRequestDTO("블렌디드", "Blended", "blended.jpg");
 
-        mvc.perform(post("/api/menu-groups")
+        mvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.name").value("블렌디드"))
-            .andExpect(jsonPath("$.englishName").value("Blended"));
+            .andExpect(jsonPath("$.englishName").value("Blended"))
+            .andExpect(jsonPath("$.representativeImagePath").value("blended.jpg"));
     }
 
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     @Test
     void findAll() throws Exception {
-        MenuGroup coldBrew = menuGroupRepository.save(new MenuGroup("콜드 브루", "Cold Brew", null));
-        MenuGroup blonde = menuGroupRepository.save(new MenuGroup("블론드", "Blonde Coffee", null));
+        MenuGroup coldBrew = menuGroupRepository.save(menuGroup("콜드 브루", "Cold Brew"));
+        MenuGroup blonde = menuGroupRepository.save(menuGroup("블론드", "Blonde Coffee"));
 
         List<MenuGroupResponseDTO> menuGroups = List.of(
             new MenuGroupResponseDTO(coldBrew),
             new MenuGroupResponseDTO(blonde)
         );
 
-        mvc.perform(get("/api/menu-groups"))
+        mvc.perform(get(BASE_URI))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(menuGroups)));
     }
@@ -88,11 +67,11 @@ class MenuGroupRestControllerTest {
     @DisplayName("특정 메뉴 그룹을 조회한다.")
     @Test
     void findById() throws Exception {
-        MenuGroup frappuccino = menuGroupRepository.save(new MenuGroup("프라푸치노", "Frappuccino", null));
+        MenuGroup frappuccino = menuGroupRepository.save(menuGroup("프라푸치노", "Frappuccino"));
 
         MenuGroupResponseDTO menuGroup = new MenuGroupResponseDTO(frappuccino);
 
-        mvc.perform(get("/api/menu-groups/{menuGroupId}", frappuccino.getId()))
+        mvc.perform(get(BASE_URI + "/{menuGroupId}", frappuccino.getId()))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
     }
@@ -100,15 +79,22 @@ class MenuGroupRestControllerTest {
     @DisplayName("특정 메뉴 그룹 조회 시, 하위의 메뉴 목록을 함께 조회한다.")
     @Test
     void findWithMenusById() throws Exception {
-        MenuGroup espresso = menuGroupRepository.save(new MenuGroup("에스프레소", "Espresso", null));
+        MenuGroup espresso = menuGroupRepository.save(menuGroup("에스프레소", "Espresso"));
         Menu macchiato = menuRepository.save(menu("에스프레소 마키아또", "Espresso Macchiato", 4_000, espresso));
         Menu conPanna = menuRepository.save(menu("에스프레소 콘 파나", "Espresso Con Panna", 4_200, espresso));
 
         MenuGroupMenusResponseDTO menuGroup = new MenuGroupMenusResponseDTO(espresso, List.of(macchiato, conPanna));
 
-        mvc.perform(get("/api/menu-groups/{menuGroupId}/menus", espresso.getId()))
+        mvc.perform(get(BASE_URI + "/{menuGroupId}/menus", espresso.getId()))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
+    }
+
+    private MenuGroup menuGroup(String name, String englishName) {
+        return MenuGroup.builder()
+            .name(name)
+            .englishName(englishName)
+            .build();
     }
 
     private Menu menu(String name, String englishName, long price, MenuGroup menuGroup) {

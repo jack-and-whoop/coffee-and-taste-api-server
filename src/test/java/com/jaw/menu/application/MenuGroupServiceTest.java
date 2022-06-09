@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,11 +39,13 @@ class MenuGroupServiceTest {
     void create() {
         String name = "에스프레소";
         String englishName = "Espresso";
-        MenuGroupResponseDTO response = menuGroupService.create(new MenuGroupRequestDTO(name, englishName));
+        String imagePath = "/images/espresso.jpg";
+        MenuGroupResponseDTO response = menuGroupService.create(new MenuGroupRequestDTO(name, englishName, imagePath));
         assertAll(
             () -> assertThat(response.getId()).isEqualTo(1L),
             () -> assertThat(response.getName()).isEqualTo(name),
-            () -> assertThat(response.getEnglishName()).isEqualTo(englishName)
+            () -> assertThat(response.getEnglishName()).isEqualTo(englishName),
+            () -> assertThat(response.getRepresentativeImagePath()).isEqualTo(imagePath)
         );
     }
 
@@ -70,8 +71,8 @@ class MenuGroupServiceTest {
     @Test
     void findWithMenusById() {
         MenuGroup blended = menuGroupRepository.save(menuGroup("블렌디드", "Blended"));
-        menuRepository.save(menu("망고 바나나", "Mango Banana", 6100, blended));
-        menuRepository.save(menu("피치 & 레몬", "Peach & Lemon", 6200, blended));
+        menuRepository.save(menu("망고 바나나", "Mango Banana", 6_100, blended));
+        menuRepository.save(menu("피치 & 레몬", "Peach & Lemon", 6_200, blended));
 
         MenuGroupMenusResponseDTO menuGroup = menuGroupService.findWithMenusById(blended.getId());
         assertThat(menuGroup.getName()).isEqualTo(blended.getName());

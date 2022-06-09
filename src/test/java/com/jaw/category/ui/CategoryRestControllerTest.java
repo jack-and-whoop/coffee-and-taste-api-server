@@ -1,43 +1,24 @@
 package com.jaw.category.ui;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jaw.AbstractControllerTest;
 import com.jaw.category.domain.Category;
 import com.jaw.category.domain.CategoryRepository;
 import com.jaw.menu.domain.MenuGroup;
 import com.jaw.menu.domain.MenuGroupRepository;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
-@TestPropertySource("/application-dev.properties")
-class CategoryRestControllerTest {
+class CategoryRestControllerTest extends AbstractControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+	private static final String BASE_URI = "/api/categories";
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -45,23 +26,12 @@ class CategoryRestControllerTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
 
-    @Autowired
-    private WebApplicationContext wac;
-
-    @BeforeEach
-    void setup() {
-        mvc = MockMvcBuilders.webAppContextSetup(wac)
-            .addFilters(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
-            .alwaysDo(print())
-            .build();
-    }
-
     @DisplayName("새로운 카테고리를 등록한다.")
     @Test
     void create() throws Exception {
         CategoryRequestDTO request = new CategoryRequestDTO("음료");
 
-        mvc.perform(post("/api/categories")
+        mvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -77,7 +47,7 @@ class CategoryRestControllerTest {
 		CategoryResponseDTO beverageResponse = new CategoryResponseDTO(beverage);
 		CategoryResponseDTO foodResponse = new CategoryResponseDTO(food);
 
-		mvc.perform(get("/api/categories"))
+		mvc.perform(get(BASE_URI))
 			.andExpect(status().isOk())
 			.andExpect(content().string(objectMapper.writeValueAsString(List.of(beverageResponse, foodResponse))));
 	}
@@ -89,7 +59,7 @@ class CategoryRestControllerTest {
 
 		CategoryResponseDTO response = new CategoryResponseDTO(category);
 
-		mvc.perform(get("/api/categories/{categoryId}", category.getId())
+		mvc.perform(get(BASE_URI + "/{categoryId}", category.getId())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(response)));
@@ -104,7 +74,7 @@ class CategoryRestControllerTest {
 
 		CategoryMenuGroupsResponseDTO response = new CategoryMenuGroupsResponseDTO(category, List.of(coke, cider));
 
-		mvc.perform(get("/api/categories/{categoryId}/menu-groups", category.getId()))
+		mvc.perform(get(BASE_URI+ "/{categoryId}/menu-groups", category.getId()))
             .andExpect(status().isOk())
             .andExpect(content().string(objectMapper.writeValueAsString(response)));
     }
