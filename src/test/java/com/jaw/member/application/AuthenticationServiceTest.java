@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.jaw.auth.JwtUtil;
 import com.jaw.exception.InvalidTokenException;
+import com.jaw.exception.LoginFailedException;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.member.domain.RoleRepository;
@@ -57,7 +58,7 @@ class AuthenticationServiceTest {
 	@Test
 	void loginWithInvalidEmail() {
 		assertThatThrownBy(() -> authenticationService.login(INVALID_EMAIL, VALID_PASSWORD))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(LoginFailedException.class);
 		verify(memberRepository).findByEmail(INVALID_EMAIL);
 	}
 
@@ -65,7 +66,7 @@ class AuthenticationServiceTest {
 	@Test
 	void loginWithInvalidPassword() {
 		assertThatThrownBy(() -> authenticationService.login(VALID_EMAIL, INVALID_PASSWORD))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(LoginFailedException.class);
 		verify(memberRepository).findByEmail(VALID_EMAIL);
 	}
 

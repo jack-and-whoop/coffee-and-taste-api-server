@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jaw.auth.JwtUtil;
+import com.jaw.exception.LoginFailedException;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.member.domain.Role;
@@ -24,10 +25,10 @@ public class AuthenticationService {
 
 	public String login(String email, String password) {
 		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(IllegalArgumentException::new);
+			.orElseThrow(() -> new LoginFailedException(email));
 
 		if (!member.authenticate(password, passwordEncoder)) {
-			throw new IllegalArgumentException();
+			throw new LoginFailedException(email);
 		}
 
 		return jwtUtil.encode(member.getId());
