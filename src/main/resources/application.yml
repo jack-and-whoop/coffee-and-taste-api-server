@@ -24,6 +24,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
 
+open-api:
+  url: https://coffee-and-taste.kro.kr
+  description: production
+
 ---
 spring:
   config:
@@ -52,3 +56,7 @@ spring:
   h2:
     console:
       enabled: true
+
+open-api:
+  url: http://localhost:8080
+  description: development
