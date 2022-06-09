@@ -42,6 +42,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.nickname("hong")
 			.birthDate(LocalDate.now())
 			.email("hong@gmail.com")
+			.password("1234")
 			.phoneNumber("010-1234-5678")
 			.build());
 	}
