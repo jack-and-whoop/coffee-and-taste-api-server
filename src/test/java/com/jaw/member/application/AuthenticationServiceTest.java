@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.jaw.auth.JwtUtil;
+import com.jaw.exception.InvalidTokenException;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.member.domain.RoleRepository;
@@ -79,6 +80,6 @@ class AuthenticationServiceTest {
 	@Test
 	void parseInvalidToken() {
 		assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
-			.isInstanceOf(IllegalArgumentException.class);
+			.isInstanceOf(InvalidTokenException.class);
 	}
 }

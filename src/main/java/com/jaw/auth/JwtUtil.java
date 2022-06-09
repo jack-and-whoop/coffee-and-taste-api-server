@@ -5,6 +5,8 @@ import java.security.Key;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.jaw.exception.InvalidTokenException;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
@@ -45,13 +47,13 @@ public class JwtUtil {
 				.getBody()
 				.get(USER_ID, Long.class);
 		} catch (SignatureException | MalformedJwtException e) {
-			throw new IllegalArgumentException();
+			throw new InvalidTokenException(token);
 		}
 	}
 
 	private void validateToken(String token) {
 		if (token == null || token.isBlank()) {
-			throw new IllegalArgumentException();
+			throw new InvalidTokenException(token);
 		}
 	}
 }

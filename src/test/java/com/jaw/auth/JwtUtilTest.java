@@ -12,6 +12,8 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.jaw.exception.InvalidTokenException;
+
 class JwtUtilTest {
 
 	private static final String SECRET_KEY = "this-is-coffee-and-taste-api-server";
@@ -57,7 +59,7 @@ class JwtUtilTest {
 	@NullAndEmptySource
 	@ParameterizedTest
 	void decodeWithInvalidToken(String token) {
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> JWT_UTIL.decode(token));
+		assertThatThrownBy(() -> JWT_UTIL.decode(token))
+			.isInstanceOf(InvalidTokenException.class);
 	}
 }

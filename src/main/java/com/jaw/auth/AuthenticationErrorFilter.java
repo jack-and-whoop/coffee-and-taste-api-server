@@ -8,6 +8,8 @@ import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.jaw.exception.InvalidTokenException;
+
 public class AuthenticationErrorFilter extends HttpFilter {
 
 	@Override
@@ -16,7 +18,7 @@ public class AuthenticationErrorFilter extends HttpFilter {
 							FilterChain chain) throws IOException, ServletException {
 		try {
 			chain.doFilter(request, response);
-		} catch (IllegalArgumentException e) {
+		} catch (InvalidTokenException e) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 	}
