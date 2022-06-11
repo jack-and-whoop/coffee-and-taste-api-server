@@ -1,29 +1,39 @@
 package com.jaw.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
+@OpenAPIDefinition(
+    info = @Info(
+        title = "Coffee and Taste",
+        description = "This is a RESTful API server for Coffee and Taste",
+        version = "1.0"
+    )
+)
 public class OpenAPIConfiguration {
 
-    private static final String URL_PROD = "https://coffee-and-taste.kro.kr";
-    private static final String URL_DEV = "http://localhost:8080";
+    @Value("${open-api.url}")
+    private String url;
+
+    @Value("${open-api.description}")
+    private String description;
 
     @Bean
     public OpenAPI openAPI() {
-        Server prod = createServer(URL_PROD, "Production");
-        Server dev = createServer(URL_DEV, "Development");
-        return new OpenAPI().servers(List.of(prod, dev));
+        return new OpenAPI()
+            .addServersItem(createServer());
     }
 
-    public Server createServer(String url, String description) {
-        Server server = new Server();
-        server.setUrl(url);
-        server.setDescription(description);
-        return server;
+    public Server createServer() {
+        return new Server()
+            .url(url)
+            .description(description);
     }
 }
