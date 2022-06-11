@@ -1,11 +1,14 @@
 package com.jaw.menu.ui;
 
-import com.jaw.menu.domain.Menu;
-import lombok.Getter;
-
 import java.math.BigDecimal;
 
+import com.jaw.menu.domain.Menu;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
 @Getter
+@EqualsAndHashCode
 public class MenuResponseDTO {
 
     private final Long id;
