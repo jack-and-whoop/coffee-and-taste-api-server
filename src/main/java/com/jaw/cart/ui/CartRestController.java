@@ -20,12 +20,12 @@ public class CartRestController {
 
 	private final CartService cartService;
 
-	@GetMapping("/members/{memberId}/cart")
+	@GetMapping("/api/members/{memberId}/cart")
 	public ResponseEntity<List<CartMenuResponseDTO>> findAll(@PathVariable Long memberId) {
 		return ResponseEntity.ok(cartService.findAll(memberId));
 	}
 
-	@PostMapping("/members/{memberId}/cart")
+	@PostMapping("/api/members/{memberId}/cart")
 	public ResponseEntity<CartMenuResponseDTO> addMenu(@PathVariable Long memberId,
 													   @RequestBody CartMenuRequestDTO request) {
 
