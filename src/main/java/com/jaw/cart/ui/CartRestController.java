@@ -25,7 +25,7 @@ public class CartRestController {
 													   @RequestBody CartMenuRequestDTO request) {
 
 		CartMenuResponseDTO cartMenu = cartService.addMenu(memberId, request.getMenuId(), request.getCount());
-		return ResponseEntity.created(URI.create(String.format("/members/%d/cart", memberId)))
+		return ResponseEntity.created(URI.create(String.format("/api/members/%d/cart", memberId)))
 			.body(cartMenu);
 	}
 }

@@ -21,7 +21,7 @@ import com.jaw.menu.domain.MenuRepository;
 
 class CartRestControllerTest extends AbstractControllerTest {
 
-	private static final String BASE_URI = "/members/{memberId}/cart";
+	private static final String BASE_URI = "/api/members/{memberId}/cart";
 
 	@Autowired
 	private MemberRepository memberRepository;
