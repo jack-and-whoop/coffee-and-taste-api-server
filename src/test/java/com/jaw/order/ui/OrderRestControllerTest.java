@@ -29,7 +29,6 @@ class OrderRestControllerTest extends AbstractControllerTest {
 
 	@BeforeEach
 	protected void setup() {
-		super.setup();
 		coldBrew = menuRepository.save(menu("콜드 브루", 4_900));
 		icedCoffee = menuRepository.save(menu("아이스 커피", 4_500));
 	}
@@ -62,7 +61,7 @@ class OrderRestControllerTest extends AbstractControllerTest {
 
 		mvc.perform(get("/api/orders"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(objectMapper.writeValueAsString(List.of(coldBrewOrder, icedCoffeeOrder))));
+			.andExpect(content().json(objectMapper.writeValueAsString(List.of(coldBrewOrder, icedCoffeeOrder))));
 	}
 
 	@DisplayName("특정 주문을 조회한다.")
@@ -72,6 +71,6 @@ class OrderRestControllerTest extends AbstractControllerTest {
 
 		mvc.perform(get("/api/orders/{id}", order.getId()))
 			.andExpect(status().isOk())
-			.andExpect(content().string(objectMapper.writeValueAsString(order)));
+			.andExpect(content().json(objectMapper.writeValueAsString(order)));
 	}
 }

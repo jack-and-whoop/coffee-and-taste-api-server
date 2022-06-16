@@ -49,7 +49,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
 
 		mvc.perform(get(BASE_URI))
 			.andExpect(status().isOk())
-			.andExpect(content().string(objectMapper.writeValueAsString(List.of(beverageResponse, foodResponse))));
+			.andExpect(content().json(objectMapper.writeValueAsString(List.of(beverageResponse, foodResponse))));
 	}
 
     @DisplayName("특정 카테고리를 조회한다.")
@@ -62,7 +62,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
 		mvc.perform(get(BASE_URI + "/{categoryId}", category.getId())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string(objectMapper.writeValueAsString(response)));
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     @DisplayName("특정 카테고리 조회 시, 하위의 메뉴 그룹 목록을 함께 조회한다.")
@@ -76,7 +76,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
 
 		mvc.perform(get(BASE_URI+ "/{categoryId}/menu-groups", category.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().string(objectMapper.writeValueAsString(response)));
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     private MenuGroup menuGroup(String name, String englishName, Category category) {
