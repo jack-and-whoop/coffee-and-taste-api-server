@@ -47,7 +47,7 @@ class MemberRestControllerTest extends AbstractControllerTest {
 
 		mvc.perform(get(BASE_URI))
 			.andExpect(status().isOk())
-			.andExpect(content().string(objectMapper.writeValueAsString(List.of(kim, park))));
+			.andExpect(content().json(objectMapper.writeValueAsString(List.of(kim, park))));
 	}
 
 	private MemberRequestDTO member(String name, String nickname, String email, String password, String phoneNumber) {

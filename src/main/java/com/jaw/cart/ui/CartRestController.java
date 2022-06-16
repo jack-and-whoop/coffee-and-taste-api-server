@@ -1,36 +1,34 @@
 package com.jaw.cart.ui;
 
+import com.jaw.cart.application.CartService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.jaw.cart.application.CartService;
-
-import lombok.RequiredArgsConstructor;
-
 @RequiredArgsConstructor
+@RequestMapping("/api/members/{memberId}/cart")
 @RestController
 public class CartRestController {
 
 	private final CartService cartService;
 
-	@GetMapping("/members/{memberId}/cart")
+	@GetMapping
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<List<CartMenuResponseDTO>> findAll(@PathVariable Long memberId) {
 		return ResponseEntity.ok(cartService.findAll(memberId));
 	}
 
-	@PostMapping("/members/{memberId}/cart")
+	@PostMapping
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<CartMenuResponseDTO> addMenu(@PathVariable Long memberId,
 													   @RequestBody CartMenuRequestDTO request) {
 
 		CartMenuResponseDTO cartMenu = cartService.addMenu(memberId, request.getMenuId(), request.getCount());
-		return ResponseEntity.created(URI.create(String.format("/members/%d/cart", memberId)))
+		return ResponseEntity.created(URI.create(String.format("/api/members/%d/cart", memberId)))
 			.body(cartMenu);
 	}
 }
