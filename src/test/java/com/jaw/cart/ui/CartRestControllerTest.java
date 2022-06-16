@@ -80,6 +80,19 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.andExpect(status().isUnauthorized());
 	}
 
+	@DisplayName("장바구니에 메뉴 요청 시, 인증 정보가 없는 경우 HTTP 401 응답을 내려준다.")
+	@Test
+	void addMenuWithoutToken() throws Exception {
+		Menu americano = menuRepository.save(menu("아메리카노", 4_000));
+
+		CartMenuRequestDTO request = new CartMenuRequestDTO(americano.getId(), 1);
+
+		mvc.perform(post(BASE_URI, member.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isUnauthorized());
+	}
+
 	@DisplayName("유효한 인증 토큰이 전달될 경우, 장바구니에 담긴 모든 메뉴를 조회할 수 있다.")
 	@Test
 	void findAllWithValidToken() throws Exception {
@@ -101,6 +114,13 @@ class CartRestControllerTest extends AbstractControllerTest {
 	void findAllWithInvalidToken() throws Exception {
 		mvc.perform(get(BASE_URI, member.getId())
 				.header("Authorization", "Bearer " + INVALID_TOKEN))
+			.andExpect(status().isUnauthorized());
+	}
+
+	@DisplayName("장바구니에 담긴 모든 메뉴 조회 요청 시, 인증 정보가 없는 경우 HTTP 401 응답을 내려준다.")
+	@Test
+	void findAllWithoutToken() throws Exception {
+		mvc.perform(get(BASE_URI, member.getId()))
 			.andExpect(status().isUnauthorized());
 	}
 
