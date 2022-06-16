@@ -3,6 +3,7 @@ package com.jaw.cart.ui;
 import com.jaw.cart.application.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -16,11 +17,13 @@ public class CartRestController {
 	private final CartService cartService;
 
 	@GetMapping
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<List<CartMenuResponseDTO>> findAll(@PathVariable Long memberId) {
 		return ResponseEntity.ok(cartService.findAll(memberId));
 	}
 
 	@PostMapping
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<CartMenuResponseDTO> addMenu(@PathVariable Long memberId,
 													   @RequestBody CartMenuRequestDTO request) {
 
