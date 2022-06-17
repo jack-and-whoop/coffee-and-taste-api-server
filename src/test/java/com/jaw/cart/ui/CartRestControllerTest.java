@@ -37,7 +37,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 	private Member member;
 
 	@BeforeEach
-	protected void setup() {
+	void setup() {
 		member = memberRepository.save(Member.builder()
 			.name("홍길동")
 			.nickname("hong")

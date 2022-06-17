@@ -28,7 +28,7 @@ class OrderRestControllerTest extends AbstractControllerTest {
 	private Menu icedCoffee;
 
 	@BeforeEach
-	protected void setup() {
+	void setup() {
 		coldBrew = menuRepository.save(menu("콜드 브루", 4_900));
 		icedCoffee = menuRepository.save(menu("아이스 커피", 4_500));
 	}
