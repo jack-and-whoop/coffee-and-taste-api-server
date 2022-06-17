@@ -3,6 +3,7 @@ package com.jaw.member.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.jaw.exception.MemberNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,6 @@ public class MemberService {
 	public MemberResponseDTO findByEmail(String email) {
 		return memberRepository.findByEmail(email)
 			.map(MemberResponseDTO::new)
-			.orElseThrow(IllegalArgumentException::new);
+			.orElseThrow(() -> new MemberNotFoundException(email));
 	}
 }

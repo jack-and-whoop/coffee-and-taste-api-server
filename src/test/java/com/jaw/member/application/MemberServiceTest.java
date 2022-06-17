@@ -1,17 +1,18 @@
 package com.jaw.member.application;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.time.LocalDate;
-import java.util.List;
-
+import com.jaw.exception.MemberNotFoundException;
+import com.jaw.member.ui.MemberRequestDTO;
+import com.jaw.member.ui.MemberResponseDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.jaw.member.ui.MemberRequestDTO;
-import com.jaw.member.ui.MemberResponseDTO;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MemberServiceTest {
 
@@ -53,6 +54,15 @@ class MemberServiceTest {
 		MemberResponseDTO member = memberService.findByEmail("aaa@gmail.com");
 		assertThat(member.getName()).isEqualTo("memberA");
 		assertThat(member.getEmail()).isEqualTo("aaa@gmail.com");
+	}
+
+	@DisplayName("존재하지 않는 이메일로 회원을 조회할 경우, MemberNotFoundException 예외가 발생한다.")
+	@Test
+	void findByNonExistentEmail() {
+		memberRepository.save(member("memberA", "aaa@gmail.com").toEntity());
+
+		assertThatThrownBy(() -> memberService.findByEmail("bbb@gmail.com"))
+			.isInstanceOf(MemberNotFoundException.class);
 	}
 
 	private MemberRequestDTO member(String name, String email) {
