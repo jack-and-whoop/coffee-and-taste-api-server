@@ -1,6 +1,7 @@
 package com.jaw.member.application;
 
 import com.jaw.exception.MemberNotFoundException;
+import com.jaw.exception.UserEmailDuplicationException;
 import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
 import org.junit.jupiter.api.AfterEach;
@@ -35,6 +36,16 @@ class MemberServiceTest {
 	void create() {
 		MemberResponseDTO member = memberService.create(member( "memberA", "aaa@gmail.com"));
 		assertThat(member.getId()).isEqualTo(1L);
+	}
+
+	@DisplayName("회원 등록 시, 이미 등록된 이메일이라면 등록할 수 없다.")
+	@Test
+	void createWithDuplicateEmail() {
+		memberService.create(member("memberA", "aaa@gmail.com"));
+		MemberRequestDTO createMemberRequest = member("memberB", "aaa@gmail.com");
+
+		assertThatThrownBy(() -> memberService.create(createMemberRequest))
+			.isInstanceOf(UserEmailDuplicationException.class);
 	}
 
 	@DisplayName("회원 목록을 조회한다.")

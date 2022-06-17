@@ -1,18 +1,17 @@
 package com.jaw.member.application;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.jaw.exception.MemberNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.jaw.exception.UserEmailDuplicationException;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -22,6 +21,11 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	public MemberResponseDTO create(MemberRequestDTO request) {
+		String email = request.getEmail();
+		if (memberRepository.findByEmail(email).isPresent()) {
+			throw new UserEmailDuplicationException(email);
+		}
+
 		Member member = memberRepository.save(request.toEntity());
 		return new MemberResponseDTO(member);
 	}
