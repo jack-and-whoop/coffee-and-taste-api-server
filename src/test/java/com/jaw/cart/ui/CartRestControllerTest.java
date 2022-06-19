@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import com.jaw.AbstractControllerTest;
+import com.jaw.auth.JwtUtil;
 import com.jaw.cart.application.CartService;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
@@ -22,8 +23,8 @@ import com.jaw.menu.domain.MenuRepository;
 class CartRestControllerTest extends AbstractControllerTest {
 
 	private static final String BASE_URI = "/api/members/{memberId}/cart";
-	private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbfw";
 	private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbf0";
+	private static final JwtUtil JWT_UTIL = new JwtUtil("this-is-coffee-and-taste-api-server");
 
 	@Autowired
 	private MemberRepository memberRepository;
@@ -35,6 +36,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 	private CartService cartService;
 
 	private Member member;
+	private Member other;
 
 	@BeforeEach
 	void setup() {
@@ -46,6 +48,15 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.password("1234")
 			.phoneNumber("010-1234-5678")
 			.build());
+
+		other = memberRepository.save(Member.builder()
+			.name("김길동")
+			.nickname("kim")
+			.birthDate(LocalDate.now())
+			.email("kim@gmail.com")
+			.password("1234")
+			.phoneNumber("010-2222-3333")
+			.build());
 	}
 
 	@DisplayName("유효한 인증 토큰을 함께 전달할 경우, 장바구니에 메뉴를 추가할 수 있다.")
@@ -56,7 +67,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 		CartMenuRequestDTO request = new CartMenuRequestDTO(americano.getId(), 1);
 
 		mvc.perform(post(BASE_URI, member.getId())
-				.header("Authorization", "Bearer " + VALID_TOKEN)
+				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId()))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
@@ -64,6 +75,20 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.menu.name").value(americano.getName()))
 			.andExpect(jsonPath("$.menu.price").value(americano.getPrice()))
 			.andExpect(jsonPath("$.count").value(1));
+	}
+
+	@DisplayName("다른 회원의 장바구니에 메뉴를 담을 수 없다.")
+	@Test
+	void addMenuToOtherCart() throws Exception {
+		Menu mangoBanana = menuRepository.save(menu("망고 바나나 블렌디드", 6_300));
+
+		CartMenuRequestDTO request = new CartMenuRequestDTO(mangoBanana.getId(), 1);
+
+		mvc.perform(post(BASE_URI, other.getId())
+				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId()))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isForbidden());
 	}
 
 	@DisplayName("장바구니에 메뉴 추가 요청 시, 인증 토큰이 유효하지 않을 경우 HTTP 401 응답을 내려준다.")
@@ -99,12 +124,15 @@ class CartRestControllerTest extends AbstractControllerTest {
 		Menu icedAmericano = menuRepository.save(menu("아이스 아메리카노", 4_500));
 		Menu mangoBanana = menuRepository.save(menu("망고 바나나 블렌디드", 6_300));
 
-		CartMenuResponseDTO icedAmericanoInCart = cartService.addMenu(member.getId(), icedAmericano.getId(), 1);
-		CartMenuResponseDTO mangoBananaInCart = cartService.addMenu(member.getId(), mangoBanana.getId(), 1);
+		CartMenuRequestDTO icedAmericanoRequest = new CartMenuRequestDTO(icedAmericano.getId(), 1);
+		CartMenuRequestDTO mangoBananaRequest = new CartMenuRequestDTO(mangoBanana.getId(), 2);
+
+		CartMenuResponseDTO icedAmericanoInCart = cartService.addMenu(member.getId(), member.getId(), icedAmericanoRequest);
+		CartMenuResponseDTO mangoBananaInCart = cartService.addMenu(member.getId(), member.getId(), mangoBananaRequest);
 		List<CartMenuResponseDTO> responses = List.of(icedAmericanoInCart, mangoBananaInCart);
 
 		mvc.perform(get(BASE_URI, member.getId())
-				.header("Authorization", "Bearer " + VALID_TOKEN))
+				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId())))
 			.andExpect(status().isOk())
 			.andExpect(content().json(objectMapper.writeValueAsString(responses)));
 	}
