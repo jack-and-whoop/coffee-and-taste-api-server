@@ -137,6 +137,14 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.andExpect(content().json(objectMapper.writeValueAsString(responses)));
 	}
 
+	@DisplayName("회원은 다른 회원의 장바구니에 담긴 메뉴 목록을 조회할 수 없다.")
+	@Test
+	void findAllOtherUserCart() throws Exception {
+		mvc.perform(get(BASE_URI, other.getId())
+				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId())))
+			.andExpect(status().isForbidden());
+	}
+
 	@DisplayName("장바구니에 담긴 모든 메뉴 조회 요청 시, 인증 토큰이 유효하지 않을 경우 HTTP 401 응답을 내려준다.")
 	@Test
 	void findAllWithInvalidToken() throws Exception {
