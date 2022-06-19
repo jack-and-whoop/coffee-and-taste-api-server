@@ -25,6 +25,10 @@ public class UserAuthentication extends AbstractAuthenticationToken {
 			.collect(Collectors.toList());
 	}
 
+	public Long getUserId() {
+		return userId;
+	}
+
 	@Override
 	public boolean isAuthenticated() {
 		return true;
