@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.jaw.cart.ui.CartMenuRequestDTO;
 import com.jaw.cart.ui.CartMenuResponseDTO;
 import com.jaw.member.application.InMemoryMemberRepository;
 import com.jaw.member.domain.Member;
@@ -46,10 +47,13 @@ class CartServiceTest {
 		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900));
 		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500));
 
-		cartService.addMenu(member.getId(), vanillaFlatWhite.getId(), 1);
-		cartService.addMenu(member.getId(), icedCaffeMocha.getId(), 1);
+		CartMenuRequestDTO vanillaFlatWhiteRequest = new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1);
+		CartMenuRequestDTO icedCaffeMochaRequest = new CartMenuRequestDTO(icedCaffeMocha.getId(), 2);
 
-		List<CartMenuResponseDTO> cartMenus = cartService.findAll(member.getId());
+		cartService.addMenu(member.getId(), member.getId(), vanillaFlatWhiteRequest);
+		cartService.addMenu(member.getId(), member.getId(), icedCaffeMochaRequest);
+
+		List<CartMenuResponseDTO> cartMenus = cartService.findAll(member.getId(), member.getId());
 
 		assertThat(cartMenus).hasSize(2);
 	}

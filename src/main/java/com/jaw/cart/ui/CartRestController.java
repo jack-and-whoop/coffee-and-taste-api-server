@@ -1,5 +1,6 @@
 package com.jaw.cart.ui;
 
+import com.jaw.auth.UserAuthentication;
 import com.jaw.cart.application.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +19,20 @@ public class CartRestController {
 
 	@GetMapping
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<List<CartMenuResponseDTO>> findAll(@PathVariable Long memberId) {
-		return ResponseEntity.ok(cartService.findAll(memberId));
+	public ResponseEntity<List<CartMenuResponseDTO>> findAll(@PathVariable Long memberId,
+															 UserAuthentication authentication) {
+		Long userId = authentication.getUserId();
+		return ResponseEntity.ok(cartService.findAll(memberId, userId));
 	}
 
 	@PostMapping
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<CartMenuResponseDTO> addMenu(@PathVariable Long memberId,
-													   @RequestBody CartMenuRequestDTO request) {
+													   @RequestBody CartMenuRequestDTO request,
+													   UserAuthentication authentication) {
 
-		CartMenuResponseDTO cartMenu = cartService.addMenu(memberId, request.getMenuId(), request.getCount());
+		Long userId = authentication.getUserId();
+		CartMenuResponseDTO cartMenu = cartService.addMenu(memberId, userId, request);
 		return ResponseEntity.created(URI.create(String.format("/api/members/%d/cart", memberId)))
 			.body(cartMenu);
 	}
