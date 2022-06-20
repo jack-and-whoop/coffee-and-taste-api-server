@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -30,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OrderRestControllerTest {
 
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbfw";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbf0";
 
     @Autowired
     private MockMvc mvc;
@@ -77,6 +75,17 @@ class OrderRestControllerTest {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$..orderMenus[0].menu.name").value("콜드 브루"))
             .andExpect(jsonPath("$..orderMenus[0].menu.price").value(4_900));
+    }
+
+    @DisplayName("인증된 토큰을 전달하지 않으면 새로운 주문을 등록할 수 없다.")
+    @Test
+    void createWithoutToken() throws Exception {
+        OrderRequestDTO request = new OrderRequestDTO(1L, 1L);
+
+        mvc.perform(post("/api/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("주문 목록을 조회한다.")
