@@ -7,6 +7,7 @@ import com.jaw.member.domain.MemberRepository;
 import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public MemberResponseDTO create(MemberRequestDTO request) {
 		String email = request.getEmail();
@@ -26,6 +28,7 @@ public class MemberService {
 			throw new UserEmailDuplicationException(email);
 		}
 
+		request.setPassword(passwordEncoder.encode(request.getPassword()));
 		Member member = memberRepository.save(request.toEntity());
 		return new MemberResponseDTO(member);
 	}
