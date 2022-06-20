@@ -4,14 +4,12 @@ import com.jaw.menu.ui.MenuResponseDTO;
 import com.jaw.order.domain.OrderMenu;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class OrderMenuResponseDTO {
 
-	private MenuResponseDTO menu;
-	private Long quantity;
+	private final MenuResponseDTO menu;
+	private final Long quantity;
 
 	public OrderMenuResponseDTO(OrderMenu orderMenu) {
 		this.menu = new MenuResponseDTO(orderMenu.getMenu());
