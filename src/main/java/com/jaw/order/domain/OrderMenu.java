@@ -13,6 +13,7 @@ import com.jaw.menu.domain.Menu;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,6 +22,7 @@ public class OrderMenu {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Setter
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

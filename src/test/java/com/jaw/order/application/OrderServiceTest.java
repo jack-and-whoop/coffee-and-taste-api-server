@@ -19,6 +19,7 @@ class OrderServiceTest {
 
 	private InMemoryOrderRepository orderRepository;
 	private InMemoryMenuRepository menuRepository;
+	private InMemoryOrderMenuRepository orderMenuRepository;
 	private OrderService orderService;
 
 	private Menu coldBrew;
@@ -28,7 +29,8 @@ class OrderServiceTest {
 	void setup() {
 		orderRepository = new InMemoryOrderRepository();
 		menuRepository = new InMemoryMenuRepository();
-		orderService = new OrderService(orderRepository, menuRepository);
+		orderMenuRepository = new InMemoryOrderMenuRepository();
+		orderService = new OrderService(orderRepository, orderMenuRepository, menuRepository);
 
 		coldBrew = menuRepository.save(menu("콜드 브루", 4_900));
 		icedCoffee = menuRepository.save(menu("아이스 커피", 4_500));
