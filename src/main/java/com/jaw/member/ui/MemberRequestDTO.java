@@ -7,6 +7,7 @@ import com.jaw.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -16,8 +17,10 @@ public class MemberRequestDTO {
 	private String nickname;
 	private LocalDate birthDate;
 	private String email;
-	private String password;
 	private String phoneNumber;
+
+	@Setter
+	private String password;
 
 	@Builder
 	public MemberRequestDTO(String name, String nickname, LocalDate birthDate, String email, String password, String phoneNumber) {
