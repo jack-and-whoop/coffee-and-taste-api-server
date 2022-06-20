@@ -1,33 +1,75 @@
 package com.jaw.member.ui;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.application.MemberService;
+import com.jaw.member.domain.Member;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.jaw.AbstractControllerTest;
-import com.jaw.member.application.MemberService;
-
-class MemberRestControllerTest extends AbstractControllerTest {
+@WebMvcTest(MemberRestController.class)
+class MemberRestControllerTest {
 
 	private static final String BASE_URI = "/api/members";
 
 	@Autowired
+	private MockMvc mvc;
+
+	@MockBean
 	private MemberService memberService;
+
+	@MockBean
+	private AuthenticationService authenticationService;
+
+	private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
+	private MemberRequestDTO request;
+	private MemberResponseDTO response;
+
+	@BeforeEach
+	void setup() {
+		Member member = Member.builder()
+			.id(1L)
+			.name("홍길동")
+			.nickname("hong")
+			.email("hong@gmail.com")
+			.password(passwordEncoder.encode("1234"))
+			.birthDate(LocalDate.of(2000, 1, 1))
+			.phoneNumber("010-1234-5678")
+			.build();
+
+		request = MemberRequestDTO.builder()
+			.build();
+
+		response = new MemberResponseDTO(member);
+
+		given(memberService.create(any(MemberRequestDTO.class))).willReturn(response);
+		given(memberService.findAll()).willReturn(List.of(response));
+	}
 
 	@DisplayName("새로운 회원을 등록한다.")
 	@Test
 	void create() throws Exception {
-		MemberRequestDTO request = member("홍길동", "hong", "hong@gmail.com", "1234", "010-1234-5678");
-
 		mvc.perform(post(BASE_URI)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
@@ -42,22 +84,8 @@ class MemberRestControllerTest extends AbstractControllerTest {
 	@DisplayName("회원 목록을 조회한다.")
 	@Test
 	void findAll() throws Exception {
-		MemberResponseDTO kim = memberService.create(member("김철수", "kim", "kim@gmail.com", "1234", "010-1234-5678"));
-		MemberResponseDTO park = memberService.create(member("박영희", "park", "park@gmail.com", "1234", "010-9012-3456"));
-
 		mvc.perform(get(BASE_URI))
 			.andExpect(status().isOk())
-			.andExpect(content().json(objectMapper.writeValueAsString(List.of(kim, park))));
-	}
-
-	private MemberRequestDTO member(String name, String nickname, String email, String password, String phoneNumber) {
-		return MemberRequestDTO.builder()
-			.name(name)
-			.nickname(nickname)
-			.birthDate(LocalDate.of(2000, 1, 1))
-			.email(email)
-			.password(password)
-			.phoneNumber(phoneNumber)
-			.build();
+			.andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
 	}
 }
