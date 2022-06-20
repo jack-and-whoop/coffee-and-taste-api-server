@@ -1,76 +1,112 @@
 package com.jaw.order.ui;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.domain.Role;
+import com.jaw.menu.domain.Menu;
+import com.jaw.order.application.OrderService;
+import com.jaw.order.domain.Order;
+import com.jaw.order.domain.OrderMenu;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import com.jaw.AbstractControllerTest;
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.domain.MenuRepository;
-import com.jaw.order.application.OrderService;
+import java.util.List;
 
-class OrderRestControllerTest extends AbstractControllerTest {
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-	@Autowired
-	private OrderService orderService;
+@WebMvcTest(OrderRestController.class)
+class OrderRestControllerTest {
 
-	@Autowired
-	private MenuRepository menuRepository;
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbfw";
 
-	private Menu coldBrew;
-	private Menu icedCoffee;
+    @Autowired
+    private MockMvc mvc;
 
-	@BeforeEach
-	void setup() {
-		coldBrew = menuRepository.save(menu("콜드 브루", 4_900));
-		icedCoffee = menuRepository.save(menu("아이스 커피", 4_500));
-	}
+    @MockBean
+    private OrderService orderService;
 
-	private Menu menu(String name, long price) {
-		return Menu.builder()
-			.name(name)
-			.price(price)
-			.build();
-	}
+    @MockBean
+    private AuthenticationService authenticationService;
 
-	@DisplayName("새로운 주문을 등록한다.")
-	@Test
-	void create() throws Exception {
-		OrderRequestDTO request = new OrderRequestDTO(coldBrew.getId(), 1L);
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-		mvc.perform(post("/api/orders")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$..orderMenus[0].menu.name").value(coldBrew.getName()))
-			.andExpect(jsonPath("$..orderMenus[0].menu.price").value(coldBrew.getPrice().intValue()));
-	}
+    private Order order;
 
-	@DisplayName("주문 목록을 조회한다.")
-	@Test
-	void findAll() throws Exception {
-		OrderResponseDTO coldBrewOrder = orderService.create(new OrderRequestDTO(coldBrew.getId(), 1L));
-		OrderResponseDTO icedCoffeeOrder = orderService.create(new OrderRequestDTO(icedCoffee.getId(), 1L));
+    @BeforeEach
+    void setup() {
+        Menu menu = Menu.builder()
+            .name("콜드 브루")
+            .price(4_900)
+            .build();
 
-		mvc.perform(get("/api/orders"))
-			.andExpect(status().isOk())
-			.andExpect(content().json(objectMapper.writeValueAsString(List.of(coldBrewOrder, icedCoffeeOrder))));
-	}
+        OrderMenu orderMenu = new OrderMenu(menu, 1L);
+        orderMenu.setId(1L);
 
-	@DisplayName("특정 주문을 조회한다.")
-	@Test
-	void findById() throws Exception {
-		OrderResponseDTO order = orderService.create(new OrderRequestDTO(coldBrew.getId(), 1L));
+        order = new Order();
+        order.setId(1L);
+        order.setOrderMenus(List.of(orderMenu));
 
-		mvc.perform(get("/api/orders/{id}", order.getId()))
-			.andExpect(status().isOk())
-			.andExpect(content().json(objectMapper.writeValueAsString(order)));
-	}
+        given(authenticationService.roles(any())).willReturn(List.of(new Role(1L, "ROLE_ADMIN")));
+        given(orderService.create(any())).willReturn(new OrderResponseDTO(order));
+        given(orderService.findById(any())).willReturn(new OrderResponseDTO(order));
+        given(orderService.findAll()).willReturn(List.of(new OrderResponseDTO(order)));
+    }
+
+    @DisplayName("새로운 주문을 등록한다.")
+    @Test
+    void create() throws Exception {
+        OrderRequestDTO request = new OrderRequestDTO(1L, 1L);
+
+        mvc.perform(post("/api/orders")
+                .header("Authorization", "Bearer " + VALID_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$..orderMenus[0].menu.name").value("콜드 브루"))
+            .andExpect(jsonPath("$..orderMenus[0].menu.price").value(4_900));
+    }
+
+    @DisplayName("인증된 토큰을 전달하지 않으면 새로운 주문을 등록할 수 없다.")
+    @Test
+    void createWithoutToken() throws Exception {
+        OrderRequestDTO request = new OrderRequestDTO(1L, 1L);
+
+        mvc.perform(post("/api/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("주문 목록을 조회한다.")
+    @Test
+    void findAll() throws Exception {
+        List<OrderResponseDTO> response = List.of(new OrderResponseDTO(order));
+
+        mvc.perform(get("/api/orders")
+                .header("Authorization", "Bearer " + VALID_TOKEN))
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
+    }
+
+    @DisplayName("특정 주문을 조회한다.")
+    @Test
+    void findById() throws Exception {
+        OrderResponseDTO response = new OrderResponseDTO(order);
+
+        mvc.perform(get("/api/orders/{id}", 1L)
+                .header("Authorization", "Bearer " + VALID_TOKEN))
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
+    }
 }

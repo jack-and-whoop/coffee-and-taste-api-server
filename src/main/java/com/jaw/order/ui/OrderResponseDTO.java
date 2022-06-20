@@ -1,19 +1,16 @@
 package com.jaw.order.ui;
 
+import com.jaw.order.domain.Order;
+import lombok.Getter;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.jaw.order.domain.Order;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 @Getter
-@NoArgsConstructor
 public class OrderResponseDTO {
 
-	private Long id;
-	private List<OrderMenuResponseDTO> orderMenus;
+	private final Long id;
+	private final List<OrderMenuResponseDTO> orderMenus;
 
 	public OrderResponseDTO(Order order) {
 		this.id = order.getId();
