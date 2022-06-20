@@ -3,6 +3,7 @@ package com.jaw.order.ui;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.domain.Role;
 import com.jaw.menu.domain.Menu;
 import com.jaw.order.application.OrderService;
 import com.jaw.order.domain.Order;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -26,6 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest {
+
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbfw";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbf0";
 
     @Autowired
     private MockMvc mvc;
@@ -54,6 +59,7 @@ class OrderRestControllerTest {
         order.setId(1L);
         order.setOrderMenus(List.of(orderMenu));
 
+        given(authenticationService.roles(any())).willReturn(List.of(new Role(1L, "ROLE_ADMIN")));
         given(orderService.create(any())).willReturn(new OrderResponseDTO(order));
         given(orderService.findById(any())).willReturn(new OrderResponseDTO(order));
         given(orderService.findAll()).willReturn(List.of(new OrderResponseDTO(order)));
@@ -65,6 +71,7 @@ class OrderRestControllerTest {
         OrderRequestDTO request = new OrderRequestDTO(1L, 1L);
 
         mvc.perform(post("/api/orders")
+                .header("Authorization", "Bearer " + VALID_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -77,7 +84,8 @@ class OrderRestControllerTest {
     void findAll() throws Exception {
         List<OrderResponseDTO> response = List.of(new OrderResponseDTO(order));
 
-        mvc.perform(get("/api/orders"))
+        mvc.perform(get("/api/orders")
+                .header("Authorization", "Bearer " + VALID_TOKEN))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
@@ -87,7 +95,8 @@ class OrderRestControllerTest {
     void findById() throws Exception {
         OrderResponseDTO response = new OrderResponseDTO(order);
 
-        mvc.perform(get("/api/orders/{id}", 1L))
+        mvc.perform(get("/api/orders/{id}", 1L)
+                .header("Authorization", "Bearer " + VALID_TOKEN))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
