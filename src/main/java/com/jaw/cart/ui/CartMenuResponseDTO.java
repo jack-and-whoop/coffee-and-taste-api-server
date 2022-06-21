@@ -8,10 +8,12 @@ import lombok.Getter;
 @Getter
 public class CartMenuResponseDTO {
 
+	private final Long id;
 	private final MenuResponseDTO menu;
 	private final long count;
 
 	public CartMenuResponseDTO(CartMenu cartMenu) {
+		this.id = cartMenu.getId();
 		this.menu = new MenuResponseDTO(cartMenu.getMenu());
 		this.count = cartMenu.getCount();
 	}
