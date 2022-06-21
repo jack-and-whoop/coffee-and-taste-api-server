@@ -39,7 +39,6 @@ public class CartService {
 		return new CartMenuResponseDTO(cartMenu);
 	}
 
-	@Transactional(readOnly = true)
 	public List<CartMenuResponseDTO> findAll(Long memberId, Long userId) {
 		validateUserAuthentication(memberId, userId);
 		Cart cart = findCartByMemberId(memberId);
