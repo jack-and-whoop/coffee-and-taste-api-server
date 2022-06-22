@@ -58,7 +58,7 @@ class OrderRestControllerTest {
         order.setOrderMenus(List.of(orderMenu));
 
         given(authenticationService.roles(any())).willReturn(List.of(new Role(1L, "ROLE_ADMIN")));
-        given(orderService.create(any())).willReturn(new OrderResponseDTO(order));
+        given(orderService.create(any(OrderRequestDTO.class), any(Long.class))).willReturn(new OrderResponseDTO(order));
         given(orderService.findById(any())).willReturn(new OrderResponseDTO(order));
         given(orderService.findAll()).willReturn(List.of(new OrderResponseDTO(order)));
     }
