@@ -2,6 +2,7 @@ package com.jaw.order.application;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.jaw.member.application.InMemoryMemberRepository;
+import com.jaw.member.domain.Member;
 import com.jaw.menu.application.InMemoryMenuRepository;
 import com.jaw.menu.domain.Menu;
 import com.jaw.menu.ui.MenuResponseDTO;
@@ -20,6 +23,7 @@ class OrderServiceTest {
 	private InMemoryOrderRepository orderRepository;
 	private InMemoryMenuRepository menuRepository;
 	private InMemoryOrderMenuRepository orderMenuRepository;
+	private InMemoryMemberRepository memberRepository;
 	private OrderService orderService;
 
 	private Menu coldBrew;
@@ -30,16 +34,20 @@ class OrderServiceTest {
 		orderRepository = new InMemoryOrderRepository();
 		menuRepository = new InMemoryMenuRepository();
 		orderMenuRepository = new InMemoryOrderMenuRepository();
-		orderService = new OrderService(orderRepository, orderMenuRepository, menuRepository);
+		memberRepository = new InMemoryMemberRepository();
+		orderService = new OrderService(orderRepository, orderMenuRepository, menuRepository, memberRepository);
 
 		coldBrew = menuRepository.save(menu("콜드 브루", 4_900));
 		icedCoffee = menuRepository.save(menu("아이스 커피", 4_500));
+
+		memberRepository.save(member());
 	}
 
 	@AfterEach
 	void teardown() {
 		orderRepository.clear();
 		menuRepository.clear();
+		memberRepository.clear();
 	}
 
 	@DisplayName("새로운 주문을 등록한다.")
@@ -47,7 +55,7 @@ class OrderServiceTest {
 	void create() {
 		OrderRequestDTO request = new OrderRequestDTO(coldBrew.getId(), 1L);
 
-		OrderResponseDTO order = orderService.create(request);
+		OrderResponseDTO order = orderService.create(request, member().getId());
 
 		assertThat(order.getOrderMenus()).hasSize(1);
 	}
@@ -55,7 +63,7 @@ class OrderServiceTest {
 	@DisplayName("특정 주문을 조회한다.")
 	@Test
 	void findById() {
-		OrderResponseDTO coldBrewOrder = orderService.create(new OrderRequestDTO(coldBrew.getId(), 1L));
+		OrderResponseDTO coldBrewOrder = orderService.create(new OrderRequestDTO(coldBrew.getId(), 1L), 1L);
 
 		OrderResponseDTO foundOrder = orderService.findById(coldBrewOrder.getId());
 
@@ -65,8 +73,8 @@ class OrderServiceTest {
 	@DisplayName("주문 목록을 조회한다.")
 	@Test
 	void findAll() {
-		orderService.create(new OrderRequestDTO(coldBrew.getId(), 1L));
-		orderService.create(new OrderRequestDTO(icedCoffee.getId(), 1L));
+		orderService.create(new OrderRequestDTO(coldBrew.getId(), 1L), 1L);
+		orderService.create(new OrderRequestDTO(icedCoffee.getId(), 1L), 1L);
 
 		List<OrderResponseDTO> orders = orderService.findAll();
 
@@ -77,6 +85,17 @@ class OrderServiceTest {
 		return Menu.builder()
 			.name(name)
 			.price(price)
+			.build();
+	}
+
+	private Member member() {
+		return Member.builder()
+			.id(1L)
+			.name("홍길동")
+			.nickname("hong")
+			.email("hong@example.com")
+			.birthDate(LocalDate.of(1998, 5, 1))
+			.phoneNumber("010-1111-2222")
 			.build();
 	}
 }

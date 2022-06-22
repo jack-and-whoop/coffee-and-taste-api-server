@@ -27,7 +27,8 @@ public class Order {
 	@OneToMany(cascade = CascadeType.REMOVE)
 	private List<OrderMenu> orderMenus = new ArrayList<>();
 
-	public Order(List<OrderMenu> orderMenus) {
+	public Order(Member member, List<OrderMenu> orderMenus) {
+		this.member = member;
 		this.orderMenus = orderMenus;
 	}
 }
