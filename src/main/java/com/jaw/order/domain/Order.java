@@ -19,12 +19,13 @@ public class Order {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "order_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Member member;
 
-	@OneToMany(cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
 	private List<OrderMenu> orderMenus = new ArrayList<>();
 
 	public Order(Member member, List<OrderMenu> orderMenus) {
