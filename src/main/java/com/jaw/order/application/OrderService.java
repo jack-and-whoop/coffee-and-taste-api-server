@@ -30,16 +30,18 @@ public class OrderService {
 	private final MemberRepository memberRepository;
 
 	public OrderResponseDTO create(OrderRequestDTO request, Long userId) {
+		Member member = memberRepository.findById(userId)
+			.orElseThrow(IllegalArgumentException::new);
+
 		Menu menu = menuRepository.findById(request.getMenuId())
 			.orElseThrow(IllegalArgumentException::new);
 
 		OrderMenu orderMenu = orderMenuRepository.save(new OrderMenu(menu, request.getQuantity()));
 
-		Member member = memberRepository.findById(userId)
-			.orElseThrow(IllegalArgumentException::new);
+		Order order = new Order(member);
+		order.addOrderMenu(orderMenu);
 
-		Order order = orderRepository.save(new Order(member, List.of(orderMenu)));
-		return new OrderResponseDTO(order);
+		return new OrderResponseDTO(orderRepository.save(order));
 	}
 
 	@Transactional(readOnly = true)

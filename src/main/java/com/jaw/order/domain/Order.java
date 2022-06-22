@@ -1,14 +1,24 @@
 package com.jaw.order.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import com.jaw.member.domain.Member;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -28,8 +38,12 @@ public class Order {
 	@OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
 	private List<OrderMenu> orderMenus = new ArrayList<>();
 
-	public Order(Member member, List<OrderMenu> orderMenus) {
+	public Order(Member member) {
 		this.member = member;
-		this.orderMenus = orderMenus;
+	}
+
+	public void addOrderMenu(OrderMenu orderMenu) {
+		orderMenu.setOrder(this);
+		orderMenus.add(orderMenu);
 	}
 }

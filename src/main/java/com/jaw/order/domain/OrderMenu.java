@@ -28,10 +28,12 @@ public class OrderMenu {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "menu_id")
 	private Menu menu;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id")
+	@Setter
 	private Order order;
 
 	@Column(nullable = false)
