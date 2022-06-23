@@ -1,9 +1,9 @@
 package com.jaw.cart.ui;
 
+import static com.jaw.Fixtures.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -40,23 +40,8 @@ class CartRestControllerTest extends AbstractControllerTest {
 
 	@BeforeEach
 	void setup() {
-		member = memberRepository.save(Member.builder()
-			.name("홍길동")
-			.nickname("hong")
-			.birthDate(LocalDate.now())
-			.email("hong@gmail.com")
-			.password("1234")
-			.phoneNumber("010-1234-5678")
-			.build());
-
-		other = memberRepository.save(Member.builder()
-			.name("김길동")
-			.nickname("kim")
-			.birthDate(LocalDate.now())
-			.email("kim@gmail.com")
-			.password("1234")
-			.phoneNumber("010-2222-3333")
-			.build());
+		member = memberRepository.save(member());
+		other = memberRepository.save(other());
 	}
 
 	@DisplayName("유효한 인증 토큰을 함께 전달할 경우, 장바구니에 메뉴를 추가할 수 있다.")

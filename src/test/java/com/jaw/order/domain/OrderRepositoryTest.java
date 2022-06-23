@@ -1,5 +1,6 @@
 package com.jaw.order.domain;
 
+import static com.jaw.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ class OrderRepositoryTest {
 	void create() {
 		Menu menu = Menu.builder().build();
 		OrderMenu orderMenu = orderMenuRepository.save(new OrderMenu(menu, 1L));
-		Member member = Member.builder().build();
+		Member member = member();
 		Order orderRequest = new Order(member);
 		orderRequest.addOrderMenu(orderMenu);
 

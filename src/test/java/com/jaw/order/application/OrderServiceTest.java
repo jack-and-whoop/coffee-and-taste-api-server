@@ -1,8 +1,8 @@
 package com.jaw.order.application;
 
+import static com.jaw.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.jaw.member.application.InMemoryMemberRepository;
-import com.jaw.member.domain.Member;
 import com.jaw.menu.application.InMemoryMenuRepository;
 import com.jaw.menu.domain.Menu;
 import com.jaw.menu.ui.MenuResponseDTO;
@@ -85,17 +84,6 @@ class OrderServiceTest {
 		return Menu.builder()
 			.name(name)
 			.price(price)
-			.build();
-	}
-
-	private Member member() {
-		return Member.builder()
-			.id(1L)
-			.name("홍길동")
-			.nickname("hong")
-			.email("hong@example.com")
-			.birthDate(LocalDate.of(1998, 5, 1))
-			.phoneNumber("010-1111-2222")
 			.build();
 	}
 }
