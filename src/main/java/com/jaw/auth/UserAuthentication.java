@@ -1,7 +1,6 @@
 package com.jaw.auth;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -10,6 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.jaw.member.domain.Role;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = true)
 public class UserAuthentication extends AbstractAuthenticationToken {
 
 	private final Long userId;
@@ -42,22 +44,5 @@ public class UserAuthentication extends AbstractAuthenticationToken {
 	@Override
 	public Object getCredentials() {
 		return null;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		if (!super.equals(o))
-			return false;
-		UserAuthentication that = (UserAuthentication)o;
-		return Objects.equals(userId, that.userId);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), userId);
 	}
 }
