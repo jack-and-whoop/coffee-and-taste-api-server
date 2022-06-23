@@ -1,5 +1,6 @@
 package com.jaw.menu.ui;
 
+import static com.jaw.Fixtures.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,7 +28,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(OBJECT_MAPPER.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.name").value("아이스 아메리카노"))
             .andExpect(jsonPath("$.englishName").value("Iced Americano"))
@@ -45,7 +46,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(get(BASE_URI))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(menus)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(menus)));
     }
 
     @DisplayName("특정 메뉴를 조회한다.")
@@ -55,7 +56,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(get(BASE_URI + "/{menuId}", mangoBanana.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(mangoBanana)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(mangoBanana)));
     }
 
     private MenuRequestDTO menuCreateRequest(String name, String englishName, long price) {

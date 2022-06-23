@@ -1,5 +1,6 @@
 package com.jaw.auth;
 
+import static com.jaw.Fixtures.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -18,7 +19,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jaw.exception.LoginFailedException;
 import com.jaw.member.application.AuthenticationService;
 
@@ -38,8 +38,6 @@ class AuthControllerTest {
 	@MockBean
 	private AuthenticationService authenticationService;
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
-
 	@BeforeEach
 	void setup() {
 		given(authenticationService.login(VALID_EMAIL, VALID_PASSWORD))
@@ -55,8 +53,8 @@ class AuthControllerTest {
 	@DisplayName("유효한 이메일과 비밀번호로 로그인 시, 토큰이 반환된다.")
 	@Test
 	void loginWithValidEmailAndPassword() throws Exception {
-		String requestBody = objectMapper.writeValueAsString(new LoginRequestDTO(VALID_EMAIL, VALID_PASSWORD));
-		String responseBody = objectMapper.writeValueAsString(new LoginResponseDTO(VALID_TOKEN));
+		String requestBody = OBJECT_MAPPER.writeValueAsString(new LoginRequestDTO(VALID_EMAIL, VALID_PASSWORD));
+		String responseBody = OBJECT_MAPPER.writeValueAsString(new LoginResponseDTO(VALID_TOKEN));
 
 		mvc.perform(post(LOGIN_URI)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +67,7 @@ class AuthControllerTest {
 	@MethodSource("invalidLoginRequestArguments")
 	@ParameterizedTest
 	void loginWithInvalidEmailOrPassword(String email, String password) throws Exception {
-		String requestBody = objectMapper.writeValueAsString(new LoginRequestDTO(email, password));
+		String requestBody = OBJECT_MAPPER.writeValueAsString(new LoginRequestDTO(email, password));
 
 		mvc.perform(post(LOGIN_URI)
 				.contentType(MediaType.APPLICATION_JSON)

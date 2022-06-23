@@ -42,7 +42,7 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(OBJECT_MAPPER.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.name").value("블렌디드"))
             .andExpect(jsonPath("$.englishName").value("Blended"))
@@ -62,7 +62,7 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(get(BASE_URI))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(menuGroups)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(menuGroups)));
     }
 
     @DisplayName("특정 메뉴 그룹을 조회한다.")
@@ -74,7 +74,7 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(get(BASE_URI + "/{menuGroupId}", frappuccino.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(menuGroup)));
     }
 
     @DisplayName("특정 메뉴 그룹 조회 시, 하위의 메뉴 목록을 함께 조회한다.")
@@ -88,6 +88,6 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(get(BASE_URI + "/{menuGroupId}/menus", espresso.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(menuGroup)));
     }
 }

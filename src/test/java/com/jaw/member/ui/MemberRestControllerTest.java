@@ -18,8 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jaw.member.application.AuthenticationService;
 import com.jaw.member.application.MemberService;
 
@@ -36,8 +34,6 @@ class MemberRestControllerTest {
 
 	@MockBean
 	private AuthenticationService authenticationService;
-
-	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	private MemberRequestDTO request;
 	private MemberResponseDTO response;
@@ -58,7 +54,7 @@ class MemberRestControllerTest {
 	void create() throws Exception {
 		mvc.perform(post(BASE_URI)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.name").value("홍길동"))
 			.andExpect(jsonPath("$.nickname").value("hong"))
@@ -72,6 +68,6 @@ class MemberRestControllerTest {
 	void findAll() throws Exception {
 		mvc.perform(get(BASE_URI))
 			.andExpect(status().isOk())
-			.andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
+			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(List.of(response))));
 	}
 }

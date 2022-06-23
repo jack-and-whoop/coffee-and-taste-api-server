@@ -54,7 +54,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 		mvc.perform(post(BASE_URI, member.getId())
 				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId()))
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.menu.id").value(americano.getId()))
 			.andExpect(jsonPath("$.menu.name").value(americano.getName()))
@@ -72,7 +72,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 		mvc.perform(post(BASE_URI, other.getId())
 				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId()))
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
 			.andExpect(status().isForbidden());
 	}
 
@@ -86,7 +86,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 		mvc.perform(post(BASE_URI, member.getId())
 				.header("Authorization", "Bearer " + INVALID_TOKEN)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
 			.andExpect(status().isUnauthorized());
 	}
 
@@ -99,7 +99,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 
 		mvc.perform(post(BASE_URI, member.getId())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
 			.andExpect(status().isUnauthorized());
 	}
 
@@ -119,7 +119,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 		mvc.perform(get(BASE_URI, member.getId())
 				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId())))
 			.andExpect(status().isOk())
-			.andExpect(content().json(objectMapper.writeValueAsString(responses)));
+			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(responses)));
 	}
 
 	@DisplayName("회원은 다른 회원의 장바구니에 담긴 메뉴 목록을 조회할 수 없다.")
