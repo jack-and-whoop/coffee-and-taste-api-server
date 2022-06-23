@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.jaw.auth.JwtUtil;
 import com.jaw.category.domain.Category;
 import com.jaw.member.domain.Member;
 import com.jaw.menu.domain.Menu;
@@ -12,6 +13,8 @@ import com.jaw.menu.domain.MenuGroup;
 
 public class Fixtures {
 
+	public static final String SECRET_KEY = "this-is-coffee-and-taste-api-server";
+	public static final JwtUtil JWT_UTIL = new JwtUtil(SECRET_KEY);
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
 	private Fixtures() {
