@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import com.jaw.AbstractControllerTest;
-import com.jaw.auth.JwtUtil;
 import com.jaw.cart.application.CartService;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
@@ -24,7 +23,6 @@ class CartRestControllerTest extends AbstractControllerTest {
 
 	private static final String BASE_URI = "/api/members/{memberId}/cart";
 	private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbf0";
-	private static final JwtUtil JWT_UTIL = new JwtUtil("this-is-coffee-and-taste-api-server");
 
 	@Autowired
 	private MemberRepository memberRepository;
