@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.jaw.Fixtures;
 import com.jaw.cart.ui.CartMenuRequestDTO;
 import com.jaw.cart.ui.CartMenuResponseDTO;
 import com.jaw.member.application.InMemoryMemberRepository;
@@ -46,8 +45,8 @@ class CartServiceTest {
 	@Test
 	void addMenu() {
 		Member member = memberRepository.save(member());
-		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900));
-		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500));
+		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
+		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));
 
 		CartMenuRequestDTO vanillaFlatWhiteRequest = new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1);
 		CartMenuRequestDTO icedCaffeMochaRequest = new CartMenuRequestDTO(icedCaffeMocha.getId(), 2);
@@ -59,13 +58,4 @@ class CartServiceTest {
 
 		assertThat(cartMenus).hasSize(2);
 	}
-
-	private Menu menu(String name, long price) {
-		return Menu.builder()
-			.name(name)
-			.price(price)
-			.onSale(true)
-			.build();
-	}
-
 }

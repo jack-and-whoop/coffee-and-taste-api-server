@@ -36,8 +36,8 @@ class OrderServiceTest {
 		memberRepository = new InMemoryMemberRepository();
 		orderService = new OrderService(orderRepository, orderMenuRepository, menuRepository, memberRepository);
 
-		coldBrew = menuRepository.save(menu("콜드 브루", 4_900));
-		icedCoffee = menuRepository.save(menu("아이스 커피", 4_500));
+		coldBrew = menuRepository.save(menu("콜드 브루", 4_900L));
+		icedCoffee = menuRepository.save(menu("아이스 커피", 4_500L));
 
 		memberRepository.save(member());
 	}
@@ -78,12 +78,5 @@ class OrderServiceTest {
 		List<OrderResponseDTO> orders = orderService.findAll();
 
 		assertThat(orders).hasSize(2);
-	}
-
-	private Menu menu(String name, long price) {
-		return Menu.builder()
-			.name(name)
-			.price(price)
-			.build();
 	}
 }

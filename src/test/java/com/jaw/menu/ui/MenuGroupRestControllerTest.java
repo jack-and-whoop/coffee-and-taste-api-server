@@ -1,10 +1,11 @@
 package com.jaw.menu.ui;
 
-import com.jaw.AbstractControllerTest;
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.domain.MenuGroup;
-import com.jaw.menu.domain.MenuGroupRepository;
-import com.jaw.menu.domain.MenuRepository;
+import static com.jaw.Fixtures.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.jaw.Fixtures.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.jaw.AbstractControllerTest;
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.domain.MenuGroup;
+import com.jaw.menu.domain.MenuGroupRepository;
+import com.jaw.menu.domain.MenuRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -81,23 +81,13 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
     @Test
     void findWithMenusById() throws Exception {
         MenuGroup espresso = menuGroupRepository.save(menuGroup("에스프레소", "Espresso"));
-        Menu macchiato = menuRepository.save(menu("에스프레소 마키아또", "Espresso Macchiato", 4_000, espresso));
-        Menu conPanna = menuRepository.save(menu("에스프레소 콘 파나", "Espresso Con Panna", 4_200, espresso));
+        Menu macchiato = menuRepository.save(menu("에스프레소 마키아또", 4_000L, espresso));
+        Menu conPanna = menuRepository.save(menu("에스프레소 콘 파나", 4_200L, espresso));
 
         MenuGroupMenusResponseDTO menuGroup = new MenuGroupMenusResponseDTO(espresso, List.of(macchiato, conPanna));
 
         mvc.perform(get(BASE_URI + "/{menuGroupId}/menus", espresso.getId()))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
-    }
-
-    private Menu menu(String name, String englishName, long price, MenuGroup menuGroup) {
-        return Menu.builder()
-            .name(name)
-            .englishName(englishName)
-            .price(price)
-            .onSale(true)
-            .menuGroup(menuGroup)
-            .build();
     }
 }

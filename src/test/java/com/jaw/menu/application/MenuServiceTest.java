@@ -1,18 +1,20 @@
 package com.jaw.menu.application;
 
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.ui.MenuRequestDTO;
-import com.jaw.menu.ui.MenuResponseDTO;
+import static com.jaw.Fixtures.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.ui.MenuRequestDTO;
+import com.jaw.menu.ui.MenuResponseDTO;
 
 class MenuServiceTest {
 
@@ -51,8 +53,8 @@ class MenuServiceTest {
     @DisplayName("전체 메뉴 목록을 조회한다.")
     @Test
     void findAll() {
-        Menu menu1 = menu("바닐라 플랫 화이트", "Vanilla Flat White", 5_900, true);
-        Menu menu2 = menu("아이스 카페 모카", "Iced Caffe Mocha", 5_500, false);
+        Menu menu1 = menu("바닐라 플랫 화이트", 5_900L);
+        Menu menu2 = menu("아이스 카페 모카", 5_500L);
         menuRepository.save(menu1);
         menuRepository.save(menu2);
 
@@ -64,7 +66,7 @@ class MenuServiceTest {
     @DisplayName("특정 메뉴를 조회한다.")
     @Test
     void findById() {
-        Menu menu = menuRepository.save(menu("바닐라 플랫 화이트", "Vanilla Flat White", 5_900, true));
+        Menu menu = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
 
         MenuResponseDTO foundMenu = menuService.findById(menu.getId());
 
@@ -74,14 +76,5 @@ class MenuServiceTest {
             () -> assertThat(foundMenu.getPrice()).isEqualTo(menu.getPrice()),
             () -> assertThat(foundMenu.isOnSale()).isEqualTo(menu.isOnSale())
         );
-    }
-
-    private Menu menu(String name, String englishName, long price, boolean onSale) {
-        return Menu.builder()
-            .name(name)
-            .englishName(englishName)
-            .price(price)
-            .onSale(onSale)
-            .build();
     }
 }

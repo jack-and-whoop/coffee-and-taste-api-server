@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.jaw.category.domain.Category;
 import com.jaw.member.domain.Member;
+import com.jaw.menu.domain.Menu;
 import com.jaw.menu.domain.MenuGroup;
 
 public class Fixtures {
@@ -56,6 +57,23 @@ public class Fixtures {
 			.name(name)
 			.englishName(englishName)
 			.category(category)
+			.build();
+	}
+
+	public static Menu menu(String name, Long price, MenuGroup menuGroup) {
+		return Menu.builder()
+			.name(name)
+			.price(price)
+			.onSale(true)
+			.menuGroup(menuGroup)
+			.build();
+	}
+
+	public static Menu menu(String name, Long price) {
+		return Menu.builder()
+			.name(name)
+			.price(price)
+			.onSale(true)
 			.build();
 	}
 }
