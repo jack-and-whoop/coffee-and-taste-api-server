@@ -1,10 +1,14 @@
 package com.jaw.member.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.jaw.member.application.AuthenticationService;
-import com.jaw.member.application.MemberService;
-import com.jaw.member.domain.Member;
+import static com.jaw.Fixtures.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,19 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.application.MemberService;
 
 @WebMvcTest(MemberRestController.class)
 class MemberRestControllerTest {
@@ -40,7 +37,6 @@ class MemberRestControllerTest {
 	@MockBean
 	private AuthenticationService authenticationService;
 
-	private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	private MemberRequestDTO request;
@@ -48,20 +44,10 @@ class MemberRestControllerTest {
 
 	@BeforeEach
 	void setup() {
-		Member member = Member.builder()
-			.id(1L)
-			.name("홍길동")
-			.nickname("hong")
-			.email("hong@gmail.com")
-			.password(passwordEncoder.encode("1234"))
-			.birthDate(LocalDate.of(2000, 1, 1))
-			.phoneNumber("010-1234-5678")
-			.build();
-
 		request = MemberRequestDTO.builder()
 			.build();
 
-		response = new MemberResponseDTO(member);
+		response = new MemberResponseDTO(member());
 
 		given(memberService.create(any(MemberRequestDTO.class))).willReturn(response);
 		given(memberService.findAll()).willReturn(List.of(response));
@@ -76,8 +62,8 @@ class MemberRestControllerTest {
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.name").value("홍길동"))
 			.andExpect(jsonPath("$.nickname").value("hong"))
-			.andExpect(jsonPath("$.birthDate").value(LocalDate.of(2000, 1, 1).format(DateTimeFormatter.ISO_DATE)))
-			.andExpect(jsonPath("$.email").value("hong@gmail.com"))
+			.andExpect(jsonPath("$.birthDate").value(LocalDate.of(1992, 1, 1).format(DateTimeFormatter.ISO_DATE)))
+			.andExpect(jsonPath("$.email").value("hong@example.com"))
 			.andExpect(jsonPath("$.phoneNumber").value("010-1234-5678"));
 	}
 
