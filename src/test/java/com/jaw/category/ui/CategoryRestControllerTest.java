@@ -79,12 +79,4 @@ class CategoryRestControllerTest extends AbstractControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
-
-    private MenuGroup menuGroup(String name, String englishName, Category category) {
-        return MenuGroup.builder()
-            .name(name)
-            .englishName(englishName)
-            .category(category)
-            .build();
-    }
 }

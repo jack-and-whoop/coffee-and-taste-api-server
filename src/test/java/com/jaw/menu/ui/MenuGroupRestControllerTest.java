@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.jaw.Fixtures.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -88,13 +89,6 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
         mvc.perform(get(BASE_URI + "/{menuGroupId}/menus", espresso.getId()))
             .andExpect(status().isOk())
             .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
-    }
-
-    private MenuGroup menuGroup(String name, String englishName) {
-        return MenuGroup.builder()
-            .name(name)
-            .englishName(englishName)
-            .build();
     }
 
     private Menu menu(String name, String englishName, long price, MenuGroup menuGroup) {

@@ -1,19 +1,21 @@
 package com.jaw.menu.application;
 
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.domain.MenuGroup;
-import com.jaw.menu.ui.MenuGroupMenusResponseDTO;
-import com.jaw.menu.ui.MenuGroupRequestDTO;
-import com.jaw.menu.ui.MenuGroupResponseDTO;
+import static com.jaw.Fixtures.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.domain.MenuGroup;
+import com.jaw.menu.ui.MenuGroupMenusResponseDTO;
+import com.jaw.menu.ui.MenuGroupRequestDTO;
+import com.jaw.menu.ui.MenuGroupResponseDTO;
 
 class MenuGroupServiceTest {
 
@@ -78,13 +80,6 @@ class MenuGroupServiceTest {
         assertThat(menuGroup.getName()).isEqualTo(blended.getName());
         assertThat(menuGroup.getEnglishName()).isEqualTo(blended.getEnglishName());
         assertThat(menuGroup.getMenus()).hasSize(2);
-    }
-
-    private MenuGroup menuGroup(String name, String englishName) {
-        return MenuGroup.builder()
-            .name(name)
-            .englishName(englishName)
-            .build();
     }
 
     private Menu menu(String name, String englishName, long price, MenuGroup menuGroup) {
