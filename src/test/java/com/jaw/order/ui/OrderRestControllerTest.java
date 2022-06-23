@@ -1,13 +1,13 @@
 package com.jaw.order.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.jaw.member.application.AuthenticationService;
-import com.jaw.member.domain.Role;
-import com.jaw.menu.domain.Menu;
-import com.jaw.order.application.OrderService;
-import com.jaw.order.domain.Order;
-import com.jaw.order.domain.OrderMenu;
+import static com.jaw.Fixtures.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,13 +17,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.domain.Role;
+import com.jaw.menu.domain.Menu;
+import com.jaw.order.application.OrderService;
+import com.jaw.order.domain.Order;
+import com.jaw.order.domain.OrderMenu;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest {
@@ -39,16 +38,11 @@ class OrderRestControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
     private Order order;
 
     @BeforeEach
     void setup() {
-        Menu menu = Menu.builder()
-            .name("콜드 브루")
-            .price(4_900)
-            .build();
+        Menu menu = menu("콜드 브루", 4_900L);
 
         OrderMenu orderMenu = new OrderMenu(menu, 1L);
         orderMenu.setId(1L);
@@ -71,7 +65,7 @@ class OrderRestControllerTest {
         mvc.perform(post("/api/orders")
                 .header("Authorization", "Bearer " + VALID_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(OBJECT_MAPPER.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$..orderMenus[0].menu.name").value("콜드 브루"))
             .andExpect(jsonPath("$..orderMenus[0].menu.price").value(4_900));
@@ -84,7 +78,7 @@ class OrderRestControllerTest {
 
         mvc.perform(post("/api/orders")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(OBJECT_MAPPER.writeValueAsString(request)))
             .andExpect(status().isUnauthorized());
     }
 
@@ -96,7 +90,7 @@ class OrderRestControllerTest {
         mvc.perform(get("/api/orders")
                 .header("Authorization", "Bearer " + VALID_TOKEN))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(response)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(response)));
     }
 
     @DisplayName("특정 주문을 조회한다.")
@@ -107,6 +101,6 @@ class OrderRestControllerTest {
         mvc.perform(get("/api/orders/{id}", 1L)
                 .header("Authorization", "Bearer " + VALID_TOKEN))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(response)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(response)));
     }
 }

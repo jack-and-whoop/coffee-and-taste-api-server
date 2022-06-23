@@ -1,5 +1,6 @@
 package com.jaw.auth;
 
+import static com.jaw.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.stream.Stream;
@@ -15,9 +16,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.jaw.exception.InvalidTokenException;
 
 class JwtUtilTest {
-
-	private static final String SECRET_KEY = "this-is-coffee-and-taste-api-server";
-	private static final JwtUtil JWT_UTIL = new JwtUtil(SECRET_KEY);
 
 	@DisplayName("사용자 id가 유효하면, 토큰을 생성 후 반환한다.")
 	@ValueSource(longs = {1, Long.MAX_VALUE})

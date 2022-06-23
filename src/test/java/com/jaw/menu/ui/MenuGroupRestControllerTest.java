@@ -1,10 +1,11 @@
 package com.jaw.menu.ui;
 
-import com.jaw.AbstractControllerTest;
-import com.jaw.menu.domain.Menu;
-import com.jaw.menu.domain.MenuGroup;
-import com.jaw.menu.domain.MenuGroupRepository;
-import com.jaw.menu.domain.MenuRepository;
+import static com.jaw.Fixtures.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.jaw.AbstractControllerTest;
+import com.jaw.menu.domain.Menu;
+import com.jaw.menu.domain.MenuGroup;
+import com.jaw.menu.domain.MenuGroupRepository;
+import com.jaw.menu.domain.MenuRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,7 +42,7 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                .content(OBJECT_MAPPER.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.name").value("블렌디드"))
             .andExpect(jsonPath("$.englishName").value("Blended"))
@@ -61,7 +62,7 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(get(BASE_URI))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(menuGroups)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(menuGroups)));
     }
 
     @DisplayName("특정 메뉴 그룹을 조회한다.")
@@ -73,37 +74,20 @@ class MenuGroupRestControllerTest extends AbstractControllerTest {
 
         mvc.perform(get(BASE_URI + "/{menuGroupId}", frappuccino.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(menuGroup)));
     }
 
     @DisplayName("특정 메뉴 그룹 조회 시, 하위의 메뉴 목록을 함께 조회한다.")
     @Test
     void findWithMenusById() throws Exception {
         MenuGroup espresso = menuGroupRepository.save(menuGroup("에스프레소", "Espresso"));
-        Menu macchiato = menuRepository.save(menu("에스프레소 마키아또", "Espresso Macchiato", 4_000, espresso));
-        Menu conPanna = menuRepository.save(menu("에스프레소 콘 파나", "Espresso Con Panna", 4_200, espresso));
+        Menu macchiato = menuRepository.save(menu("에스프레소 마키아또", 4_000L, espresso));
+        Menu conPanna = menuRepository.save(menu("에스프레소 콘 파나", 4_200L, espresso));
 
         MenuGroupMenusResponseDTO menuGroup = new MenuGroupMenusResponseDTO(espresso, List.of(macchiato, conPanna));
 
         mvc.perform(get(BASE_URI + "/{menuGroupId}/menus", espresso.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(menuGroup)));
-    }
-
-    private MenuGroup menuGroup(String name, String englishName) {
-        return MenuGroup.builder()
-            .name(name)
-            .englishName(englishName)
-            .build();
-    }
-
-    private Menu menu(String name, String englishName, long price, MenuGroup menuGroup) {
-        return Menu.builder()
-            .name(name)
-            .englishName(englishName)
-            .price(price)
-            .onSale(true)
-            .menuGroup(menuGroup)
-            .build();
+            .andExpect(content().json(OBJECT_MAPPER.writeValueAsString(menuGroup)));
     }
 }

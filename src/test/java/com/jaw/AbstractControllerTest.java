@@ -8,9 +8,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -21,5 +18,4 @@ public abstract class AbstractControllerTest {
 	@Autowired
 	protected MockMvc mvc;
 
-	protected final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 }

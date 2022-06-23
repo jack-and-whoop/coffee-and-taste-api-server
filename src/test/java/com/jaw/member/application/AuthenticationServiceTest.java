@@ -1,5 +1,6 @@
 package com.jaw.member.application;
 
+import static com.jaw.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -8,10 +9,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.jaw.auth.JwtUtil;
 import com.jaw.exception.InvalidTokenException;
 import com.jaw.exception.LoginFailedException;
 import com.jaw.member.domain.Member;
@@ -20,7 +18,6 @@ import com.jaw.member.domain.RoleRepository;
 
 class AuthenticationServiceTest {
 
-	private static final String SECRET_KEY = "this-is-coffee-and-taste-api-server";
 	private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbfw";
 	private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.1Zx-1BRb0VJflU1JBYaP_FqrL6S53uRBn5DhYablbf0";
 	private static final String VALID_EMAIL = "aaa@gmail.com";
@@ -34,13 +31,11 @@ class AuthenticationServiceTest {
 
 	@BeforeEach
 	void setup() {
-		JwtUtil jwtUtil = new JwtUtil(SECRET_KEY);
-		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		authenticationService = new AuthenticationService(memberRepository, roleRepository, jwtUtil, passwordEncoder);
+		authenticationService = new AuthenticationService(memberRepository, roleRepository, JWT_UTIL, PASSWORD_ENCODER);
 
 		Member member = Member.builder()
 			.id(1L)
-			.password(passwordEncoder.encode(VALID_PASSWORD))
+			.password(PASSWORD_ENCODER.encode(VALID_PASSWORD))
 			.build();
 
 		given(memberRepository.findByEmail(VALID_EMAIL)).willReturn(Optional.of(member));

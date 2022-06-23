@@ -1,5 +1,6 @@
 package com.jaw.cart.application;
 
+import static com.jaw.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -43,9 +44,9 @@ class CartServiceTest {
 	@DisplayName("장바구니에 메뉴를 추가한다.")
 	@Test
 	void addMenu() {
-		Member member = memberRepository.save(member("고길동"));
-		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900));
-		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500));
+		Member member = memberRepository.save(member());
+		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
+		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));
 
 		CartMenuRequestDTO vanillaFlatWhiteRequest = new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1);
 		CartMenuRequestDTO icedCaffeMochaRequest = new CartMenuRequestDTO(icedCaffeMocha.getId(), 2);
@@ -57,19 +58,4 @@ class CartServiceTest {
 
 		assertThat(cartMenus).hasSize(2);
 	}
-
-	private Member member(String name) {
-		return Member.builder()
-			.name(name)
-			.build();
-	}
-
-	private Menu menu(String name, long price) {
-		return Menu.builder()
-			.name(name)
-			.price(price)
-			.onSale(true)
-			.build();
-	}
-
 }
