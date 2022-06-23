@@ -1,5 +1,6 @@
 package com.jaw.category.ui;
 
+import static com.jaw.Fixtures.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,8 +42,8 @@ class CategoryRestControllerTest extends AbstractControllerTest {
     @DisplayName("카테고리 목록을 조회한다.")
     @Test
     void findAll() throws Exception {
-		Category beverage = categoryRepository.save(new Category("음료"));
-		Category food = categoryRepository.save(new Category("푸드"));
+		Category beverage = categoryRepository.save(category("음료"));
+		Category food = categoryRepository.save(category("푸드"));
 
 		CategoryResponseDTO beverageResponse = new CategoryResponseDTO(beverage);
 		CategoryResponseDTO foodResponse = new CategoryResponseDTO(food);
@@ -55,7 +56,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
     @DisplayName("특정 카테고리를 조회한다.")
     @Test
     void findById() throws Exception {
-        Category category = categoryRepository.save(new Category("음료"));
+        Category category = categoryRepository.save(category("음료"));
 
 		CategoryResponseDTO response = new CategoryResponseDTO(category);
 
@@ -68,7 +69,7 @@ class CategoryRestControllerTest extends AbstractControllerTest {
     @DisplayName("특정 카테고리 조회 시, 하위의 메뉴 그룹 목록을 함께 조회한다.")
     @Test
     void findWithMenuGroupsById() throws Exception {
-        Category category = categoryRepository.save(new Category("탄산음료"));
+        Category category = categoryRepository.save(category("탄산음료"));
 		MenuGroup coke = menuGroupRepository.save(menuGroup("콜라", "Coke", category));
 		MenuGroup cider = menuGroupRepository.save(menuGroup("사이다", "Cider", category));
 

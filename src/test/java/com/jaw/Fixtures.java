@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.jaw.category.domain.Category;
 import com.jaw.member.domain.Member;
 
 public class Fixtures {
@@ -36,5 +37,9 @@ public class Fixtures {
 			.birthDate(LocalDate.of(1994, 1, 1))
 			.phoneNumber("010-2222-3333")
 			.build();
+	}
+
+	public static Category category(String name) {
+		return new Category(name);
 	}
 }

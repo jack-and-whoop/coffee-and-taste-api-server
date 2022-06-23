@@ -1,5 +1,6 @@
 package com.jaw.category.application;
 
+import com.jaw.Fixtures;
 import com.jaw.category.domain.Category;
 import com.jaw.category.ui.CategoryMenuGroupsResponseDTO;
 import com.jaw.category.ui.CategoryRequestDTO;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
+import static com.jaw.Fixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CategoryServiceTest {
@@ -45,8 +47,8 @@ class CategoryServiceTest {
     @DisplayName("전체 카테고리 목록을 조회한다.")
     @Test
     void findAll() {
-        categoryRepository.save(new Category("음료"));
-        categoryRepository.save(new Category("푸드"));
+        categoryRepository.save(category("음료"));
+        categoryRepository.save(category("푸드"));
         List<CategoryResponseDTO> categories = categoryService.findAll();
         assertThat(categories).hasSize(2);
     }
@@ -54,7 +56,7 @@ class CategoryServiceTest {
     @DisplayName("특정 카테고리를 조회한다.")
     @Test
     void findById() {
-        Category category = categoryRepository.save(new Category("음료"));
+        Category category = categoryRepository.save(category("음료"));
         Optional<Category> foundCategory = categoryRepository.findById(category.getId());
         assertThat(foundCategory).contains(category);
     }
@@ -62,7 +64,7 @@ class CategoryServiceTest {
     @DisplayName("특정 카테고리 조회 시, 하위의 메뉴 그룹 목록을 함께 조회한다.")
     @Test
     void findWithMenuGroupsById() {
-        Category category = categoryRepository.save(categoryRepository.save(new Category("탄산음료")));
+        Category category = categoryRepository.save(category("탄산음료"));
 
         menuGroupRepository.save(menuGroup("콜라", "Coke", category));
         menuGroupRepository.save(menuGroup("사이다", "Cider", category));
