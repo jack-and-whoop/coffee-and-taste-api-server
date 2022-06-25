@@ -83,7 +83,7 @@ public class CartService {
 			.collect(Collectors.toList());
 
 		Order order = new Order(member);
-		order.setOrderMenus(orderMenus);
+		order.addOrderMenus(orderMenus);
 
 		return new CartMenuOrderResponseDTO(orderRepository.save(order));
 	}

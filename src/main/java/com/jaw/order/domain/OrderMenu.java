@@ -31,11 +31,6 @@ public class OrderMenu {
 	@JoinColumn(name = "menu_id")
 	private Menu menu;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_id")
-	@Setter
-	private Order order;
-
 	@Column(nullable = false)
 	private Long quantity;
 
