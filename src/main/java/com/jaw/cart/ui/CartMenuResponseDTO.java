@@ -10,11 +10,11 @@ public class CartMenuResponseDTO {
 
 	private final Long id;
 	private final MenuResponseDTO menu;
-	private final long count;
+	private final Long quantity;
 
 	public CartMenuResponseDTO(CartMenu cartMenu) {
 		this.id = cartMenu.getId();
 		this.menu = new MenuResponseDTO(cartMenu.getMenu());
-		this.count = cartMenu.getCount();
+		this.quantity = cartMenu.getQuantity();
 	}
 }

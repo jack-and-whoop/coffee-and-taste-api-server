@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.jaw.menu.domain.Menu;
+import com.jaw.order.domain.OrderMenu;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,11 +31,15 @@ public class CartMenu {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Menu menu;
 
-	private long count;
+	private Long quantity;
 
-	public CartMenu(Cart cart, Menu menu, long count) {
+	public CartMenu(Cart cart, Menu menu, Long quantity) {
 		this.cart = cart;
 		this.menu = menu;
-		this.count = count;
+		this.quantity = quantity;
+	}
+
+	public OrderMenu toOrderMenu() {
+		return new OrderMenu(menu, quantity);
 	}
 }

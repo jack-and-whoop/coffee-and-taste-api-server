@@ -57,7 +57,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.menu.id").value(americano.getId()))
 			.andExpect(jsonPath("$.menu.name").value(americano.getName()))
 			.andExpect(jsonPath("$.menu.price").value(americano.getPrice()))
-			.andExpect(jsonPath("$.count").value(1));
+			.andExpect(jsonPath("$.quantity").value(1));
 	}
 
 	@DisplayName("다른 회원의 장바구니에 메뉴를 담을 수 없다.")
