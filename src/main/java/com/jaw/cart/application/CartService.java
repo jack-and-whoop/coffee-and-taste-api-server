@@ -11,6 +11,7 @@ import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
 import com.jaw.cart.domain.CartMenuRepository;
 import com.jaw.cart.domain.CartRepository;
+import com.jaw.cart.ui.CartMenuDeleteRequestDTO;
 import com.jaw.cart.ui.CartMenuOrderRequestDTO;
 import com.jaw.cart.ui.CartMenuOrderResponseDTO;
 import com.jaw.cart.ui.CartMenuRequestDTO;
@@ -103,5 +104,14 @@ public class CartService {
 		cartMenu.changeQuantity(request.getQuantity());
 
 		return new CartMenuResponseDTO(cartMenu);
+	}
+
+	public void delete(Long memberId, Long userId, CartMenuDeleteRequestDTO request) {
+		validateUserAuthentication(memberId, userId);
+
+		CartMenu cartMenu = cartMenuRepository.findById(request.getId())
+			.orElseThrow(IllegalArgumentException::new);
+
+		cartMenuRepository.delete(cartMenu);
 	}
 }

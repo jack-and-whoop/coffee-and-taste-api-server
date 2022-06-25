@@ -182,4 +182,19 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.quantity").value(2L));
 	}
+
+	@DisplayName("장바구니에 담긴 메뉴를 삭제한다.")
+	@Test
+	void remove() throws Exception {
+		Menu mixCoffee = menuRepository.save(menu("믹스 커피", 300L));
+		CartMenuResponseDTO cartMenu = cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(mixCoffee.getId(), 1));
+
+		CartMenuDeleteRequestDTO request = new CartMenuDeleteRequestDTO(cartMenu.getId());
+
+		mvc.perform(delete(BASE_URI, member.getId())
+				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId()))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
+			.andExpect(status().isNoContent());
+	}
 }
