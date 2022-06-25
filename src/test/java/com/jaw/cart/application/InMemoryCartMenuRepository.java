@@ -3,6 +3,7 @@ package com.jaw.cart.application;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.jaw.cart.domain.Cart;
@@ -26,6 +27,11 @@ public class InMemoryCartMenuRepository implements CartMenuRepository {
 		return cartMenus.values().stream()
 			.filter(cartMenu -> cartMenu.getCart().equals(cart))
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public Optional<CartMenu> findById(Long id) {
+		return Optional.ofNullable(cartMenus.get(id));
 	}
 
 	public void clear() {
