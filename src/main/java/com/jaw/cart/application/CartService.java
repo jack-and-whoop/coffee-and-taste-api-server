@@ -11,12 +11,17 @@ import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
 import com.jaw.cart.domain.CartMenuRepository;
 import com.jaw.cart.domain.CartRepository;
+import com.jaw.cart.ui.CartMenuOrderRequestDTO;
+import com.jaw.cart.ui.CartMenuOrderResponseDTO;
 import com.jaw.cart.ui.CartMenuRequestDTO;
 import com.jaw.cart.ui.CartMenuResponseDTO;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
 import com.jaw.menu.domain.MenuRepository;
+import com.jaw.order.domain.Order;
+import com.jaw.order.domain.OrderMenu;
+import com.jaw.order.domain.OrderRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +34,7 @@ public class CartService {
 	private final CartMenuRepository cartMenuRepository;
 	private final MenuRepository menuRepository;
 	private final MemberRepository memberRepository;
+	private final OrderRepository orderRepository;
 
 	public CartMenuResponseDTO addMenu(Long memberId, Long userId, CartMenuRequestDTO request) {
 		validateUserAuthentication(memberId, userId);
@@ -37,15 +43,6 @@ public class CartService {
 			.orElseThrow(IllegalArgumentException::new);
 		CartMenu cartMenu = cartMenuRepository.save(new CartMenu(cart, menu, request.getCount()));
 		return new CartMenuResponseDTO(cartMenu);
-	}
-
-	public List<CartMenuResponseDTO> findAll(Long memberId, Long userId) {
-		validateUserAuthentication(memberId, userId);
-		Cart cart = findCartByMemberId(memberId);
-		return cartMenuRepository.findAllByCart(cart)
-			.stream()
-			.map(CartMenuResponseDTO::new)
-			.collect(Collectors.toList());
 	}
 
 	private void validateUserAuthentication(Long memberId, Long userId) {
@@ -63,5 +60,35 @@ public class CartService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(IllegalArgumentException::new);
 		return cartRepository.save(new Cart(member));
+	}
+
+	public List<CartMenuResponseDTO> findAll(Long memberId, Long userId) {
+		validateUserAuthentication(memberId, userId);
+		Cart cart = findCartByMemberId(memberId);
+		return cartMenuRepository.findAllByCart(cart)
+			.stream()
+			.map(CartMenuResponseDTO::new)
+			.collect(Collectors.toList());
+	}
+
+	public CartMenuOrderResponseDTO order(Long memberId, Long userId, CartMenuOrderRequestDTO request) {
+		validateUserAuthentication(memberId, userId);
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(IllegalArgumentException::new);
+
+		List<OrderMenu> orderMenus = request.getCartMenuIds()
+			.stream()
+			.map(cartMenuId -> {
+				CartMenu cartMenu = cartMenuRepository.findById(cartMenuId)
+					.orElseThrow(IllegalArgumentException::new);
+				return new OrderMenu(cartMenu.getMenu(), cartMenu.getCount());
+			})
+			.collect(Collectors.toList());
+
+		Order order = new Order(member);
+		order.setOrderMenus(orderMenus);
+
+		return new CartMenuOrderResponseDTO(orderRepository.save(order));
 	}
 }
