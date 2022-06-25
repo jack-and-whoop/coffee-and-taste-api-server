@@ -36,6 +36,5 @@ class OrderRepositoryTest {
 
 		assertThat(order.getMember()).isEqualTo(member);
 		assertThat(order.getOrderMenus()).contains(orderMenu);
-		assertThat(order.getOrderMenus().get(0).getOrder()).isEqualTo(orderRequest);
 	}
 }

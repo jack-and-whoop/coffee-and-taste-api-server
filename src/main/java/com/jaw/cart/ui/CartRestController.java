@@ -1,14 +1,21 @@
 package com.jaw.cart.ui;
 
-import com.jaw.auth.UserAuthentication;
-import com.jaw.cart.application.CartService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.jaw.auth.UserAuthentication;
+import com.jaw.cart.application.CartService;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/members/{memberId}/cart")
@@ -35,5 +42,16 @@ public class CartRestController {
 		CartMenuResponseDTO cartMenu = cartService.addMenu(memberId, userId, request);
 		return ResponseEntity.created(URI.create(String.format("/api/members/%d/cart", memberId)))
 			.body(cartMenu);
+	}
+
+	@PostMapping("/order")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<CartMenuOrderResponseDTO> order(@PathVariable Long memberId,
+														  @RequestBody CartMenuOrderRequestDTO request,
+														  UserAuthentication authentication) {
+
+		Long userId = authentication.getUserId();
+		CartMenuOrderResponseDTO order = cartService.order(memberId, userId, request);
+		return ResponseEntity.ok(order);
 	}
 }

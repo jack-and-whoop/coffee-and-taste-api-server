@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class CartMenuRequestDTO {
 
 	private Long menuId;
-	private long count;
+	private long quantity;
 }

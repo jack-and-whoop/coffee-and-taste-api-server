@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -35,15 +36,20 @@ public class Order {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Member member;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+	@JoinColumn(name = "order_id")
 	private List<OrderMenu> orderMenus = new ArrayList<>();
 
 	public Order(Member member) {
 		this.member = member;
 	}
 
+	public Order(Member member, List<OrderMenu> orderMenus) {
+		this.member = member;
+		this.orderMenus = orderMenus;
+	}
+
 	public void addOrderMenu(OrderMenu orderMenu) {
-		orderMenu.setOrder(this);
 		orderMenus.add(orderMenu);
 	}
 }

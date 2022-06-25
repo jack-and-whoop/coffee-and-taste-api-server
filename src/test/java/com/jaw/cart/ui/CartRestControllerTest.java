@@ -57,7 +57,7 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.menu.id").value(americano.getId()))
 			.andExpect(jsonPath("$.menu.name").value(americano.getName()))
 			.andExpect(jsonPath("$.menu.price").value(americano.getPrice()))
-			.andExpect(jsonPath("$.count").value(1));
+			.andExpect(jsonPath("$.quantity").value(1));
 	}
 
 	@DisplayName("다른 회원의 장바구니에 메뉴를 담을 수 없다.")
@@ -141,5 +141,28 @@ class CartRestControllerTest extends AbstractControllerTest {
 	void findAllWithoutToken() throws Exception {
 		mvc.perform(get(BASE_URI, member.getId()))
 			.andExpect(status().isUnauthorized());
+	}
+
+	@DisplayName("장바구니에 담긴 메뉴를 주문한다.")
+	@Test
+	void order() throws Exception {
+		Menu mixCoffee = menuRepository.save(menu("믹스 커피", 300L));
+		Menu americano = menuRepository.save(menu("아메리카노", 1_000L));
+
+		CartMenuResponseDTO mixCoffeeCartMenu = cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(mixCoffee.getId(), 1));
+		CartMenuResponseDTO americanoCartMenu = cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(americano.getId(), 2));
+
+		CartMenuOrderRequestDTO request = new CartMenuOrderRequestDTO();
+		request.setCartMenuIds(List.of(mixCoffeeCartMenu.getId(), americanoCartMenu.getId()));
+
+		mvc.perform(post(BASE_URI + "/order", member.getId())
+				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId()))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.orderMenus[0].menu.name").value("믹스 커피"))
+			.andExpect(jsonPath("$.orderMenus[0].quantity").value("1"))
+			.andExpect(jsonPath("$.orderMenus[1].menu.name").value("아메리카노"))
+			.andExpect(jsonPath("$.orderMenus[1].quantity").value("2"));
 	}
 }
