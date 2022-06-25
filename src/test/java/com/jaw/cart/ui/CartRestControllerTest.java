@@ -165,4 +165,21 @@ class CartRestControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.orderMenus[1].menu.name").value("아메리카노"))
 			.andExpect(jsonPath("$.orderMenus[1].quantity").value("2"));
 	}
+
+	@DisplayName("장바구니에 담긴 메뉴를 수정한다.")
+	@Test
+	void update() throws Exception {
+		Menu mixCoffee = menuRepository.save(menu("믹스 커피", 300L));
+		CartMenuResponseDTO mixCoffeeCartMenu =
+			cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(mixCoffee.getId(), 1));
+
+		CartMenuUpdateDTO request = new CartMenuUpdateDTO(mixCoffeeCartMenu.getId(), 2L);
+
+		mvc.perform(patch(BASE_URI, member.getId())
+				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId()))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.quantity").value(2L));
+	}
 }

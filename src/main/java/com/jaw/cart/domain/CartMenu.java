@@ -42,4 +42,8 @@ public class CartMenu {
 	public OrderMenu toOrderMenu() {
 		return new OrderMenu(menu, quantity);
 	}
+
+	public void changeQuantity(Long quantity) {
+		this.quantity = quantity;
+	}
 }
