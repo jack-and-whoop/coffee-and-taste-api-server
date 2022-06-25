@@ -7,14 +7,12 @@ import com.jaw.order.domain.Order;
 import com.jaw.order.ui.OrderMenuResponseDTO;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class CartMenuOrderResponseDTO {
 
-	private Long id;
-	private List<OrderMenuResponseDTO> orderMenus;
+	private final Long id;
+	private final List<OrderMenuResponseDTO> orderMenus;
 
 	public CartMenuOrderResponseDTO(Order order) {
 		this.id = order.getId();
