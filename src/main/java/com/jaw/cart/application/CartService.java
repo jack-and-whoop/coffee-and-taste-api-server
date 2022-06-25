@@ -77,20 +77,19 @@ public class CartService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(IllegalArgumentException::new);
 
-		List<OrderMenu> orderMenus = request.getCartMenuIds()
+		List<CartMenu> cartMenus = request.getCartMenuIds()
 			.stream()
-			.map(this::cartMenuToOrderMenu)
+			.map(cartMenuId -> cartMenuRepository.findById(cartMenuId)
+				.orElseThrow(IllegalArgumentException::new))
 			.collect(Collectors.toList());
 
-		Order order = new Order(member);
-		order.addOrderMenus(orderMenus);
+		List<OrderMenu> orderMenus = cartMenus.stream()
+			.map(CartMenu::toOrderMenu)
+			.collect(Collectors.toList());
 
-		return new CartMenuOrderResponseDTO(orderRepository.save(order));
-	}
+		Order order = orderRepository.save(new Order(member, orderMenus));
+		cartMenus.forEach(cartMenuRepository::delete);
 
-	private OrderMenu cartMenuToOrderMenu(Long cartMenuId) {
-		return cartMenuRepository.findById(cartMenuId)
-			.orElseThrow(IllegalArgumentException::new)
-			.toOrderMenu();
+		return new CartMenuOrderResponseDTO(order);
 	}
 }

@@ -10,4 +10,6 @@ public interface CartMenuRepository {
 	List<CartMenu> findAllByCart(Cart cart);
 
 	Optional<CartMenu> findById(Long id);
+
+	void delete(CartMenu cartMenu);
 }

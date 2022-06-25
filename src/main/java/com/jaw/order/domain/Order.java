@@ -44,11 +44,12 @@ public class Order {
 		this.member = member;
 	}
 
-	public void addOrderMenu(OrderMenu orderMenu) {
-		orderMenus.add(orderMenu);
+	public Order(Member member, List<OrderMenu> orderMenus) {
+		this.member = member;
+		this.orderMenus = orderMenus;
 	}
 
-	public void addOrderMenus(List<OrderMenu> orderMenus) {
-		orderMenus.forEach(this::addOrderMenu);
+	public void addOrderMenu(OrderMenu orderMenu) {
+		orderMenus.add(orderMenu);
 	}
 }

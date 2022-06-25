@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 
 import com.jaw.AbstractControllerTest;
 import com.jaw.cart.application.CartService;
-import com.jaw.cart.domain.CartMenuRepository;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
@@ -30,9 +29,6 @@ class CartRestControllerTest extends AbstractControllerTest {
 
 	@Autowired
 	private MenuRepository menuRepository;
-
-	@Autowired
-	private CartMenuRepository cartMenuRepository;
 
 	@Autowired
 	private CartService cartService;
@@ -153,11 +149,11 @@ class CartRestControllerTest extends AbstractControllerTest {
 		Menu mixCoffee = menuRepository.save(menu("믹스 커피", 300L));
 		Menu americano = menuRepository.save(menu("아메리카노", 1_000L));
 
-		cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(mixCoffee.getId(), 1));
-		cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(americano.getId(), 2));
+		CartMenuResponseDTO mixCoffeeCartMenu = cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(mixCoffee.getId(), 1));
+		CartMenuResponseDTO americanoCartMenu = cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(americano.getId(), 2));
 
 		CartMenuOrderRequestDTO request = new CartMenuOrderRequestDTO();
-		request.setCartMenuIds(List.of(mixCoffee.getId(), americano.getId()));
+		request.setCartMenuIds(List.of(mixCoffeeCartMenu.getId(), americanoCartMenu.getId()));
 
 		mvc.perform(post(BASE_URI + "/order", member.getId())
 				.header("Authorization", "Bearer " + JWT_UTIL.encode(member.getId()))
