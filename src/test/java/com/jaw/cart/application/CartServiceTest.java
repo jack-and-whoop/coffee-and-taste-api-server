@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.jaw.cart.domain.Cart;
 import com.jaw.cart.ui.CartMenuOrderRequestDTO;
 import com.jaw.cart.ui.CartMenuOrderResponseDTO;
 import com.jaw.cart.ui.CartMenuRequestDTO;
@@ -46,6 +47,16 @@ class CartServiceTest {
 		cartRepository.clear();
 		cartMenuRepository.clear();
 		memberRepository.clear();
+	}
+
+	@DisplayName("장바구니를 생성한다.")
+	@Test
+	void create() {
+		Member member = memberRepository.save(member());
+
+		Cart cart = cartService.create(member.getId());
+
+		assertThat(cart.getMember()).isEqualTo(member);
 	}
 
 	@DisplayName("장바구니에 메뉴를 추가한다.")

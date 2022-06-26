@@ -38,6 +38,14 @@ public class CartService {
 	private final MemberRepository memberRepository;
 	private final OrderRepository orderRepository;
 
+	public Cart create(Long userId) {
+		Member member = memberRepository.findById(userId)
+			.orElseThrow(IllegalArgumentException::new);
+
+		return cartRepository.findByMemberId(userId)
+			.orElseGet(() -> cartRepository.save(new Cart(member)));
+	}
+
 	public CartMenuResponseDTO addMenu(Long memberId, Long userId, CartMenuRequestDTO request) {
 		validateUserAuthentication(memberId, userId);
 		Cart cart = findCartByMemberId(memberId);
@@ -55,13 +63,7 @@ public class CartService {
 
 	private Cart findCartByMemberId(Long memberId) {
 		return cartRepository.findByMemberId(memberId)
-			.orElseGet(() -> createNewCart(memberId));
-	}
-
-	private Cart createNewCart(Long memberId) {
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(IllegalArgumentException::new);
-		return cartRepository.save(new Cart(member));
+			.orElseGet(() -> create(memberId));
 	}
 
 	public List<CartMenuResponseDTO> findAll(Long memberId, Long userId) {
