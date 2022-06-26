@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.jaw.cart.domain.Cart;
+import com.jaw.cart.domain.CartMenu;
 import com.jaw.cart.ui.CartMenuOrderRequestDTO;
 import com.jaw.cart.ui.CartMenuOrderResponseDTO;
 import com.jaw.cart.ui.CartMenuRequestDTO;
@@ -57,6 +59,20 @@ class CartServiceTest {
 		CartResponseDTO cart = cartService.create(member.getId());
 
 		assertThat(cart.getId()).isEqualTo(1L);
+	}
+
+	@DisplayName("특정 장바구니를 조회한다.")
+	@Test
+	void findById() {
+		Member member = memberRepository.save(member());
+		Cart cart = cartRepository.save(new Cart(member));
+		CartMenu americano = new CartMenu(cart, menuRepository.save(menu("아메리카노", 1_000L)), 1L);
+		CartMenu vanillaLatte = new CartMenu(cart, menuRepository.save(menu("바닐라 라떼", 2_000L)), 1L);
+		cart.getCartMenus().addAll(List.of(americano, vanillaLatte));
+
+		CartResponseDTO foundCart = cartService.findById(member.getId(), cart.getId());
+
+		assertThat(foundCart.getCartMenus()).hasSize(2);
 	}
 
 	@DisplayName("장바구니 생성 요청 시, 기존에 장바구니가 있으면 해당 장바구니를 반환한다.")
