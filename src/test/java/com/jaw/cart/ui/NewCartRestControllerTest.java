@@ -37,7 +37,7 @@ class NewCartRestControllerTest {
 	void setup() {
 		Member member = member();
 
-		given(cartService.create(any(Long.class))).willReturn(new Cart(member));
+		given(cartService.create(any(Long.class))).willReturn(new CartResponseDTO(new Cart(member)));
 	}
 
 	@DisplayName("회원의 장바구니를 생성한다.")

@@ -11,11 +11,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.jaw.cart.domain.Cart;
 import com.jaw.cart.ui.CartMenuOrderRequestDTO;
 import com.jaw.cart.ui.CartMenuOrderResponseDTO;
 import com.jaw.cart.ui.CartMenuRequestDTO;
 import com.jaw.cart.ui.CartMenuResponseDTO;
+import com.jaw.cart.ui.CartResponseDTO;
 import com.jaw.member.application.InMemoryMemberRepository;
 import com.jaw.member.domain.Member;
 import com.jaw.menu.application.InMemoryMenuRepository;
@@ -54,18 +54,18 @@ class CartServiceTest {
 	void create() {
 		Member member = memberRepository.save(member());
 
-		Cart cart = cartService.create(member.getId());
+		CartResponseDTO cart = cartService.create(member.getId());
 
-		assertThat(cart.getMember()).isEqualTo(member);
+		assertThat(cart.getId()).isEqualTo(1L);
 	}
 
 	@DisplayName("장바구니 생성 요청 시, 기존에 장바구니가 있으면 해당 장바구니를 반환한다.")
 	@Test
 	void preExistent() {
 		Member member = memberRepository.save(member());
-		Cart created = cartService.create(member.getId());
+		CartResponseDTO created = cartService.create(member.getId());
 
-		Cart additional = cartService.create(member.getId());
+		CartResponseDTO additional = cartService.create(member.getId());
 
 		assertThat(created.getId()).isEqualTo(additional.getId());
 	}
@@ -93,7 +93,7 @@ class CartServiceTest {
 	void order() {
 		Member member = memberRepository.save(member());
 		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
-		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));;
+		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));
 
 		cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1));
 		cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(icedCaffeMocha.getId(), 1));

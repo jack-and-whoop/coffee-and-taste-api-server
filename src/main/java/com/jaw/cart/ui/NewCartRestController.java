@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jaw.auth.UserAuthentication;
 import com.jaw.cart.application.CartService;
-import com.jaw.cart.domain.Cart;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,8 +22,8 @@ public class NewCartRestController {
 
 	@PostMapping
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<Cart> create(UserAuthentication authentication) {
-		Cart cart = cartService.create(authentication.getUserId());
+	public ResponseEntity<CartResponseDTO> create(UserAuthentication authentication) {
+		CartResponseDTO cart = cartService.create(authentication.getUserId());
 		return ResponseEntity.created(URI.create(String.format("/api/carts/%d", cart.getId())))
 			.body(cart);
 	}

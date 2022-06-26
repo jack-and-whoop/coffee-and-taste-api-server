@@ -17,6 +17,7 @@ import com.jaw.cart.ui.CartMenuOrderResponseDTO;
 import com.jaw.cart.ui.CartMenuRequestDTO;
 import com.jaw.cart.ui.CartMenuResponseDTO;
 import com.jaw.cart.ui.CartMenuUpdateDTO;
+import com.jaw.cart.ui.CartResponseDTO;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
@@ -38,12 +39,14 @@ public class CartService {
 	private final MemberRepository memberRepository;
 	private final OrderRepository orderRepository;
 
-	public Cart create(Long userId) {
+	public CartResponseDTO create(Long userId) {
 		Member member = memberRepository.findById(userId)
 			.orElseThrow(IllegalArgumentException::new);
 
-		return cartRepository.findByMemberId(userId)
+		Cart cart = cartRepository.findByMemberId(userId)
 			.orElseGet(() -> cartRepository.save(new Cart(member)));
+
+		return new CartResponseDTO(cart);
 	}
 
 	public CartMenuResponseDTO addMenu(Long memberId, Long userId, CartMenuRequestDTO request) {
@@ -62,8 +65,10 @@ public class CartService {
 	}
 
 	private Cart findCartByMemberId(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(IllegalArgumentException::new);
 		return cartRepository.findByMemberId(memberId)
-			.orElseGet(() -> create(memberId));
+			.orElseGet(() -> cartRepository.save(new Cart(member)));
 	}
 
 	public List<CartMenuResponseDTO> findAll(Long memberId, Long userId) {
