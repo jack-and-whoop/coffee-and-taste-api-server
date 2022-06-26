@@ -37,4 +37,8 @@ public class Cart {
 	public Cart(Member member) {
 		this.member = member;
 	}
+
+	public boolean belongsTo(Long userId) {
+		return member.hasId(userId);
+	}
 }

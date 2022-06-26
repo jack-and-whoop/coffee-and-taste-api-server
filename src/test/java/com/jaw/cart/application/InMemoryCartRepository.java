@@ -26,6 +26,11 @@ public class InMemoryCartRepository implements CartRepository {
 			.findFirst();
 	}
 
+	@Override
+	public Optional<Cart> findById(Long id) {
+		return Optional.ofNullable(carts.get(id));
+	}
+
 	public void clear() {
 		sequence = 0;
 		carts.clear();
