@@ -59,6 +59,17 @@ class CartServiceTest {
 		assertThat(cart.getMember()).isEqualTo(member);
 	}
 
+	@DisplayName("장바구니 생성 요청 시, 기존에 장바구니가 있으면 해당 장바구니를 반환한다.")
+	@Test
+	void preExistent() {
+		Member member = memberRepository.save(member());
+		Cart created = cartService.create(member.getId());
+
+		Cart additional = cartService.create(member.getId());
+
+		assertThat(created.getId()).isEqualTo(additional.getId());
+	}
+
 	@DisplayName("장바구니에 메뉴를 추가한다.")
 	@Test
 	void addMenu() {
