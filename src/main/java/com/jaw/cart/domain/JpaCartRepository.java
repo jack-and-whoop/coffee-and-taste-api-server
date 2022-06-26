@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 public interface JpaCartRepository extends CartRepository, JpaRepository<Cart, Long> {
 
 	@Override
-	@Query("select c from Cart c join fetch c.cartMenus join fetch c.member where c.id = :id")
+	@Query("select c from Cart c join fetch c.cartMenus cm join fetch cm.menu join fetch c.member where c.id = :id")
 	Optional<Cart> findById(@Param("id") Long id);
 }
