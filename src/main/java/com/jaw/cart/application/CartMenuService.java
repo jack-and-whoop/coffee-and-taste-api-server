@@ -20,13 +20,16 @@ public class CartMenuService {
 		return new CartMenuResponseDTO(cartMenu);
 	}
 
-	public void changeQuantity(Long id, Long quantity) {
+	public CartMenuResponseDTO changeQuantity(Long id, Long quantity) {
 		CartMenu cartMenu = cartMenuRepository.findById(id)
 			.orElseThrow(IllegalArgumentException::new);
 		cartMenu.changeQuantity(quantity);
+		return new CartMenuResponseDTO(cartMenu);
 	}
 
 	public void delete(Long id) {
-		cartMenuRepository.deleteById(id);
+		CartMenu cartMenu = cartMenuRepository.findById(id)
+			.orElseThrow(IllegalArgumentException::new);
+		cartMenuRepository.delete(cartMenu);
 	}
 }
