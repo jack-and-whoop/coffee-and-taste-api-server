@@ -12,4 +12,6 @@ public interface CartMenuRepository {
 	Optional<CartMenu> findById(Long id);
 
 	void delete(CartMenu cartMenu);
+
+	void deleteById(Long id);
 }

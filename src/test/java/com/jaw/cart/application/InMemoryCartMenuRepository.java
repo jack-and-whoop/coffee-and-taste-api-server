@@ -36,7 +36,12 @@ public class InMemoryCartMenuRepository implements CartMenuRepository {
 
 	@Override
 	public void delete(CartMenu cartMenu) {
-		cartMenus.remove(cartMenu.getId());
+		deleteById(cartMenu.getId());
+	}
+
+	@Override
+	public void deleteById(Long id) {
+		cartMenus.remove(id);
 	}
 
 	public void clear() {
