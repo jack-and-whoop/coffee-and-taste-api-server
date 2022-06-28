@@ -53,9 +53,7 @@ public class CartService {
 		Cart cart = cartRepository.findById(cartId)
 			.orElseThrow(IllegalArgumentException::new);
 
-		if (!cart.belongsTo(userId)) {
-			throw new AccessDeniedException("장바구니 접근 권한이 없습니다.");
-		}
+		validateAuthorization(userId, cart);
 
 		return new CartResponseDTO(cart);
 	}
@@ -64,13 +62,17 @@ public class CartService {
 		Cart cart = cartRepository.findById(cartId)
 			.orElseThrow(IllegalArgumentException::new);
 
-		if (!cart.belongsTo(userId)) {
-			throw new AccessDeniedException("장바구니 접근 권한이 없습니다.");
-		}
+		validateAuthorization(userId, cart);
 
 		cart.getCartMenus().forEach(cartMenuRepository::delete);
 
 		return new CartResponseDTO(cart);
+	}
+
+	private void validateAuthorization(Long userId, Cart cart) {
+		if (!cart.belongsTo(userId)) {
+			throw new AccessDeniedException("장바구니 접근 권한이 없습니다.");
+		}
 	}
 
 	public CartMenuResponseDTO addMenu(Long memberId, Long userId, CartMenuRequestDTO request) {
