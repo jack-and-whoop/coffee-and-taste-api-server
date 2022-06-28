@@ -60,12 +60,26 @@ public class CartService {
 		return new CartResponseDTO(cart);
 	}
 
+	public CartResponseDTO deleteAllCartMenus(Long userId, Long cartId) {
+		Cart cart = cartRepository.findById(cartId)
+			.orElseThrow(IllegalArgumentException::new);
+
+		if (!cart.belongsTo(userId)) {
+			throw new AccessDeniedException("장바구니 접근 권한이 없습니다.");
+		}
+
+		cart.getCartMenus().forEach(cartMenuRepository::delete);
+
+		return new CartResponseDTO(cart);
+	}
+
 	public CartMenuResponseDTO addMenu(Long memberId, Long userId, CartMenuRequestDTO request) {
 		validateUserAuthentication(memberId, userId);
 		Cart cart = findCartByMemberId(memberId);
 		Menu menu = menuRepository.findById(request.getMenuId())
 			.orElseThrow(IllegalArgumentException::new);
 		CartMenu cartMenu = cartMenuRepository.save(new CartMenu(cart, menu, request.getQuantity()));
+		cart.addMenu(cartMenu);
 		return new CartMenuResponseDTO(cartMenu);
 	}
 

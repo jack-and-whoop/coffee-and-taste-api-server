@@ -86,6 +86,25 @@ class CartServiceTest {
 		assertThat(created.getId()).isEqualTo(additional.getId());
 	}
 
+	@DisplayName("장바구니에 담긴 모든 메뉴를 삭제한다.")
+	@Test
+	void deleteAllCartMenus() {
+		Member member = memberRepository.save(member());
+		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
+		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));
+		cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1));
+		cartService.addMenu(member.getId(), member.getId(), new CartMenuRequestDTO(icedCaffeMocha.getId(), 2));
+
+		Cart cart = cartRepository.findByMemberId(member.getId())
+			.orElseThrow(IllegalArgumentException::new);
+
+		cartService.deleteAllCartMenus(member.getId(), cart.getId());
+
+		List<CartMenu> cartMenus = cartMenuRepository.findAllByCart(cart);
+
+		assertThat(cartMenus).isEmpty();
+	}
+
 	@DisplayName("장바구니에 메뉴를 추가한다.")
 	@Test
 	void addMenu() {

@@ -41,4 +41,8 @@ public class Cart {
 	public boolean belongsTo(Long userId) {
 		return member.hasId(userId);
 	}
+
+	public void addMenu(CartMenu cartMenu) {
+		cartMenus.add(cartMenu);
+	}
 }
