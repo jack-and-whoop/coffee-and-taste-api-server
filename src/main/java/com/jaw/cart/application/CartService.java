@@ -69,6 +69,19 @@ public class CartService {
 		return new CartResponseDTO(cart);
 	}
 
+	public CartResponseDTO addCartMenu(Long userId, Long cartId, CartMenuRequestDTO request) {
+		Cart cart = cartRepository.findById(cartId)
+			.orElseThrow(IllegalArgumentException::new);
+
+		validateAuthorization(userId, cart);
+
+		Menu menu = menuRepository.findById(request.getMenuId())
+			.orElseThrow(IllegalArgumentException::new);
+		CartMenu cartMenu = cartMenuRepository.save(new CartMenu(cart, menu, request.getQuantity()));
+		cart.addMenu(cartMenu);
+		return new CartResponseDTO(cart);
+	}
+
 	private void validateAuthorization(Long userId, Cart cart) {
 		if (!cart.belongsTo(userId)) {
 			throw new AccessDeniedException("장바구니 접근 권한이 없습니다.");

@@ -120,6 +120,25 @@ class CartServiceTest {
 
 	@DisplayName("장바구니에 메뉴를 추가한다.")
 	@Test
+	void addCartMenu() {
+		Member member = memberRepository.save(member());
+		Cart cart = cartRepository.save(new Cart(member));
+		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
+		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));
+
+		CartMenuRequestDTO vanillaFlatWhiteRequest = new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1);
+		CartMenuRequestDTO icedCaffeMochaRequest = new CartMenuRequestDTO(icedCaffeMocha.getId(), 2);
+
+		cartService.addCartMenu(member.getId(), cart.getId(), vanillaFlatWhiteRequest);
+		cartService.addCartMenu(member.getId(), cart.getId(), icedCaffeMochaRequest);
+
+		List<CartMenuResponseDTO> cartMenus = cartService.findAll(member.getId(), member.getId());
+
+		assertThat(cartMenus).hasSize(2);
+	}
+
+	@DisplayName("장바구니에 메뉴를 추가한다.")
+	@Test
 	void addMenu() {
 		Member member = memberRepository.save(member());
 		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
