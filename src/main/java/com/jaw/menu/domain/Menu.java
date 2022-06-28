@@ -49,7 +49,8 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @Builder
-    public Menu(String name, String englishName, long price, String description, String imagePath, boolean onSale, MenuGroup menuGroup) {
+    public Menu(Long id, String name, String englishName, long price, String description, String imagePath, boolean onSale, MenuGroup menuGroup) {
+        this.id = id;
         this.name = name;
         this.englishName = englishName;
         this.price = BigDecimal.valueOf(price);

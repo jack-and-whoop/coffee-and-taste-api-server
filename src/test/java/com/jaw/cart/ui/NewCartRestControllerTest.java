@@ -5,6 +5,8 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.jaw.cart.application.CartService;
 import com.jaw.cart.domain.Cart;
 import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.domain.Member;
+import com.jaw.menu.domain.Menu;
+import com.jaw.order.domain.Order;
+import com.jaw.order.domain.OrderMenu;
 
 @WebMvcTest(NewCartRestController.class)
 class NewCartRestControllerTest {
@@ -69,5 +75,30 @@ class NewCartRestControllerTest {
 				.header("Authorization", "Bearer " + VALID_TOKEN))
 			.andExpect(status().isNoContent())
 			.andExpect(jsonPath("$.cartMenus.size()").value(0));
+	}
+
+	@DisplayName("장바구니에 담긴 메뉴를 주문한다.")
+	@Test
+	void orderCartMenus() throws Exception {
+		Member member = member();
+		Menu mixCoffee = menu(1L, "믹스 커피", 1_000L);
+		Menu americano = menu(2L, "아메리카노", 1_000L);
+		Order order = new Order(member, List.of(new OrderMenu(mixCoffee, 1L), new OrderMenu(americano, 2L)));
+
+		given(cartService.orderCartMenus(any(Long.class), any(Long.class), any(CartMenuOrderRequestDTO.class)))
+			.willReturn(new CartMenuOrderResponseDTO(order));
+
+		CartMenuOrderRequestDTO orderRequest = new CartMenuOrderRequestDTO();
+		orderRequest.setCartMenuIds(List.of(mixCoffee.getId(), americano.getId()));
+
+		mvc.perform(post("/api/carts/1/order")
+				.header("Authorization", "Bearer " + VALID_TOKEN)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(OBJECT_MAPPER.writeValueAsString(orderRequest)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.orderMenus[0].menu.name").value("믹스 커피"))
+			.andExpect(jsonPath("$.orderMenus[0].quantity").value("1"))
+			.andExpect(jsonPath("$.orderMenus[1].menu.name").value("아메리카노"))
+			.andExpect(jsonPath("$.orderMenus[1].quantity").value("2"));
 	}
 }

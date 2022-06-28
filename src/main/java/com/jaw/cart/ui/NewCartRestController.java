@@ -56,7 +56,19 @@ public class NewCartRestController {
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<CartResponseDTO> deleteAllCartMenus(@PathVariable Long id,
 															  UserAuthentication authentication) {
+
 		CartResponseDTO cart = cartService.deleteAllCartMenus(authentication.getUserId(), id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(cart);
+	}
+
+	@PostMapping("/{id}/order")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<CartMenuOrderResponseDTO> order(@PathVariable Long id,
+														  @RequestBody CartMenuOrderRequestDTO request,
+														  UserAuthentication authentication) {
+
+		Long userId = authentication.getUserId();
+		CartMenuOrderResponseDTO order = cartService.orderCartMenus(id, userId, request);
+		return ResponseEntity.ok(order);
 	}
 }

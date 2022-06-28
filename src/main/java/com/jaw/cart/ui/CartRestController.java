@@ -67,15 +67,4 @@ public class CartRestController {
 		cartService.delete(memberId, userId, request);
 		return ResponseEntity.noContent().build();
 	}
-
-	@PostMapping("/order")
-	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<CartMenuOrderResponseDTO> order(@PathVariable Long memberId,
-														  @RequestBody CartMenuOrderRequestDTO request,
-														  UserAuthentication authentication) {
-
-		Long userId = authentication.getUserId();
-		CartMenuOrderResponseDTO order = cartService.order(memberId, userId, request);
-		return ResponseEntity.ok(order);
-	}
 }
