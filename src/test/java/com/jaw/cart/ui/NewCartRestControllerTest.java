@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.jaw.cart.application.CartService;
 import com.jaw.cart.domain.Cart;
+import com.jaw.cart.domain.CartMenu;
 import com.jaw.member.application.AuthenticationService;
 import com.jaw.member.domain.Member;
 import com.jaw.menu.domain.Menu;
@@ -75,6 +76,26 @@ class NewCartRestControllerTest {
 				.header("Authorization", "Bearer " + VALID_TOKEN))
 			.andExpect(status().isNoContent())
 			.andExpect(jsonPath("$.cartMenus.size()").value(0));
+	}
+
+	@DisplayName("장바구니에 메뉴를 추가한다.")
+	@Test
+	void addMenu() throws Exception {
+		Menu americano = menu("아메리카노", 1_000L);
+		Cart cart = new Cart(member());
+
+		CartMenu cartMenu = new CartMenu(cart, americano, 1L);
+		cart.addMenu(cartMenu);
+
+		given(cartService.addCartMenu(any(Long.class), any(Long.class), any(CartMenuRequestDTO.class)))
+			.willReturn(new CartResponseDTO(cart));
+
+		mvc.perform(post("/api/carts/1/cart-menus")
+				.header("Authorization", "Bearer " + VALID_TOKEN)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(OBJECT_MAPPER.writeValueAsString(new CartMenuRequestDTO(americano.getId(), 1L))))
+			.andExpect(status().isCreated())
+			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(new CartResponseDTO(cart))));
 	}
 
 	@DisplayName("장바구니에 담긴 메뉴를 주문한다.")
