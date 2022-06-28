@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.jaw.cart.application.CartService;
 import com.jaw.cart.domain.Cart;
 import com.jaw.member.application.AuthenticationService;
-import com.jaw.member.domain.Member;
 
 @WebMvcTest(NewCartRestController.class)
 class NewCartRestControllerTest {
@@ -58,5 +57,17 @@ class NewCartRestControllerTest {
 				.header("Authorization", "Bearer " + VALID_TOKEN))
 			.andExpect(status().isOk())
 			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(cart)));
+	}
+
+	@DisplayName("장바구니에 담긴 모든 메뉴를 삭제한다.")
+	@Test
+	void deleteAllCartMenus() throws Exception {
+		CartResponseDTO cart = new CartResponseDTO(new Cart(member()));
+		given(cartService.deleteAllCartMenus(any(Long.class), any(Long.class))).willReturn(cart);
+
+		mvc.perform(delete("/api/carts/1/cart-menus")
+				.header("Authorization", "Bearer " + VALID_TOKEN))
+			.andExpect(status().isNoContent())
+			.andExpect(jsonPath("$.cartMenus.size()").value(0));
 	}
 }
