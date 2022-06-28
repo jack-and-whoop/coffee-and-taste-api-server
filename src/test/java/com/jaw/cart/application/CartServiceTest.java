@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.AccessDeniedException;
 
 import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
@@ -49,6 +50,18 @@ class CartServiceTest {
 		cartRepository.clear();
 		cartMenuRepository.clear();
 		memberRepository.clear();
+	}
+
+	@DisplayName("회원은 본인의 장바구니에만 접근할 수 있다.")
+	@Test
+	void accessDenied() {
+		Long memberId = memberRepository.save(member()).getId();
+		Long otherId = memberRepository.save(other()).getId();
+
+		Long cartId = cartService.create(memberId).getId();
+
+		assertThatThrownBy(() -> cartService.findById(otherId, cartId))
+			.isInstanceOf(AccessDeniedException.class);
 	}
 
 	@DisplayName("장바구니를 생성한다.")
