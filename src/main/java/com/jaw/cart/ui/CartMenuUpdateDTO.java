@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartMenuUpdateDTO {
 
-	private Long id;
 	private Long quantity;
 }

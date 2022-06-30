@@ -57,8 +57,4 @@ public class Member {
 	public boolean authenticate(String password, PasswordEncoder passwordEncoder) {
 		return passwordEncoder.matches(password, this.password);
 	}
-
-	public boolean hasId(Long userId) {
-		return this.id.equals(userId);
-	}
 }
