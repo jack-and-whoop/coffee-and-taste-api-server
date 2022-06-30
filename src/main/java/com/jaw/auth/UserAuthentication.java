@@ -38,7 +38,7 @@ public class UserAuthentication extends AbstractAuthenticationToken {
 
 	@Override
 	public Object getPrincipal() {
-		return userId;
+		return getUserId();
 	}
 
 	@Override

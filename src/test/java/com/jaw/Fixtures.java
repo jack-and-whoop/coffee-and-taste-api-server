@@ -82,4 +82,13 @@ public class Fixtures {
 			.onSale(true)
 			.build();
 	}
+
+	public static Menu menu(Long id, String name, Long price) {
+		return Menu.builder()
+			.id(id)
+			.name(name)
+			.price(price)
+			.onSale(true)
+			.build();
+	}
 }

@@ -1,8 +1,8 @@
 package com.jaw.cart.ui;
 
 import java.net.URI;
-import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,62 +20,65 @@ import com.jaw.cart.application.CartService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/members/{memberId}/cart")
+@RequestMapping("/api/cart")
 @RestController
 public class CartRestController {
 
 	private final CartService cartService;
 
-	@GetMapping
+	@GetMapping("/cart-menus")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<List<CartMenuResponseDTO>> findAll(@PathVariable Long memberId,
-															 UserAuthentication authentication) {
-		Long userId = authentication.getUserId();
-		return ResponseEntity.ok(cartService.findAll(memberId, userId));
+	public ResponseEntity<CartResponseDTO> findByUser(UserAuthentication authentication) {
+		CartResponseDTO cart = cartService.findByUser(authentication.getUserId());
+		return ResponseEntity.ok(cart);
 	}
 
-	@PostMapping
+	@PostMapping("/cart-menus")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<CartMenuResponseDTO> addMenu(@PathVariable Long memberId,
-													   @RequestBody CartMenuRequestDTO request,
-													   UserAuthentication authentication) {
-
-		Long userId = authentication.getUserId();
-		CartMenuResponseDTO cartMenu = cartService.addMenu(memberId, userId, request);
-		return ResponseEntity.created(URI.create(String.format("/api/members/%d/cart", memberId)))
-			.body(cartMenu);
+	public ResponseEntity<CartResponseDTO> addMenu(@RequestBody CartMenuRequestDTO request,
+												   UserAuthentication authentication) {
+		CartResponseDTO cart = cartService.addCartMenu(authentication.getUserId(), request);
+		return ResponseEntity.created(URI.create("/api/cart"))
+			.body(cart);
 	}
 
-	@PatchMapping
+	@GetMapping("/cart-menus/{id}")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<CartMenuResponseDTO> update(@PathVariable Long memberId,
-													  @RequestBody CartMenuUpdateDTO request,
-													  UserAuthentication authentication) {
-
-		Long userId = authentication.getUserId();
-		CartMenuResponseDTO cartMenu = cartService.update(memberId, userId, request);
+	public ResponseEntity<CartMenuResponseDTO> findCartMenuById(@PathVariable Long id,
+																UserAuthentication authentication) {
+		CartMenuResponseDTO cartMenu = cartService.findCartMenuById(authentication.getUserId(), id);
 		return ResponseEntity.ok(cartMenu);
 	}
 
-	@DeleteMapping
+	@PatchMapping("/cart-menus/{id}")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<Void> delete(@PathVariable Long memberId,
-									   @RequestBody CartMenuDeleteRequestDTO request,
-									   UserAuthentication authentication) {
+	public ResponseEntity<CartMenuResponseDTO> changeQuantity(@PathVariable Long id,
+															  @RequestBody CartMenuUpdateDTO request,
+															  UserAuthentication authentication) {
+		CartMenuResponseDTO cartMenu = cartService.changeCartMenuQuantity(authentication.getUserId(), id, request);
+		return ResponseEntity.ok(cartMenu);
+	}
 
-		Long userId = authentication.getUserId();
-		cartService.delete(memberId, userId, request);
+	@DeleteMapping("/cart-menus/{id}")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<CartMenuResponseDTO> deleteCartMenu(@PathVariable Long id,
+															  UserAuthentication authentication) {
+		cartService.deleteCartMenuById(authentication.getUserId(), id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/cart-menus")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<CartResponseDTO> deleteAllCartMenus(UserAuthentication authentication) {
+		CartResponseDTO cart = cartService.deleteAllCartMenus(authentication.getUserId());
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(cart);
 	}
 
 	@PostMapping("/order")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<CartMenuOrderResponseDTO> order(@PathVariable Long memberId,
-														  @RequestBody CartMenuOrderRequestDTO request,
+	public ResponseEntity<CartMenuOrderResponseDTO> order(@RequestBody CartMenuOrderRequestDTO request,
 														  UserAuthentication authentication) {
-
-		Long userId = authentication.getUserId();
-		CartMenuOrderResponseDTO order = cartService.order(memberId, userId, request);
+		CartMenuOrderResponseDTO order = cartService.orderCartMenus(authentication.getUserId(), request);
 		return ResponseEntity.ok(order);
 	}
 }
