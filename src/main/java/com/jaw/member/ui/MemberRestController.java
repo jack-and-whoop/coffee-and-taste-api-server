@@ -1,18 +1,14 @@
 package com.jaw.member.ui;
 
+import com.jaw.auth.UserAuthentication;
+import com.jaw.member.application.MemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import java.net.URI;
 import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.jaw.member.application.MemberService;
-
-import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -31,5 +27,11 @@ public class MemberRestController {
 	@GetMapping
 	public ResponseEntity<List<MemberResponseDTO>> findAll() {
 		return ResponseEntity.ok(memberService.findAll());
+	}
+
+	@GetMapping("/me")
+	@PreAuthorize("isAuthenticated() and hasAnyAuthority('USER')")
+	public ResponseEntity<MemberResponseDTO> findById(UserAuthentication authentication) {
+		return ResponseEntity.ok(memberService.findById(authentication.getUserId()));
 	}
 }

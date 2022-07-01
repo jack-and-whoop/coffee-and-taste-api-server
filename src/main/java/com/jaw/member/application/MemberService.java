@@ -45,4 +45,10 @@ public class MemberService {
 			.map(MemberResponseDTO::new)
 			.orElseThrow(() -> new MemberNotFoundException(email));
 	}
+
+	public MemberResponseDTO findById(Long id) {
+		return memberRepository.findById(id)
+			.map(MemberResponseDTO::new)
+			.orElseThrow(IllegalArgumentException::new);
+	}
 }
