@@ -10,6 +10,8 @@ import javax.persistence.Id;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.jaw.member.ui.MemberUpdateRequestDTO;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,5 +58,13 @@ public class Member {
 
 	public boolean authenticate(String password, PasswordEncoder passwordEncoder) {
 		return passwordEncoder.matches(password, this.password);
+	}
+
+	public void update(MemberUpdateRequestDTO request) {
+		this.name = request.getName();
+		this.nickname = request.getNickname();
+		this.birthDate = request.getBirthDate();
+		this.email = request.getEmail();
+		this.phoneNumber = request.getPhoneNumber();
 	}
 }

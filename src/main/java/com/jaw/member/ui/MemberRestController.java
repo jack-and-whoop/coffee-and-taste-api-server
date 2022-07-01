@@ -30,8 +30,16 @@ public class MemberRestController {
 	}
 
 	@GetMapping("/me")
-	@PreAuthorize("isAuthenticated() and hasAnyAuthority('USER')")
+	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
 	public ResponseEntity<MemberResponseDTO> findById(UserAuthentication authentication) {
 		return ResponseEntity.ok(memberService.findById(authentication.getUserId()));
 	}
+
+	@PatchMapping("/me")
+	@PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+	public ResponseEntity<MemberUpdateResponseDTO> update(@RequestBody MemberUpdateRequestDTO request,
+														  UserAuthentication authentication) {
+		return ResponseEntity.ok(memberService.update(authentication.getUserId(), request));
+	}
+
 }

@@ -1,9 +1,14 @@
 package com.jaw.member.ui;
 
-import com.jaw.member.application.AuthenticationService;
-import com.jaw.member.application.MemberService;
-import com.jaw.member.domain.Member;
-import com.jaw.member.domain.Role;
+import static com.jaw.Fixtures.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,17 +18,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import static com.jaw.Fixtures.OBJECT_MAPPER;
-import static com.jaw.Fixtures.member;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.application.MemberService;
+import com.jaw.member.domain.Member;
+import com.jaw.member.domain.Role;
 
 @WebMvcTest(MemberRestController.class)
 class MemberRestControllerTest {
@@ -64,6 +62,17 @@ class MemberRestControllerTest {
 		given(memberService.create(any(MemberRequestDTO.class))).willReturn(response);
 		given(memberService.findAll()).willReturn(List.of(response));
 		given(memberService.findById(any(Long.class))).willReturn(response);
+
+		given(memberService.update(any(Long.class), any(MemberUpdateRequestDTO.class)))
+			.willReturn(MemberUpdateResponseDTO.builder()
+				.id(member.getId())
+				.name("김길동")
+				.nickname("kim")
+				.birthDate(LocalDate.of(1995, 1, 1).format(DateTimeFormatter.ISO_DATE))
+				.email("kim@example.com")
+				.phoneNumber("010-2222-3333")
+				.build());
+
 	}
 
 	@DisplayName("새로운 회원을 등록한다.")
@@ -101,6 +110,47 @@ class MemberRestControllerTest {
 	void findByIdFailed() throws Exception {
 		mvc.perform(get(BASE_URI + "/me")
 				.header("Authorization", "Bearer " + INVALID_TOKEN))
+			.andExpect(status().isForbidden());
+	}
+
+	@DisplayName("회원 정보를 수정한다.")
+	@Test
+	void update() throws Exception {
+		MemberUpdateRequestDTO request = MemberUpdateRequestDTO.builder()
+			.name("김길동")
+			.nickname("kim")
+			.birthDate(LocalDate.of(1995, 1, 1))
+			.email("kim@example.com")
+			.phoneNumber("010-2222-3333")
+			.build();
+
+		mvc.perform(patch(BASE_URI + "/me")
+				.header("Authorization", "Bearer " + VALID_TOKEN)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.name").value("김길동"))
+			.andExpect(jsonPath("$.nickname").value("kim"))
+			.andExpect(jsonPath("$.birthDate").value("1995-01-01"))
+			.andExpect(jsonPath("$.email").value("kim@example.com"))
+			.andExpect(jsonPath("$.phoneNumber").value("010-2222-3333"));
+	}
+
+	@DisplayName("인증 정보가 유효하지 않다면, 회원 정보를 수정할 수 없다.")
+	@Test
+	void updateFailed() throws Exception {
+		MemberUpdateRequestDTO request = MemberUpdateRequestDTO.builder()
+			.name("김길동")
+			.nickname("kim")
+			.birthDate(LocalDate.of(1995, 1, 1))
+			.email("kim@example.com")
+			.phoneNumber("010-2222-3333")
+			.build();
+
+		mvc.perform(patch(BASE_URI + "/me")
+				.header("Authorization", "Bearer " + INVALID_TOKEN)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(OBJECT_MAPPER.writeValueAsString(request)))
 			.andExpect(status().isForbidden());
 	}
 }

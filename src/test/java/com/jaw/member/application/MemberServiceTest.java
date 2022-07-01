@@ -1,6 +1,8 @@
 package com.jaw.member.application;
 
+import static com.jaw.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,8 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.jaw.exception.MemberNotFoundException;
 import com.jaw.exception.UserEmailDuplicationException;
+import com.jaw.member.domain.Member;
 import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
+import com.jaw.member.ui.MemberUpdateRequestDTO;
 
 class MemberServiceTest {
 
@@ -38,7 +42,7 @@ class MemberServiceTest {
 	@DisplayName("회원을 등록한다.")
 	@Test
 	void create() {
-		MemberResponseDTO member = memberService.create(memberCreateRequest( "memberA", "aaa@gmail.com", "1234"));
+		MemberResponseDTO member = memberService.create(memberCreateRequest("memberA", "aaa@gmail.com", "1234"));
 		assertThat(member.getId()).isEqualTo(1L);
 	}
 
@@ -86,5 +90,32 @@ class MemberServiceTest {
 			.password(passwordEncoder.encode(password))
 			.birthDate(LocalDate.now())
 			.build();
+	}
+
+	@DisplayName("회원 정보를 수정한다.")
+	@Test
+	void update() {
+		Member member = memberRepository.save(member());
+		MemberUpdateRequestDTO updateRequest = MemberUpdateRequestDTO.builder()
+			.name("김길동")
+			.nickname("kim")
+			.birthDate(LocalDate.of(1995, 1, 1))
+			.email("kim@example.com")
+			.phoneNumber("010-2222-3333")
+			.build();
+
+		memberService.update(member.getId(), updateRequest);
+
+		Member result = memberRepository.findById(member.getId())
+			.orElseThrow(IllegalArgumentException::new);
+
+		assertAll(
+			() -> assertThat(result.getId()).isEqualTo(member.getId()),
+			() -> assertThat(result.getName()).isEqualTo("김길동"),
+			() -> assertThat(result.getNickname()).isEqualTo("kim"),
+			() -> assertThat(result.getBirthDate()).isEqualTo("1995-01-01"),
+			() -> assertThat(result.getEmail()).isEqualTo("kim@example.com"),
+			() -> assertThat(result.getPhoneNumber()).isEqualTo("010-2222-3333")
+		);
 	}
 }
