@@ -1,18 +1,22 @@
 package com.jaw.member.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jaw.exception.MemberNotFoundException;
 import com.jaw.exception.UserEmailDuplicationException;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.jaw.member.ui.MemberUpdateRequestDTO;
+import com.jaw.member.ui.MemberUpdateResponseDTO;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
@@ -44,5 +48,19 @@ public class MemberService {
 		return memberRepository.findByEmail(email)
 			.map(MemberResponseDTO::new)
 			.orElseThrow(() -> new MemberNotFoundException(email));
+	}
+
+	public MemberResponseDTO findById(Long id) {
+		return memberRepository.findById(id)
+			.map(MemberResponseDTO::new)
+			.orElseThrow(IllegalArgumentException::new);
+	}
+
+	public MemberUpdateResponseDTO update(Long id, MemberUpdateRequestDTO request) {
+		Member member = memberRepository.findById(id)
+			.orElseThrow(IllegalArgumentException::new);
+
+		member.update(request);
+		return new MemberUpdateResponseDTO(member);
 	}
 }
