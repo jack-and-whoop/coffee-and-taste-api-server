@@ -1,16 +1,13 @@
 package com.jaw.member.ui;
 
-import com.jaw.member.domain.Member;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.format.DateTimeFormatter;
 
+import com.jaw.member.domain.Member;
+
+import lombok.Builder;
+import lombok.Getter;
+
 @Getter
-@Setter
-@NoArgsConstructor
 public class MemberUpdateResponseDTO {
 
     private Long id;

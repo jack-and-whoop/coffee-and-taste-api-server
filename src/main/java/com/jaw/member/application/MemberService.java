@@ -11,6 +11,8 @@ import com.jaw.exception.MemberNotFoundException;
 import com.jaw.exception.UserEmailDuplicationException;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
+import com.jaw.member.domain.Role;
+import com.jaw.member.domain.RoleRepository;
 import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
 import com.jaw.member.ui.MemberUpdateRequestDTO;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	public MemberResponseDTO create(MemberRequestDTO request) {
@@ -34,6 +37,7 @@ public class MemberService {
 
 		request.setPassword(passwordEncoder.encode(request.getPassword()));
 		Member member = memberRepository.save(request.toEntity());
+		roleRepository.save(new Role(member.getId(), "USER"));
 		return new MemberResponseDTO(member);
 	}
 
