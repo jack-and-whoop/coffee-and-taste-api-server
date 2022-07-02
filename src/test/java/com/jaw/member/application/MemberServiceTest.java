@@ -3,6 +3,7 @@ package com.jaw.member.application;
 import static com.jaw.Fixtures.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.jaw.exception.MemberNotFoundException;
 import com.jaw.exception.UserEmailDuplicationException;
 import com.jaw.member.domain.Member;
+import com.jaw.member.domain.Role;
+import com.jaw.member.domain.RoleRepository;
 import com.jaw.member.ui.MemberRequestDTO;
 import com.jaw.member.ui.MemberResponseDTO;
 import com.jaw.member.ui.MemberUpdateRequestDTO;
@@ -24,6 +27,7 @@ import com.jaw.member.ui.MemberUpdateRequestDTO;
 class MemberServiceTest {
 
 	private InMemoryMemberRepository memberRepository;
+	private final RoleRepository roleRepository = mock(RoleRepository.class);
 	private PasswordEncoder passwordEncoder;
 	private MemberService memberService;
 
@@ -31,7 +35,7 @@ class MemberServiceTest {
 	void setup() {
 		memberRepository = new InMemoryMemberRepository();
 		passwordEncoder = new BCryptPasswordEncoder();
-		memberService = new MemberService(memberRepository, passwordEncoder);
+		memberService = new MemberService(memberRepository, roleRepository, passwordEncoder);
 	}
 
 	@AfterEach
@@ -44,6 +48,8 @@ class MemberServiceTest {
 	void create() {
 		MemberResponseDTO member = memberService.create(memberCreateRequest("memberA", "aaa@gmail.com", "1234"));
 		assertThat(member.getId()).isEqualTo(1L);
+
+		verify(roleRepository).save(any(Role.class));
 	}
 
 	@DisplayName("회원 등록 시, 이미 등록된 이메일이라면 등록할 수 없다.")
