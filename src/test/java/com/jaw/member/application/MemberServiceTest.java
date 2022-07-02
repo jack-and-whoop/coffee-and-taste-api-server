@@ -81,6 +81,15 @@ class MemberServiceTest {
 		assertThat(member.getEmail()).isEqualTo("aaa@gmail.com");
 	}
 
+	@DisplayName("식별자로 회원을 조회한다.")
+	@Test
+	void findById() {
+		MemberResponseDTO member = memberService.create(memberCreateRequest("memberA", "aaa@gmail.com", "1234"));
+		MemberResponseDTO foundMember = memberService.findById(member.getId());
+		assertThat(foundMember.getName()).isEqualTo("memberA");
+		assertThat(foundMember.getEmail()).isEqualTo("aaa@gmail.com");
+	}
+
 	@DisplayName("존재하지 않는 이메일로 회원을 조회할 경우, MemberNotFoundException 예외가 발생한다.")
 	@Test
 	void findByNonExistentEmail() {
