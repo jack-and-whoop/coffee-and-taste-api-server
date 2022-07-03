@@ -152,13 +152,14 @@ class CartServiceTest {
 		cartRepository.save(new Cart(member));
 		Menu menu = menuRepository.save(menu("아메리카노", 1_000L));
 		CartResponseDTO cartMenu = cartService.addCartMenu(member.getId(),
-			new CartMenuRequestDTO(menu.getId(), 1L));
+			new CartMenuRequestDTO(menu.getId(), 2L));
 
 		CartMenuResponseDTO foundCartMenu = cartService.findCartMenuById(member.getId(), cartMenu.getId());
 
 		assertThat(foundCartMenu.getMenu().getName()).isEqualTo("아메리카노");
 		assertThat(foundCartMenu.getMenu().getPrice()).isEqualTo(BigDecimal.valueOf(1_000L));
-		assertThat(foundCartMenu.getQuantity()).isEqualTo(1L);
+		assertThat(foundCartMenu.getQuantity()).isEqualTo(2L);
+		assertThat(foundCartMenu.getPrice()).isEqualTo(BigDecimal.valueOf(2_000L));
 	}
 
 	@DisplayName("장바구니 메뉴의 식별자가 유효하지 않다면, 장바구니에 담긴 메뉴를 조회할 수 없다.")

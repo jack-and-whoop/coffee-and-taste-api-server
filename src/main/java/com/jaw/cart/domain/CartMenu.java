@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -33,10 +35,13 @@ public class CartMenu {
 
 	private Long quantity;
 
+	private BigDecimal price;
+
 	public CartMenu(Cart cart, Menu menu, Long quantity) {
 		this.cart = cart;
 		this.menu = menu;
 		this.quantity = quantity;
+		this.price = menu.getPrice().multiply(BigDecimal.valueOf(quantity));
 	}
 
 	public OrderMenu toOrderMenu() {
