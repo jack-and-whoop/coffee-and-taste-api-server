@@ -39,6 +39,14 @@ public class InMemoryCartMenuRepository implements CartMenuRepository {
 		cartMenus.remove(cartMenu.getId());
 	}
 
+	@Override
+	public List<CartMenu> findAllByIdIn(List<Long> ids) {
+		return cartMenus.values()
+			.stream()
+			.filter(cartMenu -> ids.contains(cartMenu.getId()))
+			.collect(Collectors.toList());
+	}
+
 	public void clear() {
 		sequence = 0;
 		cartMenus.clear();

@@ -1,21 +1,10 @@
 package com.jaw.cart.application;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
 import com.jaw.cart.domain.CartMenuRepository;
 import com.jaw.cart.domain.CartRepository;
-import com.jaw.cart.ui.CartMenuOrderRequestDTO;
-import com.jaw.cart.ui.CartMenuOrderResponseDTO;
-import com.jaw.cart.ui.CartMenuRequestDTO;
-import com.jaw.cart.ui.CartMenuResponseDTO;
-import com.jaw.cart.ui.CartMenuUpdateDTO;
-import com.jaw.cart.ui.CartResponseDTO;
+import com.jaw.cart.ui.*;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
@@ -23,8 +12,13 @@ import com.jaw.menu.domain.MenuRepository;
 import com.jaw.order.domain.Order;
 import com.jaw.order.domain.OrderMenu;
 import com.jaw.order.domain.OrderRepository;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -49,9 +43,20 @@ public class CartService {
 			.orElseGet(() -> cartRepository.save(new Cart(member)));
 	}
 
-	public CartResponseDTO deleteAllCartMenus(Long userId) {
+	public CartResponseDTO deleteCartMenus(Long userId, List<Long> ids) {
 		Cart cart = findByUserId(userId);
-		cart.getCartMenus().forEach(cartMenuRepository::delete);
+		List<CartMenu> cartMenus = cart.getCartMenus();
+
+		Set<Long> cartMenuIds = cartMenus.stream()
+			.map(CartMenu::getId)
+			.collect(Collectors.toSet());
+
+		if (!cartMenuIds.containsAll(ids)) {
+			throw new IllegalArgumentException();
+		}
+
+		cartMenus.forEach(cartMenuRepository::delete);
+
 		return new CartResponseDTO(cart);
 	}
 
@@ -86,7 +91,6 @@ public class CartService {
 
 	public CartMenuResponseDTO findCartMenuById(Long userId, Long id) {
 		CartMenu cartMenu = findCartMenu(userId, id);
-
 		return new CartMenuResponseDTO(cartMenu);
 	}
 
@@ -108,10 +112,5 @@ public class CartService {
 		CartMenu cartMenu = findCartMenu(userId, cartMenuId);
 		cartMenu.changeQuantity(request.getQuantity());
 		return new CartMenuResponseDTO(cartMenu);
-	}
-
-	public void deleteCartMenuById(Long userId, Long id) {
-		CartMenu cartMenu = findCartMenu(userId, id);
-		cartMenuRepository.delete(cartMenu);
 	}
 }
