@@ -1,30 +1,26 @@
 package com.jaw.cart.application;
 
-import static com.jaw.Fixtures.*;
-import static org.assertj.core.api.Assertions.*;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
-import com.jaw.cart.ui.CartMenuOrderRequestDTO;
-import com.jaw.cart.ui.CartMenuOrderResponseDTO;
-import com.jaw.cart.ui.CartMenuRequestDTO;
-import com.jaw.cart.ui.CartMenuResponseDTO;
-import com.jaw.cart.ui.CartMenuUpdateDTO;
-import com.jaw.cart.ui.CartResponseDTO;
+import com.jaw.cart.ui.*;
 import com.jaw.member.application.InMemoryMemberRepository;
 import com.jaw.member.domain.Member;
 import com.jaw.menu.application.InMemoryMenuRepository;
 import com.jaw.menu.domain.Menu;
 import com.jaw.order.application.InMemoryOrderRepository;
 import com.jaw.order.ui.OrderMenuResponseDTO;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.jaw.Fixtures.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CartServiceTest {
 
@@ -79,9 +75,9 @@ class CartServiceTest {
 		assertThat(foundCart.getCartMenus()).hasSize(2);
 	}
 
-	@DisplayName("장바구니에 담긴 모든 메뉴를 삭제한다.")
+	@DisplayName("장바구니에 담긴 메뉴를 삭제한다.")
 	@Test
-	void deleteAllCartMenus() {
+	void deleteCartMenus() {
 		Member member = memberRepository.save(member());
 		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
 		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));
@@ -91,11 +87,24 @@ class CartServiceTest {
 		Cart cart = cartRepository.findByMemberId(member.getId())
 			.orElseThrow(IllegalArgumentException::new);
 
-		cartService.deleteAllCartMenus(member.getId());
+		cartService.deleteCartMenus(member.getId(), Arrays.asList(1L, 2L));
 
 		List<CartMenu> cartMenus = cartMenuRepository.findAllByCart(cart);
 
 		assertThat(cartMenus).isEmpty();
+	}
+
+	@DisplayName("삭제하고자 하는 메뉴가 장바구니에 없으면, 장바구니에 담긴 메뉴를 삭제할 수 없다.")
+	@Test
+	void deleteNonExistingCartMenus() {
+		Member member = memberRepository.save(member());
+		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
+		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));
+		cartService.addCartMenu(member.getId(), new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1));
+		cartService.addCartMenu(member.getId(), new CartMenuRequestDTO(icedCaffeMocha.getId(), 2));
+
+		assertThatThrownBy(() -> cartService.deleteCartMenus(member.getId(), List.of(999L)))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("장바구니에 메뉴를 추가한다.")
@@ -143,13 +152,25 @@ class CartServiceTest {
 		cartRepository.save(new Cart(member));
 		Menu menu = menuRepository.save(menu("아메리카노", 1_000L));
 		CartResponseDTO cartMenu = cartService.addCartMenu(member.getId(),
-			new CartMenuRequestDTO(menu.getId(), 1L));
+			new CartMenuRequestDTO(menu.getId(), 2L));
 
 		CartMenuResponseDTO foundCartMenu = cartService.findCartMenuById(member.getId(), cartMenu.getId());
 
 		assertThat(foundCartMenu.getMenu().getName()).isEqualTo("아메리카노");
 		assertThat(foundCartMenu.getMenu().getPrice()).isEqualTo(BigDecimal.valueOf(1_000L));
-		assertThat(foundCartMenu.getQuantity()).isEqualTo(1L);
+		assertThat(foundCartMenu.getQuantity()).isEqualTo(2L);
+		assertThat(foundCartMenu.getPrice()).isEqualTo(BigDecimal.valueOf(2_000L));
+	}
+
+	@DisplayName("장바구니 메뉴의 식별자가 유효하지 않다면, 장바구니에 담긴 메뉴를 조회할 수 없다.")
+	@Test
+	void findCartMenuByNonExistingId() {
+		Member member = memberRepository.save(member());
+		cartRepository.save(new Cart(member));
+		CartMenu cartMenu = cartMenuRepository.save(new CartMenu(null, menu("아메리카노", 1_000L), 1L));
+
+		assertThatThrownBy(() -> cartService.findCartMenuById(member.getId(), cartMenu.getId()))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("장바구니에 담긴 특정 메뉴의 수량을 변경한다.")
@@ -176,33 +197,6 @@ class CartServiceTest {
 		CartMenuUpdateDTO updateRequest = new CartMenuUpdateDTO(2L);
 
 		assertThatThrownBy(() -> cartService.changeCartMenuQuantity(member.getId(), cartMenu.getId(), updateRequest))
-			.isInstanceOf(IllegalArgumentException.class);
-	}
-
-	@DisplayName("장바구니에 담긴 특정 메뉴를 삭제한다.")
-	@Test
-	void deleteCartMenuById() {
-		Member member = memberRepository.save(member());
-		Menu menu = menuRepository.save(menu("아메리카노", 1_000L));
-		CartResponseDTO cartMenu = cartService.addCartMenu(member.getId(), new CartMenuRequestDTO(menu.getId(), 1L));
-
-		cartService.deleteCartMenuById(member.getId(), cartMenu.getId());
-
-		assertThatThrownBy(() -> cartService.findCartMenuById(member.getId(), cartMenu.getId()))
-			.isInstanceOf(IllegalArgumentException.class);
-	}
-
-	@DisplayName("장바구니에 담긴 메뉴가 아니라면, 메뉴를 삭제할 수 없다.")
-	@Test
-	void deleteCartMenuByIdFailed() {
-		Member member = memberRepository.save(member());
-		Member other = memberRepository.save(other());
-		cartRepository.save(new Cart(member));
-		Cart otherCart = cartRepository.save(new Cart(other));
-		Menu menu = menuRepository.save(menu("아메리카노", 1_000L));
-		CartMenu carMenu = cartMenuRepository.save(new CartMenu(otherCart, menu, 1L));
-
-		assertThatThrownBy(() -> cartService.deleteCartMenuById(member.getId(), carMenu.getId()))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 }

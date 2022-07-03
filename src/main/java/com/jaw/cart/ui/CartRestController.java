@@ -1,23 +1,14 @@
 package com.jaw.cart.ui;
 
-import java.net.URI;
-
+import com.jaw.auth.UserAuthentication;
+import com.jaw.cart.application.CartService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.jaw.auth.UserAuthentication;
-import com.jaw.cart.application.CartService;
-
-import lombok.RequiredArgsConstructor;
+import java.net.URI;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/cart")
@@ -59,18 +50,11 @@ public class CartRestController {
 		return ResponseEntity.ok(cartMenu);
 	}
 
-	@DeleteMapping("/cart-menus/{id}")
-	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<CartMenuResponseDTO> deleteCartMenu(@PathVariable Long id,
-															  UserAuthentication authentication) {
-		cartService.deleteCartMenuById(authentication.getUserId(), id);
-		return ResponseEntity.noContent().build();
-	}
-
 	@DeleteMapping("/cart-menus")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<CartResponseDTO> deleteAllCartMenus(UserAuthentication authentication) {
-		CartResponseDTO cart = cartService.deleteAllCartMenus(authentication.getUserId());
+	public ResponseEntity<CartResponseDTO> deleteCartMenus(@RequestBody CartMenuDeleteRequest request,
+														   UserAuthentication authentication) {
+		CartResponseDTO cart = cartService.deleteCartMenus(authentication.getUserId(), request.getCartMenuIds());
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(cart);
 	}
 
