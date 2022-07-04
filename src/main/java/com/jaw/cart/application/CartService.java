@@ -1,10 +1,22 @@
 package com.jaw.cart.application;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
 import com.jaw.cart.domain.CartMenuRepository;
 import com.jaw.cart.domain.CartRepository;
-import com.jaw.cart.ui.*;
+import com.jaw.cart.ui.CartMenuOrderRequestDTO;
+import com.jaw.cart.ui.CartMenuOrderResponseDTO;
+import com.jaw.cart.ui.CartMenuRequestDTO;
+import com.jaw.cart.ui.CartMenuResponseDTO;
+import com.jaw.cart.ui.CartMenuUpdateDTO;
+import com.jaw.cart.ui.CartResponseDTO;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
@@ -12,13 +24,8 @@ import com.jaw.menu.domain.MenuRepository;
 import com.jaw.order.domain.Order;
 import com.jaw.order.domain.OrderMenu;
 import com.jaw.order.domain.OrderRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
@@ -43,6 +50,18 @@ public class CartService {
 			.orElseGet(() -> cartRepository.save(new Cart(member)));
 	}
 
+	public void deleteCartMenu(Long userId, Long id) {
+		Cart cart = findByUserId(userId);
+
+		CartMenu cartMenu = cart.getCartMenus()
+			.stream()
+			.filter(menu -> menu.getId().equals(id))
+			.findFirst()
+			.orElseThrow(IllegalArgumentException::new);
+
+		cartMenuRepository.delete(cartMenu);
+	}
+
 	public CartResponseDTO deleteCartMenus(Long userId, List<Long> ids) {
 		Cart cart = findByUserId(userId);
 		List<CartMenu> cartMenus = cart.getCartMenus();
@@ -60,13 +79,13 @@ public class CartService {
 		return new CartResponseDTO(cart);
 	}
 
-	public CartResponseDTO addCartMenu(Long userId, CartMenuRequestDTO request) {
+	public CartMenuResponseDTO addCartMenu(Long userId, CartMenuRequestDTO request) {
 		Cart cart = findByUserId(userId);
 		Menu menu = menuRepository.findById(request.getMenuId())
 			.orElseThrow(IllegalArgumentException::new);
 		CartMenu cartMenu = cartMenuRepository.save(new CartMenu(cart, menu, request.getQuantity()));
 		cart.addMenu(cartMenu);
-		return new CartResponseDTO(cart);
+		return new CartMenuResponseDTO(cartMenu);
 	}
 
 	public CartMenuOrderResponseDTO orderCartMenus(Long userId, CartMenuOrderRequestDTO request) {

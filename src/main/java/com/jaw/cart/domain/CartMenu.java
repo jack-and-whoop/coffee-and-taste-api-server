@@ -28,6 +28,7 @@ public class CartMenu {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@Setter
 	private Cart cart;
 
 	@ManyToOne(fetch = FetchType.LAZY)

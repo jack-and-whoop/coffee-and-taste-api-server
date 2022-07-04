@@ -1,13 +1,13 @@
 package com.jaw.cart.ui;
 
-import com.jaw.cart.application.CartService;
-import com.jaw.cart.domain.Cart;
-import com.jaw.cart.domain.CartMenu;
-import com.jaw.member.application.AuthenticationService;
-import com.jaw.member.domain.Member;
-import com.jaw.menu.domain.Menu;
-import com.jaw.order.domain.Order;
-import com.jaw.order.domain.OrderMenu;
+import static com.jaw.Fixtures.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,14 +17,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static com.jaw.Fixtures.*;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.jaw.cart.application.CartService;
+import com.jaw.cart.domain.Cart;
+import com.jaw.cart.domain.CartMenu;
+import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.domain.Member;
+import com.jaw.menu.domain.Menu;
+import com.jaw.order.domain.Order;
+import com.jaw.order.domain.OrderMenu;
 
 @WebMvcTest(CartRestController.class)
 class CartRestControllerTest {
@@ -70,8 +70,7 @@ class CartRestControllerTest {
 				.header("Authorization", "Bearer " + VALID_TOKEN)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(OBJECT_MAPPER.writeValueAsString(new CartMenuDeleteRequest(Arrays.asList(1L, 2L)))))
-			.andExpect(status().isNoContent())
-			.andExpect(jsonPath("$.cartMenus").isEmpty());
+			.andExpect(status().isNoContent());
 	}
 
 	@DisplayName("장바구니에 메뉴를 추가한다.")
@@ -79,19 +78,18 @@ class CartRestControllerTest {
 	void addMenu() throws Exception {
 		Menu americano = menu("아메리카노", 1_000L);
 		Cart cart = new Cart(member());
-
 		CartMenu cartMenu = new CartMenu(cart, americano, 1L);
 		cart.addMenu(cartMenu);
 
 		given(cartService.addCartMenu(any(Long.class), any(CartMenuRequestDTO.class)))
-			.willReturn(new CartResponseDTO(cart));
+			.willReturn(new CartMenuResponseDTO(cartMenu));
 
 		mvc.perform(post("/api/cart/cart-menus")
 				.header("Authorization", "Bearer " + VALID_TOKEN)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(OBJECT_MAPPER.writeValueAsString(new CartMenuRequestDTO(americano.getId(), 1L))))
 			.andExpect(status().isCreated())
-			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(new CartResponseDTO(cart))));
+			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(new CartMenuResponseDTO(cartMenu))));
 	}
 
 	@DisplayName("장바구니에 담긴 메뉴를 주문한다.")

@@ -1,14 +1,22 @@
 package com.jaw.cart.ui;
 
-import com.jaw.auth.UserAuthentication;
-import com.jaw.cart.application.CartService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import java.net.URI;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
+import com.jaw.auth.UserAuthentication;
+import com.jaw.cart.application.CartService;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/cart")
@@ -26,9 +34,9 @@ public class CartRestController {
 
 	@PostMapping("/cart-menus")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<CartResponseDTO> addMenu(@RequestBody CartMenuRequestDTO request,
-												   UserAuthentication authentication) {
-		CartResponseDTO cart = cartService.addCartMenu(authentication.getUserId(), request);
+	public ResponseEntity<CartMenuResponseDTO> addMenu(@RequestBody CartMenuRequestDTO request,
+													   UserAuthentication authentication) {
+		CartMenuResponseDTO cart = cartService.addCartMenu(authentication.getUserId(), request);
 		return ResponseEntity.created(URI.create("/api/cart"))
 			.body(cart);
 	}
@@ -50,12 +58,20 @@ public class CartRestController {
 		return ResponseEntity.ok(cartMenu);
 	}
 
+	@DeleteMapping("/cart-menus/{id}")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<Void> deleteCartMenu(@PathVariable Long id,
+														  UserAuthentication authentication) {
+		cartService.deleteCartMenu(authentication.getUserId(), id);
+		return ResponseEntity.noContent().build();
+	}
+
 	@DeleteMapping("/cart-menus")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<CartResponseDTO> deleteCartMenus(@RequestBody CartMenuDeleteRequest request,
+	public ResponseEntity<Void> deleteCartMenus(@RequestBody CartMenuDeleteRequest request,
 														   UserAuthentication authentication) {
-		CartResponseDTO cart = cartService.deleteCartMenus(authentication.getUserId(), request.getCartMenuIds());
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(cart);
+		cartService.deleteCartMenus(authentication.getUserId(), request.getCartMenuIds());
+		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/order")
