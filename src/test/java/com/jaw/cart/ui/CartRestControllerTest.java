@@ -142,13 +142,16 @@ class CartRestControllerTest {
 		Cart cart = new Cart(member);
 		Menu menu = menu("아메리카노", 1_000L);
 
+		CartMenuResponseDTO expected = new CartMenuResponseDTO(new CartMenu(cart, menu, 2L));
+
 		given(cartService.changeCartMenuQuantity(any(Long.class), any(Long.class), any(CartMenuUpdateDTO.class)))
-			.willReturn(new CartMenuResponseDTO(new CartMenu(cart, menu, 1L)));
+			.willReturn(expected);
 
 		mvc.perform(patch("/api/cart/cart-menus/{id}", 1L)
 				.header("Authorization", "Bearer " + VALID_TOKEN)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(OBJECT_MAPPER.writeValueAsString(new CartMenuUpdateDTO(2L))))
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(expected)));
 	}
 }

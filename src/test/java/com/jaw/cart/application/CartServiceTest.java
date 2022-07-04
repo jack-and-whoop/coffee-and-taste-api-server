@@ -207,10 +207,11 @@ class CartServiceTest {
 			new CartMenuRequestDTO(menu.getId(), 1L));
 		CartMenuUpdateDTO updateRequest = new CartMenuUpdateDTO(2L);
 
-		CartMenuResponseDTO updatedCartMenu = cartService.changeCartMenuQuantity(member.getId(), cartMenu.getId(),
-			updateRequest);
+		CartMenuResponseDTO updatedCartMenu =
+			cartService.changeCartMenuQuantity(member.getId(), cartMenu.getId(), updateRequest);
 
 		assertThat(updatedCartMenu.getQuantity()).isEqualTo(2L);
+		assertThat(updatedCartMenu.getPrice()).isEqualTo(BigDecimal.valueOf(2_000L));
 	}
 
 	@DisplayName("장바구니에 담긴 메뉴가 없다면, 메뉴의 수량을 변경할 수 없다.")
