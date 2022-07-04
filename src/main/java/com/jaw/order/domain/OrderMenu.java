@@ -1,5 +1,7 @@
 package com.jaw.order.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,8 +36,11 @@ public class OrderMenu {
 	@Column(nullable = false)
 	private Long quantity;
 
+	private BigDecimal price;
+
 	public OrderMenu(Menu menu, Long quantity) {
 		this.menu = menu;
 		this.quantity = quantity;
+		this.price = menu.getPrice().multiply(BigDecimal.valueOf(quantity));
 	}
 }
