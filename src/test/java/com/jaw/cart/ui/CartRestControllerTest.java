@@ -56,7 +56,7 @@ class CartRestControllerTest {
 			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(cart)));
 	}
 
-	@DisplayName("장바구니에 담긴 메뉴를 삭제한다.")
+	@DisplayName("장바구니에 담긴 메뉴들을 삭제한다.")
 	@Test
 	void deleteCartMenus() throws Exception {
 		CartResponseDTO cart = new CartResponseDTO(new Cart(member()));
@@ -85,6 +85,20 @@ class CartRestControllerTest {
 			.andExpect(status().isNoContent());
 
 		verify(cartService).deleteCartMenu(1L, 1L);
+	}
+
+	@DisplayName("장바구니에 담긴 모든 메뉴를 삭제한다.")
+	@Test
+	void deleteAllCartMenus() throws Exception {
+		given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
+		willDoNothing().given(cartService).deleteAllCartMenus(1L);
+
+		mvc.perform(delete("/api/cart/cart-menus/all")
+				.header("Authorization", "Bearer " + VALID_TOKEN))
+			.andExpect(status().isNoContent());
+
+		verify(cartService).deleteAllCartMenus(1L);
 	}
 
 	@DisplayName("장바구니에 메뉴를 추가한다.")

@@ -79,6 +79,11 @@ public class CartService {
 		return new CartResponseDTO(cart);
 	}
 
+	public void deleteAllCartMenus(Long userId) {
+		Cart cart = findByUserId(userId);
+		cart.getCartMenus().forEach(cartMenuRepository::delete);
+	}
+
 	public CartMenuResponseDTO addCartMenu(Long userId, CartMenuRequestDTO request) {
 		Cart cart = findByUserId(userId);
 		Menu menu = menuRepository.findById(request.getMenuId())

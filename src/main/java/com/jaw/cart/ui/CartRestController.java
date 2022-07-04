@@ -61,7 +61,7 @@ public class CartRestController {
 	@DeleteMapping("/cart-menus/{id}")
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<Void> deleteCartMenu(@PathVariable Long id,
-														  UserAuthentication authentication) {
+											   UserAuthentication authentication) {
 		cartService.deleteCartMenu(authentication.getUserId(), id);
 		return ResponseEntity.noContent().build();
 	}
@@ -69,8 +69,15 @@ public class CartRestController {
 	@DeleteMapping("/cart-menus")
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<Void> deleteCartMenus(@RequestBody CartMenuDeleteRequest request,
-														   UserAuthentication authentication) {
+												UserAuthentication authentication) {
 		cartService.deleteCartMenus(authentication.getUserId(), request.getCartMenuIds());
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/cart-menus/all")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<Void> deleteAllCartMenus(UserAuthentication authentication) {
+		cartService.deleteAllCartMenus(authentication.getUserId());
 		return ResponseEntity.noContent().build();
 	}
 

@@ -98,7 +98,7 @@ class CartServiceTest {
 		assertThat(cartMenus).isEmpty();
 	}
 
-	@DisplayName("장바구니에 담긴 모든 메뉴를 삭제한다.")
+	@DisplayName("장바구니에 담긴 메뉴들을 삭제한다.")
 	@Test
 	void deleteCartMenus() {
 		Member member = memberRepository.save(member());
@@ -111,6 +111,25 @@ class CartServiceTest {
 			.orElseThrow(IllegalArgumentException::new);
 
 		cartService.deleteCartMenus(member.getId(), Arrays.asList(1L, 2L));
+
+		List<CartMenu> cartMenus = cartMenuRepository.findAllByCart(cart);
+
+		assertThat(cartMenus).isEmpty();
+	}
+
+	@DisplayName("장바구니에 담긴 모든 메뉴를 삭제한다.")
+	@Test
+	void deleteAllCartMenus() {
+		Member member = memberRepository.save(member());
+		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
+		Menu icedCaffeMocha = menuRepository.save(menu("아이스 카페 모카", 5_500L));
+		cartService.addCartMenu(member.getId(), new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1));
+		cartService.addCartMenu(member.getId(), new CartMenuRequestDTO(icedCaffeMocha.getId(), 2));
+
+		Cart cart = cartRepository.findByMemberId(member.getId())
+			.orElseThrow(IllegalArgumentException::new);
+
+		cartService.deleteAllCartMenus(member.getId());
 
 		List<CartMenu> cartMenus = cartMenuRepository.findAllByCart(cart);
 
@@ -156,10 +175,10 @@ class CartServiceTest {
 		Menu mixCoffee = menuRepository.save(menu("믹스 커피", 1_000L));
 		Menu americano = menuRepository.save(menu("아메리카노", 2_000L));
 
-		Long mixCoffeeMenuId = cartService.addCartMenu(member.getId(), new CartMenuRequestDTO(mixCoffee.getId(), 1))
-			.getId();
-		Long americanoMenuId = cartService.addCartMenu(member.getId(), new CartMenuRequestDTO(americano.getId(), 1))
-			.getId();
+		Long mixCoffeeMenuId = cartService.addCartMenu(member.getId(),
+				new CartMenuRequestDTO(mixCoffee.getId(), 1)).getId();
+		Long americanoMenuId = cartService.addCartMenu(member.getId(),
+				new CartMenuRequestDTO(americano.getId(), 1)).getId();
 
 		CartMenuOrderRequestDTO orderRequest = new CartMenuOrderRequestDTO();
 		orderRequest.setCartMenuIds(List.of(mixCoffeeMenuId, americanoMenuId));
