@@ -73,6 +73,20 @@ class CartRestControllerTest {
 			.andExpect(status().isNoContent());
 	}
 
+	@DisplayName("장바구니에 담긴 메뉴를 삭제한다.")
+	@Test
+	void deleteCartMenu() throws Exception {
+		given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
+		willDoNothing().given(cartService).deleteCartMenu(1L, 1L);
+
+		mvc.perform(delete("/api/cart/cart-menus/1")
+				.header("Authorization", "Bearer " + VALID_TOKEN))
+			.andExpect(status().isNoContent());
+
+		verify(cartService).deleteCartMenu(1L, 1L);
+	}
+
 	@DisplayName("장바구니에 메뉴를 추가한다.")
 	@Test
 	void addMenu() throws Exception {
