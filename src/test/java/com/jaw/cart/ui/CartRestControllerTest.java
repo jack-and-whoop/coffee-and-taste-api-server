@@ -1,13 +1,13 @@
 package com.jaw.cart.ui;
 
-import com.jaw.cart.application.CartService;
-import com.jaw.cart.domain.Cart;
-import com.jaw.cart.domain.CartMenu;
-import com.jaw.member.application.AuthenticationService;
-import com.jaw.member.domain.Member;
-import com.jaw.menu.domain.Menu;
-import com.jaw.order.domain.Order;
-import com.jaw.order.domain.OrderMenu;
+import static com.jaw.Fixtures.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,14 +17,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static com.jaw.Fixtures.*;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.jaw.cart.application.CartService;
+import com.jaw.cart.domain.Cart;
+import com.jaw.cart.domain.CartMenu;
+import com.jaw.member.application.AuthenticationService;
+import com.jaw.member.domain.Member;
+import com.jaw.menu.domain.Menu;
+import com.jaw.order.domain.Order;
+import com.jaw.order.domain.OrderMenu;
 
 @WebMvcTest(CartRestController.class)
 class CartRestControllerTest {
@@ -56,7 +56,7 @@ class CartRestControllerTest {
 			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(cart)));
 	}
 
-	@DisplayName("장바구니에 담긴 메뉴를 삭제한다.")
+	@DisplayName("장바구니에 담긴 메뉴들을 삭제한다.")
 	@Test
 	void deleteCartMenus() throws Exception {
 		CartResponseDTO cart = new CartResponseDTO(new Cart(member()));
@@ -70,8 +70,35 @@ class CartRestControllerTest {
 				.header("Authorization", "Bearer " + VALID_TOKEN)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(OBJECT_MAPPER.writeValueAsString(new CartMenuDeleteRequest(Arrays.asList(1L, 2L)))))
-			.andExpect(status().isNoContent())
-			.andExpect(jsonPath("$.cartMenus").isEmpty());
+			.andExpect(status().isNoContent());
+	}
+
+	@DisplayName("장바구니에 담긴 메뉴를 삭제한다.")
+	@Test
+	void deleteCartMenu() throws Exception {
+		given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
+		willDoNothing().given(cartService).deleteCartMenu(1L, 1L);
+
+		mvc.perform(delete("/api/cart/cart-menus/1")
+				.header("Authorization", "Bearer " + VALID_TOKEN))
+			.andExpect(status().isNoContent());
+
+		verify(cartService).deleteCartMenu(1L, 1L);
+	}
+
+	@DisplayName("장바구니에 담긴 모든 메뉴를 삭제한다.")
+	@Test
+	void deleteAllCartMenus() throws Exception {
+		given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
+		willDoNothing().given(cartService).deleteAllCartMenus(1L);
+
+		mvc.perform(delete("/api/cart/cart-menus/all")
+				.header("Authorization", "Bearer " + VALID_TOKEN))
+			.andExpect(status().isNoContent());
+
+		verify(cartService).deleteAllCartMenus(1L);
 	}
 
 	@DisplayName("장바구니에 메뉴를 추가한다.")
@@ -79,19 +106,18 @@ class CartRestControllerTest {
 	void addMenu() throws Exception {
 		Menu americano = menu("아메리카노", 1_000L);
 		Cart cart = new Cart(member());
-
 		CartMenu cartMenu = new CartMenu(cart, americano, 1L);
 		cart.addMenu(cartMenu);
 
 		given(cartService.addCartMenu(any(Long.class), any(CartMenuRequestDTO.class)))
-			.willReturn(new CartResponseDTO(cart));
+			.willReturn(new CartMenuResponseDTO(cartMenu));
 
 		mvc.perform(post("/api/cart/cart-menus")
 				.header("Authorization", "Bearer " + VALID_TOKEN)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(OBJECT_MAPPER.writeValueAsString(new CartMenuRequestDTO(americano.getId(), 1L))))
 			.andExpect(status().isCreated())
-			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(new CartResponseDTO(cart))));
+			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(new CartMenuResponseDTO(cartMenu))));
 	}
 
 	@DisplayName("장바구니에 담긴 메뉴를 주문한다.")
@@ -144,13 +170,16 @@ class CartRestControllerTest {
 		Cart cart = new Cart(member);
 		Menu menu = menu("아메리카노", 1_000L);
 
+		CartMenuResponseDTO expected = new CartMenuResponseDTO(new CartMenu(cart, menu, 2L));
+
 		given(cartService.changeCartMenuQuantity(any(Long.class), any(Long.class), any(CartMenuUpdateDTO.class)))
-			.willReturn(new CartMenuResponseDTO(new CartMenu(cart, menu, 1L)));
+			.willReturn(expected);
 
 		mvc.perform(patch("/api/cart/cart-menus/{id}", 1L)
 				.header("Authorization", "Bearer " + VALID_TOKEN)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(OBJECT_MAPPER.writeValueAsString(new CartMenuUpdateDTO(2L))))
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(content().json(OBJECT_MAPPER.writeValueAsString(expected)));
 	}
 }

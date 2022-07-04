@@ -1,5 +1,7 @@
 package com.jaw.cart.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,8 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -28,6 +28,7 @@ public class CartMenu {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@Setter
 	private Cart cart;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -50,5 +51,6 @@ public class CartMenu {
 
 	public void changeQuantity(Long quantity) {
 		this.quantity = quantity;
+		this.price = price.multiply(BigDecimal.valueOf(quantity));
 	}
 }
