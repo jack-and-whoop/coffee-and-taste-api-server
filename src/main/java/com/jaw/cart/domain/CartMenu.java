@@ -51,6 +51,6 @@ public class CartMenu {
 
 	public void changeQuantity(Long quantity) {
 		this.quantity = quantity;
-		this.price = price.multiply(BigDecimal.valueOf(quantity));
+		this.price = menu.getPrice().multiply(BigDecimal.valueOf(quantity));
 	}
 }
