@@ -167,6 +167,23 @@ class CartServiceTest {
 		assertThat(cartMenus).hasSize(2);
 	}
 
+	@DisplayName("장바구니에 메뉴를 추가할 때, 동일한 메뉴가 있다면 수량을 추가한다.")
+	@Test
+	void addIdenticalCartMenu() {
+		Member member = memberRepository.save(member());
+		Menu vanillaFlatWhite = menuRepository.save(menu("바닐라 플랫 화이트", 5_900L));
+
+		CartMenuRequestDTO vanillaFlatWhiteRequest = new CartMenuRequestDTO(vanillaFlatWhite.getId(), 1);
+
+		cartService.addCartMenu(member.getId(), vanillaFlatWhiteRequest);
+		cartService.addCartMenu(member.getId(), vanillaFlatWhiteRequest);
+
+		List<CartMenuResponseDTO> cartMenus = cartService.findByUser(member.getId()).getCartMenus();
+
+		assertThat(cartMenus).hasSize(1);
+		assertThat(cartMenus.get(0).getQuantity()).isEqualTo(2);
+	}
+
 	@DisplayName("장바구니에 담긴 메뉴를 주문한다.")
 	@Test
 	void orderCartMenus() {

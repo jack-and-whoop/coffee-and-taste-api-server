@@ -1,10 +1,23 @@
 package com.jaw.cart.application;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jaw.cart.domain.Cart;
 import com.jaw.cart.domain.CartMenu;
 import com.jaw.cart.domain.CartMenuRepository;
 import com.jaw.cart.domain.CartRepository;
-import com.jaw.cart.ui.*;
+import com.jaw.cart.ui.CartMenuOrderRequestDTO;
+import com.jaw.cart.ui.CartMenuOrderResponseDTO;
+import com.jaw.cart.ui.CartMenuRequestDTO;
+import com.jaw.cart.ui.CartMenuResponseDTO;
+import com.jaw.cart.ui.CartMenuUpdateDTO;
+import com.jaw.cart.ui.CartResponseDTO;
 import com.jaw.member.domain.Member;
 import com.jaw.member.domain.MemberRepository;
 import com.jaw.menu.domain.Menu;
@@ -12,13 +25,8 @@ import com.jaw.menu.domain.MenuRepository;
 import com.jaw.order.domain.Order;
 import com.jaw.order.domain.OrderMenu;
 import com.jaw.order.domain.OrderRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
@@ -83,6 +91,18 @@ public class CartService {
 		Cart cart = findByUserId(userId);
 		Menu menu = menuRepository.findById(request.getMenuId())
 			.orElseThrow(IllegalArgumentException::new);
+
+		Optional<CartMenu> maybeCartMenu = cart.getCartMenus()
+			.stream()
+			.filter(cartMenu -> cartMenu.getMenu().equals(menu))
+			.findFirst();
+
+		if (maybeCartMenu.isPresent()) {
+			CartMenu cartMenu = maybeCartMenu.get();
+			cartMenu.changeQuantity(cartMenu.getQuantity() + request.getQuantity());
+			return new CartMenuResponseDTO(cartMenu);
+		}
+
 		CartMenu cartMenu = cartMenuRepository.save(new CartMenu(cart, menu, request.getQuantity()));
 		cart.addMenu(cartMenu);
 		return new CartMenuResponseDTO(cartMenu);
